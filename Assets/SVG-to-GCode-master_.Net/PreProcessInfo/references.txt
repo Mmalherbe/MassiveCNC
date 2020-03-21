@@ -1,0 +1,56 @@
+<References>
+  <Reference Include="System" />
+  <Reference Include="System.Data" />
+  <Reference Include="System.Drawing" />
+  <Reference Include="System.Windows.Forms" />
+  <Reference Include="System.XML" />
+  <COMReference Include="Scripting">
+    <Guid>{420B2830-E718-11CF-893D-00A0C9054228}</Guid>
+    <Lcid>0</Lcid>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <WrapperTool>tlbimp</WrapperTool>
+  </COMReference>
+  <COMReference Include="CHILKATXMLLib">
+    <Guid>{101F9C56-A0F3-455C-ABBB-191168ABCF94}</Guid>
+    <Lcid>0</Lcid>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <WrapperTool>tlbimp</WrapperTool>
+  </COMReference>
+  <COMReference Include="vbalIml6">
+    <Guid>{396F7AC0-A0DD-11D3-93EC-00C0DFE7442A}</Guid>
+    <Lcid>0</Lcid>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <WrapperTool>tlbimp</WrapperTool>
+  </COMReference>
+  <COMReference Include="AxvbalIml6">
+    <Guid>{396F7AC0-A0DD-11D3-93EC-00C0DFE7442A}</Guid>
+    <Lcid>0</Lcid>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <WrapperTool>aximp</WrapperTool>
+  </COMReference>
+  <COMReference Include="vbalTBar6">
+    <Guid>{E142732F-A852-11D4-B06C-00500427A693}</Guid>
+    <Lcid>0</Lcid>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>14</VersionMinor>
+    <WrapperTool>tlbimp</WrapperTool>
+  </COMReference>
+  <COMReference Include="AxvbalTBar6">
+    <Guid>{E142732F-A852-11D4-B06C-00500427A693}</Guid>
+    <Lcid>0</Lcid>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>14</VersionMinor>
+    <WrapperTool>aximp</WrapperTool>
+  </COMReference>
+  <Reference Include="Microsoft.VisualBasic.Compatibility.Data" />
+  <Reference Include="MSDATASRC">
+    <Name>MSDATASRC</Name>
+  </Reference>
+  <Reference Include="Microsoft.CSharp" />
+  <Reference Include="Microsoft.VisualBasic" />
+  <Reference Include="Microsoft.VisualBasic.Compatibility" />
+</References>

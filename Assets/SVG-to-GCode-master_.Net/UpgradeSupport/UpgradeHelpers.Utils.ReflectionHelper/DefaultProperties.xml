@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DefaultProperties>
+  <!-- From VB6 Intrinsic Types -->
+  <DefaultProperty FullName="UpgradeHelpers.Gui.DataHelper">Text</DefaultProperty>
+  <DefaultProperty FullName="UpgradeHelpers.Gui.ShapeHelper">Shape</DefaultProperty>
+  <DefaultProperty FullName="UpgradeHelpers.DB.FieldHelper">Value</DefaultProperty>
+  <DefaultProperty FullName="Microsoft.VisualBasic.Compatibility.VB6.DirListBox">Path</DefaultProperty>
+  <DefaultProperty FullName="Microsoft.VisualBasic.Compatibility.VB6.DriveListBox">Drive</DefaultProperty>
+  <DefaultProperty FullName="Microsoft.VisualBasic.Compatibility.VB6.FileListBox">FileName</DefaultProperty>
+  <DefaultProperty FullName="Microsoft.VisualBasic.ErrObject">Number</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.Button">Focused</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.CheckBox">CheckState</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ComboBox">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.GroupBox">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.HScrollBar">Value</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.Label">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ListBox">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.PictureBox">Image</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ToolStripMenuItem">Enabled</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.RadioButton">Checked</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.TextBox">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.Timer">Enabled</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.VScrollBar">Value</DefaultProperty>
+  <DefaultProperty FullName="System.Drawing.Font">Name</DefaultProperty>
+  <DefaultProperty FullName="System.Drawing.Image">Handle</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.Panel">BackgroundImage</DefaultProperty>
+  <DefaultProperty FullName="VBForms.System.Windows.Forms.Application">OpenForms</DefaultProperty>
+
+  <!-- From VB6 ActiveX Types -->
+  <DefaultProperty FullName="C1.Win.C1TrueDBGrid.C1DataColumn">Text</DefaultProperty>
+  <DefaultProperty FullName="C1.Win.C1TrueDBGrid.C1DataColumnCollection">Item</DefaultProperty>
+  <!--
+  Conflicts with another external default property
+  <DefaultProperty FullName="C1.Win.C1TrueDBGrid.C1DataColumnCollection">Splits[0].DisplayColumns</DefaultProperty>
+  -->
+  <DefaultProperty FullName="C1.Win.C1TrueDBGrid.C1DisplayColumn">DataColumn.Text</DefaultProperty>
+  <DefaultProperty FullName="F21_Combo.F21_Columns">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Array.Set">SetValue</DefaultProperty>
+  <DefaultProperty FullName="System.Array.Get">GetValue</DefaultProperty>
+  <DefaultProperty FullName="System.Collections.Hashtable">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Collections.Specialized.NameValueCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.IO.DirectoryInfo">Name</DefaultProperty>
+  <DefaultProperty FullName="System.IO.FileInfo">FullName</DefaultProperty>
+  <DefaultProperty FullName="System.Web.HttpStaticObjectsCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Web.HttpApplicationState">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Web.SessionState.HttpSessionState">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Web.HttpCookie">Value</DefaultProperty>
+  <DefaultProperty FullName="System.Web.HttpClientCertificate">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Web.HttpCookieCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Web.HttpRequest">QueryString</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.DateTimePicker.Set">Value</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.DateTimePicker.Get">Value.Date</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ImageCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ImageList">Images</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ImageList.ImageCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.MaskedTextBox">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.MonthCalendar">SelectionStart</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.RichTextBox">RTF</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.StripItemCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.TabControl.TabPageCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.TabPage">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ToolBar.ToolBarButtonCollection">Item</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ToolStripButton">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.ToolStripItemCollection">Item</DefaultProperty>
+  <!--
+  Conflicts with an internal default property
+  <DefaultProperty FullName="System.Windows.Forms.ToolStripMenuItem">Text</DefaultProperty>
+  -->
+  <DefaultProperty FullName="System.Windows.Forms.ToolStripStatusLabel">Text</DefaultProperty>
+  <DefaultProperty FullName="System.Windows.Forms.WebBrowser">Name</DefaultProperty>
+</DefaultProperties>
