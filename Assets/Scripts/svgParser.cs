@@ -53,7 +53,83 @@ public class svgParser : MonoBehaviour
 	#endregion
 
 	#region helperfunctions
-	
+	internal static string extractToken(string inPath, ref int pos)
+	{
+
+		// Exract until we get a space or a comma
+		string char_Renamed = "";
+		StringBuilder build = new StringBuilder();
+		bool seenMinus = false;
+		bool seenE = false;
+		bool seenPeriod = false;
+		int startPos = pos;
+
+
+
+		while (pos <= inPath.Length)
+		{
+			char_Renamed = inPath[pos].ToString();
+
+			switch (char_Renamed)
+			{
+				// Only accept numbers
+				case ".":  // A period can be seen anywhere in the number, but if a second period is found it means we must exit 
+					if (seenPeriod)
+					{
+						return build.ToString();
+					}
+					else
+					{
+						seenPeriod = true;
+						build.Append(char_Renamed);
+						pos++;
+					}
+
+					break;
+				case "-":
+					if (seenE)
+					{
+						build.Append(char_Renamed);
+						pos++;
+					}
+					else if (seenMinus || pos > startPos)
+					{
+						return build.ToString();
+					}
+					else
+					{
+						// We already saw a minus sign
+						seenMinus = true;
+						build.Append(char_Renamed);
+						pos++;
+					}
+
+					break;
+				case "0":
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+				case "5":
+				case "6":
+				case "7":
+				case "8":
+				case "9":
+					build.Append(char_Renamed);
+					pos++;
+					//,6.192 -10e-4,12.385 
+					break;
+				case "e":  // Exponent 
+					seenE = true;
+					build.Append(char_Renamed);
+					pos++;
+					break;
+				default:
+					return build.ToString();
+			}
+		};
+		return build.ToString();
+	}
 	internal static object finishLine()
 	{
 		if (hasUnfinishedLine)
@@ -203,7 +279,7 @@ public class svgParser : MonoBehaviour
 
 
 		// Parse an SVG path.
-		string char_Renamed = "";
+
 		string token3 = "", token1 = "", token2 = "", token4 = "";
 		string token7 = "", token5 = "", token6 = "";
 
@@ -234,7 +310,7 @@ public class svgParser : MonoBehaviour
 		float startY = 0;
 
 		float pInSeg = 0;
-		string lastChar = "";
+		char lastChar = char.Parse("") ;
 
 
 
@@ -246,16 +322,10 @@ public class svgParser : MonoBehaviour
 		inPath = inPath.Replace( "\n", " ");
 		inPath = inPath.Replace( "\t", " ");
 
-		// Start parsing
-		int pos = 1;
 
-		while (pos <= inPath.Length)
+		for(int pos = 0; pos < inPath.Length; pos++)
 		{
-			char_Renamed = inPath.Substring(pos - 1, Mathf.Min(1, inPath.Length - (pos - 1)));
-			pos++;
-			isRelative = false;
-
-			switch (char_Renamed)
+			switch (inPath[pos].ToString())
 			{
 				case "M":
 				case "m":
@@ -278,28 +348,587 @@ public class svgParser : MonoBehaviour
 				case "T":
 				case "t":
 					// Accepted character. 
-					lastChar = char_Renamed;
+					lastChar = inPath[pos]; 
 					break;
 				case " ":
 
 					break;
 				default:
 					// No accepted, must be a continuation. 
-					char_Renamed = lastChar;
-					if (char_Renamed == "m")
+					inPath = rebuildString(inPath, pos, lastChar);
+				
+					if (inPath[pos] == char.Parse("m"))
 					{
-						char_Renamed = "l";
+						inPath = rebuildString(inPath, pos, char.Parse("l"));
+						
 					}  // Continuous moveto becomes lineto 
-					if (char_Renamed == "M")
+					if (inPath[pos] == char.Parse("M"))
 					{
-						char_Renamed = "L";
+						inPath = rebuildString(inPath, pos, char.Parse("L"));
+					}  // Continuous moveto becomes lineto not relative 
+					pos--;
+					break;
+			}
+
+			switch (inPath[pos].ToString())
+			{
+				case " ":  // Skip spaces 
+
+					break;
+				case "M":
+				case "m":  // MOVE TO 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+
+					// Extract two co-ordinates 
+					inPath = inPath.Replace("\r", " ");
+					inPath = inPath.Replace("\n", " ");
+					inPath = inPath.Replace("\t", " ");
+					token1 = extractToken(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set our "current" co-ordinates to this 
+					if (isRelative)
+					{
+						currX += float.Parse(token1);
+						currY += float.Parse(token2);
+					}
+					else
+					{
+						currX = float.Parse(token1);
+						currY = float.Parse(token2);
+					}
+
+					// Start a new line, since we moved 
+					//If Not isRelative Then 
+					newLine(currentLayer);
+					//pData(currentLine).PathCode = Right(inPath, Len(inPath) - pos) 
+
+					// Add the start point to this line 
+					addPoint(currX, currY);
+
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Move to " & currX & ", " & currY & vbCrLf 
+
+
+					//If Not gotFirstItem Then 
+					startX = currX;
+					startY = currY;
+					gotFirstItem = true;
+					hasPrevPoint = false;
+
+					break;
+				case "L":
+				case "l":  // LINE TO 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+
+					// Extract two co-ordinates 
+					
+					token1 = extractToken(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set our "current" co-ordinates to this 
+					if (isRelative)
+					{
+						currX += float.Parse(token1);
+						currY += float.Parse(token2);
+					}
+					else
+					{
+						currX = float.Parse(token1);
+						currY = float.Parse(token2);
+					}
+
+					// Add this point to the line 
+					addPoint(currX, currY);
+
+					//'pData(currentLine).PathCode = pData(currentLine).PathCode & "Line to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+					hasPrevPoint = false;
+
+					break;
+				case "V":
+				case "v":  // VERTICAL LINE TO 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					// Extract one co-ordinate 
+					
+					token1 = extractToken(inPath, ref pos);
+
+					// Set our "current" co-ordinates to this 
+					if (isRelative)
+					{
+						currY += float.Parse(token1);
+					}
+					else
+					{
+						currY = float.Parse(token1);
+					}
+
+					// Add this point to the line 
+					addPoint(currX, currY);
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Vertical to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+					hasPrevPoint = false;
+
+					break;
+				case "H":
+				case "h":  // HORIZONTAL LINE TO 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					// Extract one co-ordinate 
+					
+					token1 = extractToken(inPath, ref pos);
+
+					// Set our "current" co-ordinates to this 
+					if (isRelative)
+					{
+						currX += float.Parse(token1);
+					}
+					else
+					{
+						currX = float.Parse(token1);
+					}
+
+					// Add this point to the line 
+					addPoint(currX, currY);
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Horiz to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+					hasPrevPoint = false;
+
+					break;
+				case "A":
+				case "a":  // PARTIAL ARC TO 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					//(rx ry x-axis-rotation large-arc-flag sweep-flag x y)+ 
+
+					// Radii X and Y 
+					
+					token1 = extractToken(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// X axis rotation 
+					token3 = extractToken(inPath, ref pos);
+
+					// Large arc flag 
+					token4 = extractToken(inPath, ref pos);
+
+					// Sweep flag 
+					token5 = extractToken(inPath, ref pos);
+
+					// X and y 
+					token6 = extractToken(inPath, ref pos);
+					token7 = extractToken(inPath, ref pos);
+
+					// Start point 
+					pt0.x = currX;
+					pt0.y = currY;
+
+					// Set our "current" co-ordinates to this 
+					if (isRelative)
+					{
+						currX += float.Parse(token6);
+						currY += float.Parse(token7);
+					}
+					else
+					{
+						currX = float.Parse(token6);
+						currY = float.Parse(token7);
+					}
+
+					pt1.x = currX;
+					pt1.y = currY;
+
+					float tempRefParam = float.Parse(token1);
+					float tempRefParam2 = float.Parse(token2);
+					parseArcSegment(ref tempRefParam, ref tempRefParam2, float.Parse(token3), pt0, pt1, token4 == "1", token5 == "1");
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Partial Arc to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+					hasPrevPoint = false;
+
+					break;
+				case "C":
+				case "c":  // CURVE TO 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					pt0.x = currX;
+					pt0.y = currY;
+
+					// Extract two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 0 
+					pt1.x = ((isRelative) ? currX : 0) + float.Parse(token1);
+					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
+
+
+					// Extract next two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 1 
+					pt2.x = ((isRelative) ? currX : 0) + float.Parse(token1);
+					pt2.y = ((isRelative) ? currY : 0) + float.Parse(token2);
+
+					// Extract next two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 2 
+					currX = ((isRelative) ? currX : 0) + float.Parse(token1);
+					currY = ((isRelative) ? currY : 0) + float.Parse(token2);
+					pt3.x = currX;
+					pt3.y = currY;
+
+					// 
+					pInSeg = getPinSeg(pt0, pt3);
+
+
+
+					// Run the bezier code with 4 points 
+					Bezier.AddBezier(pInSeg, pt0, pt1, pt2, pt3);
+
+					// Reflect this point about pt3 
+
+					ptPrevPoint = reflectAbout(pt2, pt3);
+					hasPrevPoint = true;
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Bezier to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+
+					break;
+				case "S":
+				case "s":  // CURVE TO with 3 points 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					pt0.x = currX;
+					pt0.y = currY;
+
+					// Extract two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 0 
+					pt1.x = ((isRelative) ? currX : 0) + float.Parse(token1);
+					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
+
+					// Extract next two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 1 
+					currX = ((isRelative) ? currX : 0) + float.Parse(token1);
+					currY = ((isRelative) ? currY : 0) + float.Parse(token2);
+					pt2.x = currX;
+					pt2.y = currY;
+
+					pInSeg = getPinSeg(pt0, pt2);
+
+
+					if (!hasPrevPoint)
+					{
+						// Same as pt1
+						ptPrevPoint = pt1;
+					}
+
+					Bezier.AddBezier(pInSeg, pt0, ptPrevPoint, pt1, pt2);
+
+					ptPrevPoint = reflectAbout(pt1, pt2);
+					hasPrevPoint = true;
+
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "3Bezier to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+
+					break;
+				case "Q":
+				case "q":  // Quadratic Bezier TO with 3 points 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					pt0.x = currX;
+					pt0.y = currY;
+
+					// Extract two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 0 
+					pt1.x = ((isRelative) ? currX : 0) + float.Parse(token1);
+					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
+
+					// Extract next two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 1 
+					currX = ((isRelative) ? currX : 0) + float.Parse(token1);
+					currY = ((isRelative) ? currY : 0) + float.Parse(token2);
+					pt2.x = currX;
+					pt2.y = currY;
+
+					pInSeg = getPinSeg(pt0, pt2);
+
+
+					//If Not hasPrevPoint Then 
+					//    ' Same as pt1 
+					//    ptPrevPoint = pt1 
+					//End If 
+
+					Bezier.AddQuadBezier(pInSeg, pt0, pt1, pt2);
+
+					ptPrevPoint = reflectAbout(pt1, pt2);
+					hasPrevPoint = true;
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "3Bezier to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+
+					break;
+				case "T":
+				case "t":  // Quadratic Bezier TO with 3 points, but use reflection of last 
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
+					{
+						isRelative = true;
+					}  // Lowercase means relative co-ordinates 
+					if (!gotFirstItem)
+					{
+						isRelative = false;
+					}  //Relative not valid for first item 
+
+					pt0.x = currX;
+					pt0.y = currY;
+
+					// Extract two co-ordinates 
+					skipWhiteSpace(inPath, ref pos);
+					token1 = extractToken(inPath, ref pos);
+					skipWhiteSpace(inPath, ref pos);
+					token2 = extractToken(inPath, ref pos);
+
+					// Set into point 0 
+					pt1.x = ((isRelative) ? currX : 0) + float.Parse(token1);
+					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
+
+					pInSeg = getPinSeg(pt0, pt1);
+
+
+
+					if (!hasPrevPoint)
+					{
+						// Same as pt1
+						ptPrevPoint = pt0; // SHOULD NEVER HAPPEN
+					}
+
+					Bezier.AddQuadBezier(pInSeg, pt0, ptPrevPoint, pt1);
+
+					ptPrevPoint = reflectAbout(ptPrevPoint, pt1);
+					hasPrevPoint = true;
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "3Bezier to " & currX & ", " & currY & vbCrLf 
+
+					if (!gotFirstItem)
+					{
+						startX = currX;
+						startY = currY;
+					}
+					gotFirstItem = true;
+
+					break;
+				case "z":
+				case "Z":
+
+					hasPrevPoint = false;
+
+					// z means end the shape 
+					// Draw a line back to start of shape 
+					addPoint(startX, startY);
+					currX = startX;
+					currY = startY;
+
+
+					// Since this is a closed path, mark it as fillable. 
+					pData[currentLine].Fillable = true;
+
+					//gotFirstItem = False 
+
+
+					//pData(currentLine).PathCode = pData(currentLine).PathCode & "End Shape" & vbCrLf 
+
+
+
+					break;
+				default:
+					Debug.Log("UNSUPPORTED PATH CODE: "+ inPath[pos].ToString());
+
+
+					break;
+			}
+
+		}
+		for(int pos = 0; pos < inPath.Length; pos++) 
+		{
+			isRelative = false;
+
+			switch (inPath[pos].ToString())
+			{
+				case "M":
+				case "m":
+				case "L":
+				case "l":
+				case "C":
+				case "c":
+				case "V":
+				case "v":
+				case "A":
+				case "a":
+				case "H":
+				case "h":
+				case "S":
+				case "s":
+				case "Z":
+				case "z":
+				case "q":
+				case "Q":
+				case "T":
+				case "t":
+					// Accepted character. 
+					lastChar = inPath[pos];
+					break;
+				case " ":
+
+					break;
+				default:
+					// No accepted, must be a continuation. 
+					inPath = rebuildString(inPath, pos, lastChar);
+					if (inPath[pos].ToString() == "m")
+					{
+						inPath = rebuildString(inPath, pos, char.Parse("l"));
+					}  // Continuous moveto becomes lineto 
+					if (inPath[pos].ToString() == "M")
+					{
+						inPath = rebuildString(inPath, pos, char.Parse("L"));
 					}  // Continuous moveto becomes lineto not relative 
 					pos--;
 					break;
 			}
 
 
-			switch (char_Renamed)
+			switch (inPath[pos].ToString())
 			{
 				case " ":  // Skip spaces 
 
@@ -535,7 +1164,7 @@ public class svgParser : MonoBehaviour
 					parseArcSegment(ref tempRefParam, ref tempRefParam2, float.Parse(token3), pt0, pt1, token4 == "1", token5 == "1");
 
 					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Partial Arc to " & currX & ", " & currY & vbCrLf 
-
+						
 					if (!gotFirstItem)
 					{
 						startX = currX;
@@ -828,6 +1457,24 @@ public class svgParser : MonoBehaviour
 
 
 		return null;
+	}
+
+
+	internal static string rebuildString(string Text, int pos,char newChar)
+	{
+		string NewText = string.Empty;
+		for(int i=0; i< Text.Length; i++)
+		{
+			if(i != pos)
+			{
+				NewText += Text[i];
+			}
+			else
+			{
+				NewText += newChar;
+			}
+		}
+		return NewText;
 	}
 
 	internal static object addPoint(float x, float y, bool noCutLineSegment = false)
