@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using Chilkat;
+#if UNITY_EDITOR_LINUX
 public class svgParser : MonoBehaviour
 {
 	public static typLine[] pData = null;
 	public static int currentLine = 0;
 	public static float GLOBAL_DPI = 0;
 	static bool hasUnfinishedLine = false;
-	#region structs
+#region structs
 
 	public struct pointD
 	{
@@ -46,9 +47,9 @@ public class svgParser : MonoBehaviour
 			return result;
 		}
 	}
-	#endregion
+#endregion
 
-	#region helperfunctions
+#region helperfunctions
 	internal static string extractToken(string inPath, ref int pos)
 	{
 
@@ -265,9 +266,9 @@ public class svgParser : MonoBehaviour
 
 		return null;
 	}
-	#endregion
+#endregion
 
-	#region Parsers
+#region Parsers
 	internal static object parsePath(ref string inPath, string currentLayer)
 	{
 
@@ -1520,7 +1521,7 @@ public class svgParser : MonoBehaviour
 		return null;
 	}
 
-	#endregion
+#endregion
 	internal static string getAttr(Chilkat.Xml attr, string attrName, string DefaultValue = "")
 	{
 
@@ -1885,3 +1886,4 @@ public class svgParser : MonoBehaviour
 	}
 
 }
+#endif

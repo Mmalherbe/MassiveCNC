@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -222,19 +222,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CNCHead: {fileID: 824307439}
   CNCSize: {x: 100, y: 50}
-  SizeForSimOnly: {fileID: 600879730}
-  speed: 0.05
+  SizeForSimOnly: {fileID: 824307439}
+  speed: 1
   parabolaPoints:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   _Moving: 0
-  endPosition: {x: 0, y: 0, z: 0}
+  endPosition: {x: 0, y: 0}
   startPositionGcodeLine: {x: 0, y: 0}
   currentPositionOfHead: {x: 0, y: 0}
-  initPosition: {x: 0, y: 0}
-  vect2EndPosition: {x: 0, y: 0}
   gcodeLines: []
+  lineCounter: 0
 --- !u!4 &397651281
 Transform:
   m_ObjectHideFlags: 0
@@ -280,7 +279,6 @@ RectTransform:
   m_Children:
   - {fileID: 1580248267}
   - {fileID: 899945549}
-  - {fileID: 824307439}
   m_Father: {fileID: 1358834734}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -576,8 +574,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 600879730}
-  m_RootOrder: 2
+  m_Father: {fileID: 1580248267}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1032,7 +1030,8 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 824307439}
   m_Father: {fileID: 600879730}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

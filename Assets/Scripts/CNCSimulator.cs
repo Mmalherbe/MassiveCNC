@@ -22,10 +22,10 @@ public class CNCSimulator : MonoBehaviour
     [SerializeField] private Vector2 endPosition;
     [SerializeField] private Vector2 startPositionGcodeLine;
     [SerializeField] private Vector2 currentPositionOfHead;
-
+    
     [SerializeField] private List<string> gcodeLines;
     [SerializeField] private int lineCounter;
-
+    public bool DoneWithLine = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +35,12 @@ public class CNCSimulator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!DoneWithLine) return;
+        if (DoneWithLine)
+        {
+            lineCounter++;
+            CreateCommandFromGCodes(gcodeLines);
+        }
 
     }
     public void ReadFileAndStartSimulating()
@@ -52,16 +58,15 @@ public class CNCSimulator : MonoBehaviour
 
     }
     private void StartSimulation()
-    {
-
+    {       
+        lineCounter = 0;
         CreateCommandFromGCodes(gcodelines:gcodeLines);
     }
 
 
     public void CreateCommandFromGCodes(List<string> gcodelines)
     {
-        for (lineCounter = 0; lineCounter < gcodelines.Count; lineCounter++)
-        {
+            DoneWithLine = false;
             var cmd = Command.Parse(gcodelines[lineCounter]);
             Debug.Log(cmd.CommandType); //Output: "G"
             Debug.Log(cmd.CommandSubType); //Output: "1"
@@ -79,14 +84,19 @@ public class CNCSimulator : MonoBehaviour
             {
                 if (cmd.CommandSubType == 1) // Linear movement
                 {
+                    startPositionGcodeLine = CNCHead.localPosition;
                     string x = cmd.GetParameterValue(ParameterType.X).ToString();
                     string y = cmd.GetParameterValue(ParameterType.Y).ToString();
+                    if (string.IsNullOrEmpty(x)) x = "0";
+                    if (string.IsNullOrEmpty(y)) y = "0";
                     float smoothFactorX = SizeForSimOnly.sizeDelta.x / CNCSize.x; // Make the size of the window for sim unimportant
                     float smoothFactorY = SizeForSimOnly.sizeDelta.y / CNCSize.y; // Make the size of the window for sim unimportant
-                    endPosition = new Vector2(x != null ? (startPositionGcodeLine.x + int.Parse(x) * smoothFactorX) : startPositionGcodeLine.x * smoothFactorX, y != null ? (startPositionGcodeLine.y + int.Parse(y)) * smoothFactorY : startPositionGcodeLine.y * smoothFactorY);
-                    
+                    float endX = startPositionGcodeLine.x + float.Parse(x);
+                    float endY = startPositionGcodeLine.y + float.Parse(y);
 
 
+                    endPosition = new Vector2(endX,endY); 
+                    StartCoroutine(StraightMove(currentPositionOfHead, endPosition,0.5f));
                 }
                 else if (cmd.CommandSubType == 2) // example line G03 X0.9926 Y1.2734 I-0.1125 J0.0316 
                 {
@@ -99,9 +109,20 @@ public class CNCSimulator : MonoBehaviour
 
                 }
 
-            }
+            
         }
-
+        IEnumerator StraightMove(Vector2 start, Vector2 end, float speed = 1f)
+        {
+            float distanceThreshold = 0.1f;
+            
+            while (Vector2.Distance(CNCHead.localPosition, end) > distanceThreshold)
+            {
+                CNCHead.localPosition = Vector3.Lerp(CNCHead.localPosition, end, (Time.deltaTime*(speed)));
+                yield return null;
+            }
+            DoneWithLine = true;
+            yield return null; 
+        }
     }
 
 }
