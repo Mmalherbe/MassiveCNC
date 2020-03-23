@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Chilkat;
-
 public class svgParser : MonoBehaviour
 {
 	public static typLine[] pData = null;
@@ -1874,7 +1871,7 @@ public class svgParser : MonoBehaviour
 					}
 					break;
 			}
-			x = (CHILKATXMLLib.ChilkatXml)x.NextSibling();
+			x = (Chilkat.Xml)x.NextSibling();
 		};
 
 
@@ -1882,7 +1879,7 @@ public class svgParser : MonoBehaviour
 		return null;
 	}
 
-	internal static object parseSVGKids(CHILKATXMLLib.ChilkatXml inEle)
+	internal static object parseSVGKids(Chilkat.Xml inEle)
 	{
 		string tempRefParam = "";
 		return parseSVGKids(inEle, ref tempRefParam);
