@@ -60,7 +60,7 @@ public class CNCSimulator : MonoBehaviour
 
     public void CreateCommandFromGCodes(List<string> gcodelines)
     {
-        for (lineCounter = 0; lineCounter < gcodelines.Count;)
+        for (lineCounter = 0; lineCounter < gcodelines.Count; lineCounter++)
         {
             var cmd = Command.Parse(gcodelines[lineCounter]);
             Debug.Log(cmd.CommandType); //Output: "G"

@@ -1,0 +1,11 @@
+<MigrationStatus>
+  <Date>3/20/2020 10:31:52 AM</Date>
+  <VBUC_Version>8.1.40607.0 (RTM 8.1.40607.0)</VBUC_Version>
+  <TargetLanguage>CSharp</TargetLanguage>
+  <VSVersion>VisualStudio2019</VSVersion>
+  <UpgradeOptions>
+  </UpgradeOptions>
+  <Projects>
+    <Project Path="src\SVGtoGCODE.csproj" VB6DesignLines="798" VB6CodeLines="3690" />
+  </Projects>
+</MigrationStatus>

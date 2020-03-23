@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UpgradeLog Upgraded="True">
+  <Settings>
+    <Setting Name="LogFile" Value="SVGtoGCODE.log" />
+    <Setting Name="GenerateInterfacesForClasses" Value="FALSE" />
+    <Setting Name="ProjectName" Value="SVGtoGCODE" />
+    <Setting Name="OutputName" Value="SVGtoGCODE.csproj" />
+    <Setting Name="OutputDir" Value="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\" />
+    <Setting Name="ProjectPath" Value="C:\Users\M\Desktop\SVG-to-GCode-master\src\SVGtoGCODE.vbp" />
+    <Setting Name="MigrateProjectTo" Value="WinExe" />
+  </Settings>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\form1.frm" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\form1.cs" FileType="Form" Upgraded="True">
+    <Section Name="(Layout)">
+      <Issue Type="Design" Number="2064" ObjectName="vbalImageList1" ObjectType="vbalImageList" PME="Images" Qty="1">vbalImageList property vbalImageList1.Images was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="frmInterface" ObjectType="Form" PME="AutoRedraw" Qty="1">Form property frmInterface.AutoRedraw was not upgraded.</Issue>
+      <Issue Type="Design" Number="2038" ObjectName="frmInterface" ObjectType="Form" PME="ScaleMode" Qty="1">Form property Me.ScaleMode is not supported.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="Picture2" ObjectType="PictureBox" PME="AutoRedraw" Qty="1">PictureBox property Picture2.AutoRedraw was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="Picture2" ObjectType="PictureBox" PME="ScaleMode" Qty="1">PictureBox property Picture2.ScaleMode was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="_picRulers_1" ObjectType="PictureBox" PME="AutoRedraw" Qty="1">PictureBox property _picRulers_1.AutoRedraw was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="_picRulers_1" ObjectType="PictureBox" PME="ScaleMode" Qty="1">PictureBox property _picRulers_1.ScaleMode was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="_picRulers_0" ObjectType="PictureBox" PME="AutoRedraw" Qty="1">PictureBox property _picRulers_0.AutoRedraw was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="_picRulers_0" ObjectType="PictureBox" PME="ScaleMode" Qty="1">PictureBox property _picRulers_0.ScaleMode was not upgraded.</Issue>
+      <Issue Type="Design" Number="2068" Qty="1">CommonDialog object was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="AutoRedraw" Qty="1">PictureBox property Picture1.AutoRedraw was not upgraded.</Issue>
+      <Issue Type="Design" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="ScaleMode" Qty="1">PictureBox property Picture1.ScaleMode was not upgraded.</Issue>
+      <Issue Type="Design" Number="2068" Qty="1">ControlArray object was not upgraded.</Issue>
+    </Section>
+    <Section Name="drawLines">
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="Cls" Qty="1">PictureBox method Picture1.Cls was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="ForeColor" Qty="3">PictureBox property Picture1.ForeColor was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="DrawWidth" Qty="5">PictureBox property Picture1.DrawWidth was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="DrawStyle" Qty="5">PictureBox property Picture1.DrawStyle was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2070" ObjectName="DrawStyleConstants" ObjectType="DrawStyleConstants" PME="vbSolid" Qty="2">Constant vbSolid was not upgraded.</Issue>
+      <Issue Type="Runtime" Number="1068" Qty="1">c of type Variant is being forced to int.</Issue>
+      <Issue Type="Compile" Number="2070" ObjectName="DrawStyleConstants" ObjectType="DrawStyleConstants" PME="vbDashDot" Qty="1">Constant vbDashDot was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2070" ObjectName="DrawStyleConstants" ObjectType="DrawStyleConstants" PME="vbDot" Qty="1">Constant vbDot was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="FillStyle" Qty="1">PictureBox property Picture1.FillStyle was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2070" ObjectName="FillStyleConstants" ObjectType="FillStyleConstants" PME="vbFSSolid" Qty="1">Constant vbFSSolid was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2070" ObjectName="DrawStyleConstants" ObjectType="DrawStyleConstants" PME="vbInvisible" Qty="1">Constant vbInvisible was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="Circle" Qty="2">PictureBox method Picture1.Circle was not upgraded.</Issue>
+    </Section>
+    <Section Name="Form_Load">
+      <Issue Type="Runtime" Number="2080" ObjectType="Form" PME="Load" Qty="1">Form_Load event was upgraded to Form_Load method and has a new behavior.</Issue>
+    </Section>
+    <Section Name="List1_KeyDown">
+      <Issue Type="ToDo" Number="1065" Qty="1">Error handling statement (On Error Resume Next) could not be converted.</Issue>
+    </Section>
+    <Section Name="List1_MouseDown">
+      <Issue Type="Runtime" Number="2081" ObjectName="Clipboard" ObjectType="Clipboard" PME="SetText" Qty="1">Clipboard.SetText has a new behavior.</Issue>
+    </Section>
+    <Section Name="fillPoly">
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="PSet" Qty="1">PictureBox method Picture1.PSet was not upgraded.</Issue>
+    </Section>
+    <Section Name="updateList">
+      <Issue Type="Runtime" Number="2081" ObjectName="Information.Err" ObjectType="ErrObject" PME="Number" Qty="2">Err.Number has a new behavior.</Issue>
+    </Section>
+    <Section Name="Timer1_Timer">
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="Cls" Qty="1">PictureBox method Picture1.Cls was not upgraded.</Issue>
+    </Section>
+    <Section Name="cmdOpenFile">
+      <Issue Type="Compile" Number="6012" Qty="1">CommonDialog variable was not upgraded</Issue>
+      <Issue Type="Runtime" Number="2081" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="Filter" Qty="1">Filter has a new behavior.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="Filter" Qty="1">MSComDlg.CommonDialog property COMDLG.Filter was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="CancelError" Qty="1">MSComDlg.CommonDialog property COMDLG.CancelError was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="DialogTitle" Qty="1">MSComDlg.CommonDialog property COMDLG.DialogTitle was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="FileName" Qty="1">MSComDlg.CommonDialog property COMDLG.FileName was not upgraded.</Issue>
+    </Section>
+    <Section Name="updateRulers">
+      <Issue Type="Compile" Number="2064" ObjectName="picRulers" ObjectType="PictureBox" PME="Cls" Qty="2">PictureBox method picRulers.Cls was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="picRulers" ObjectType="PictureBox" PME="PSet" Qty="2">PictureBox method picRulers.PSet was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="picRulers" ObjectType="PictureBox" PME="Print" Qty="2">PictureBox method picRulers.Print was not upgraded.</Issue>
+    </Section>
+    <Section Name="TB1_ButtonClick">
+      <Issue Type="Compile" Number="1046" ObjectName="Interaction" ObjectType="VbMsgBoxResult" PME="MsgBox" Qty="1">MsgBox Parameter 'helpfile' is not supported, and was removed.</Issue>
+      <Issue Type="Compile" Number="1046" ObjectName="Interaction" ObjectType="VbMsgBoxResult" PME="MsgBox" Qty="1">MsgBox Parameter 'context' is not supported, and was removed.</Issue>
+    </Section>
+    <Section Name="doPages">
+      <Issue Type="Compile" Number="6012" Qty="1">CommonDialog variable was not upgraded</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="FileName" Qty="2">MSComDlg.CommonDialog property COMDLG.FileName was not upgraded.</Issue>
+      <Issue Type="Runtime" Number="2081" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="Filter" Qty="1">Filter has a new behavior.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="Filter" Qty="1">MSComDlg.CommonDialog property COMDLG.Filter was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="DialogTitle" Qty="1">MSComDlg.CommonDialog property COMDLG.DialogTitle was not upgraded.</Issue>
+      <Issue Type="Runtime" Number="2081" ObjectName="Information.Err" ObjectType="ErrObject" PME="Number" Qty="2">Err.Number has a new behavior.</Issue>
+    </Section>
+    <Section Name="(Rules Applying)">
+      <Issue Type="Compile" Number="2068" Qty="2">MSComDlg.CommonDialog object was not upgraded.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\Bezier.bas" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\Bezier.cs" FileType="Module" Upgraded="True">
+    <Section Name="DrawBezier">
+      <Issue Type="Compile" Number="2064" ObjectName="gr" ObjectType="PictureBox" PME="ForeColor" Qty="2">PictureBox property gr.ForeColor was not upgraded.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\SVGParse.bas" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\SVGParse.cs" FileType="Module" Upgraded="True">
+    <Section Name="parseArcSegment">
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="Circle" Qty="3">PictureBox method Picture1.Circle was not upgraded.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\Polygons.bas" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\Polygons.cs" FileType="Module" Upgraded="True">
+    <Section Name="Polygon">
+      <Issue Type="ToDo" Number="1050" Qty="1">Structure POINTAPI may require marshalling attributes to be passed as an argument in this Declare statement.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\GeneralFunctions.bas" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\GeneralFunctions.cs" FileType="Module" Upgraded="True">
+    <Section Name="SHFileOperation">
+      <Issue Type="ToDo" Number="1050" Qty="1">Structure SHFILEOPSTRUCT may require marshalling attributes to be passed as an argument in this Declare statement.</Issue>
+    </Section>
+    <Section Name="Unescape">
+      <Issue Type="ToDo" Number="1069" Qty="1">Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior.</Issue>
+    </Section>
+    <Section Name="myDir">
+      <Issue Type="ToDo" Number="1069" Qty="1">Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior.</Issue>
+    </Section>
+    <Section Name="addToLog">
+      <Issue Type="ToDo" Number="1069" Qty="1">Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior.</Issue>
+    </Section>
+    <Section Name="GCD_Of">
+      <Issue Type="ToDo" Number="1069" Qty="1">Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior.</Issue>
+    </Section>
+    <Section Name="fileIntoMemory">
+      <Issue Type="Runtime" Number="2080" Qty="1">Get was upgraded to FileGet and has a new behavior.</Issue>
+      <Issue Type="ToDo" Number="1069" Qty="1">Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior.</Issue>
+    </Section>
+    <Section Name="GetFile">
+      <Issue Type="Runtime" Number="2080" Qty="1">Get was upgraded to FileGet and has a new behavior.</Issue>
+      <Issue Type="Runtime" Number="2081" ObjectName="Information.Err" ObjectType="ErrObject" PME="Number" Qty="2">Err.Number has a new behavior.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\frmScale.frm" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\frmScale.cs" FileType="Form" Upgraded="True" />
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\Rasterize.bas" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\Rasterize.cs" FileType="Module" Upgraded="True">
+    <Section Name="rasterFile">
+      <Issue Type="Compile" Number="2064" ObjectName="p" ObjectType="PictureBox" PME="Point" Qty="1">PictureBox method p.Point was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="Picture1" ObjectType="PictureBox" PME="PSet" Qty="1">PictureBox method Picture1.PSet was not upgraded.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\ColorCode.bas" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\ColorCode.cs" FileType="Module" Upgraded="True">
+    <Section Name="(Declarations)">
+      <Issue Type="Compile" Number="2068" Qty="1">LoadPictureConstants object was not upgraded.</Issue>
+    </Section>
+    <Section Name="loadPantone">
+      <Issue Type="Runtime" Number="2080" Qty="1">Get was upgraded to FileGet and has a new behavior.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\mcPopupMenu.cls" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\mcPopupMenu.cs" FileType="Class Module" Upgraded="True">
+    <Section Name="GetCursorPos">
+      <Issue Type="ToDo" Number="1050" Qty="1">Structure POINT may require marshalling attributes to be passed as an argument in this Declare statement.</Issue>
+    </Section>
+    <Section Name="GetWindowRect">
+      <Issue Type="ToDo" Number="1050" Qty="1">Structure RECT may require marshalling attributes to be passed as an argument in this Declare statement.</Issue>
+    </Section>
+    <Section Name="GetMenuItemInfo">
+      <Issue Type="ToDo" Number="1050" Qty="1">Structure MENUITEMINFO may require marshalling attributes to be passed as an argument in this Declare statement.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\frmTile.frm" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\frmTile.cs" FileType="Form" Upgraded="True">
+    <Section Name="(Layout)">
+      <Issue Type="Design" Number="2068" Qty="1">ControlArray object was not upgraded.</Issue>
+    </Section>
+    <Section Name="Form_Load">
+      <Issue Type="Runtime" Number="2080" ObjectType="Form" PME="Load" Qty="1">Form_Load event was upgraded to Form_Load method and has a new behavior.</Issue>
+    </Section>
+  </File>
+  <File OldPath="C:\Users\M\Desktop\SVG-to-GCode-master\src\frmExport.frm" NewPath="C:\Users\M\Desktop\SVG-to-GCode-master_.Net\Upgraded\src\frmExport.cs" FileType="Form" Upgraded="True">
+    <Section Name="cmdChoosePath_Click">
+      <Issue Type="Compile" Number="6012" Qty="1">CommonDialog variable was not upgraded</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="FileName" Qty="2">MSComDlg.CommonDialog property COMDLG.FileName was not upgraded.</Issue>
+      <Issue Type="Runtime" Number="2081" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="Filter" Qty="1">Filter has a new behavior.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="Filter" Qty="1">MSComDlg.CommonDialog property COMDLG.Filter was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="DialogTitle" Qty="1">MSComDlg.CommonDialog property COMDLG.DialogTitle was not upgraded.</Issue>
+      <Issue Type="Compile" Number="2064" ObjectName="COMDLG" ObjectType="MSComDlg.CommonDialog" PME="CancelError" Qty="1">MSComDlg.CommonDialog property COMDLG.CancelError was not upgraded.</Issue>
+    </Section>
+    <Section Name="cmdExport_Click">
+      <Issue Type="Compile" Number="1046" ObjectName="Interaction" ObjectType="VbMsgBoxResult" PME="MsgBox" Qty="1">MsgBox Parameter 'helpfile' is not supported, and was removed.</Issue>
+      <Issue Type="Compile" Number="1046" ObjectName="Interaction" ObjectType="VbMsgBoxResult" PME="MsgBox" Qty="1">MsgBox Parameter 'context' is not supported, and was removed.</Issue>
+    </Section>
+    <Section Name="Form_Load">
+      <Issue Type="Runtime" Number="2080" ObjectType="Form" PME="Load" Qty="1">Form_Load event was upgraded to Form_Load method and has a new behavior.</Issue>
+    </Section>
+  </File>
+  <Issue Type="Global Warning" Number="1070" Qty="4">Member access from a dynamic/late binding object will be resolved using the ReflectionHelper</Issue>
+</UpgradeLog>
+

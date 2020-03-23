@@ -6,7 +6,6 @@ public class svgParser : MonoBehaviour
 	public static int currentLine = 0;
 	public static float GLOBAL_DPI = 0;
 	static bool hasUnfinishedLine = false;
-
 	#region structs
 
 	public struct pointD
@@ -307,7 +306,7 @@ public class svgParser : MonoBehaviour
 		float startY = 0;
 
 		float pInSeg = 0;
-		char lastChar = char.Parse("") ;
+		char lastChar = char.Parse("");
 
 
 
@@ -315,12 +314,12 @@ public class svgParser : MonoBehaviour
 		//c0.2,0.2,0.6,0.4,0.9,0.4c0.3,0,0.7-0.2,1-0.4c0.2-0.3,0.3-0.6,0.3-1C209.4,188.25,209.3,187.95,209.1,187.65z
 
 		// Get rid of enter presses
-		inPath = inPath.Replace( "\r", " ");
-		inPath = inPath.Replace( "\n", " ");
-		inPath = inPath.Replace( "\t", " ");
+		inPath = inPath.Replace("\r", " ");
+		inPath = inPath.Replace("\n", " ");
+		inPath = inPath.Replace("\t", " ");
 
 
-		for(int pos = 0; pos < inPath.Length; pos++)
+		for (int pos = 0; pos < inPath.Length; pos++)
 		{
 			switch (inPath[pos].ToString())
 			{
@@ -345,7 +344,7 @@ public class svgParser : MonoBehaviour
 				case "T":
 				case "t":
 					// Accepted character. 
-					lastChar = inPath[pos]; 
+					lastChar = inPath[pos];
 					break;
 				case " ":
 
@@ -353,11 +352,11 @@ public class svgParser : MonoBehaviour
 				default:
 					// No accepted, must be a continuation. 
 					inPath = rebuildString(inPath, pos, lastChar);
-				
+
 					if (inPath[pos] == char.Parse("m"))
 					{
 						inPath = rebuildString(inPath, pos, char.Parse("l"));
-						
+
 					}  // Continuous moveto becomes lineto 
 					if (inPath[pos] == char.Parse("M"))
 					{
@@ -435,7 +434,7 @@ public class svgParser : MonoBehaviour
 
 
 					// Extract two co-ordinates 
-					
+
 					token1 = extractToken(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
@@ -477,7 +476,7 @@ public class svgParser : MonoBehaviour
 					}  //Relative not valid for first item 
 
 					// Extract one co-ordinate 
-					
+
 					token1 = extractToken(inPath, ref pos);
 
 					// Set our "current" co-ordinates to this 
@@ -516,7 +515,7 @@ public class svgParser : MonoBehaviour
 					}  //Relative not valid for first item 
 
 					// Extract one co-ordinate 
-					
+
 					token1 = extractToken(inPath, ref pos);
 
 					// Set our "current" co-ordinates to this 
@@ -556,7 +555,7 @@ public class svgParser : MonoBehaviour
 					//(rx ry x-axis-rotation large-arc-flag sweep-flag x y)+ 
 
 					// Radii X and Y 
-					
+
 					token1 = extractToken(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
@@ -870,14 +869,14 @@ public class svgParser : MonoBehaviour
 
 					break;
 				default:
-					Debug.Log("UNSUPPORTED PATH CODE: "+ inPath[pos].ToString());
+					Debug.Log("UNSUPPORTED PATH CODE: " + inPath[pos].ToString());
 
 
 					break;
 			}
 
 		}
-		for(int pos = 0; pos < inPath.Length; pos++) 
+		for (int pos = 0; pos < inPath.Length; pos++)
 		{
 			isRelative = false;
 
@@ -1161,7 +1160,7 @@ public class svgParser : MonoBehaviour
 					parseArcSegment(ref tempRefParam, ref tempRefParam2, float.Parse(token3), pt0, pt1, token4 == "1", token5 == "1");
 
 					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Partial Arc to " & currX & ", " & currY & vbCrLf 
-						
+
 					if (!gotFirstItem)
 					{
 						startX = currX;
@@ -1457,12 +1456,12 @@ public class svgParser : MonoBehaviour
 	}
 
 
-	internal static string rebuildString(string Text, int pos,char newChar)
+	internal static string rebuildString(string Text, int pos, char newChar)
 	{
 		string NewText = string.Empty;
-		for(int i=0; i< Text.Length; i++)
+		for (int i = 0; i < Text.Length; i++)
 		{
-			if(i != pos)
+			if (i != pos)
 			{
 				NewText += Text[i];
 			}
@@ -1669,8 +1668,8 @@ public class svgParser : MonoBehaviour
 			int tempForEndVar4 = pData[i].Points.GetUpperBound(0);
 			for (int j = 1; j <= tempForEndVar4; j++)
 			{
-				minX = Mathf.Min(minX, float.Parse(pData[i].Points[j].x.ToString())); 
-				minY = Mathf.Min(minY, float.Parse(pData[i].Points[j].y.ToString())) ;
+				minX = Mathf.Min(minX, float.Parse(pData[i].Points[j].x.ToString()));
+				minY = Mathf.Min(minY, float.Parse(pData[i].Points[j].y.ToString()));
 			}
 		}
 
