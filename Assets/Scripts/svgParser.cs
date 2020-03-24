@@ -1,13 +1,32 @@
 ﻿using UnityEngine;
-using Chilkat;
-#if UNITY_EDITOR_LINUX
+using System.Collections;
+using Hashtable = System.Collections.Hashtable;
+using Assets.Scripts.Classes;
+using System.Text;
+#if !UNITY_EDITOR_LINUX
 public class svgParser : MonoBehaviour
 {
 	public static typLine[] pData = null;
 	public static int currentLine = 0;
 	public static float GLOBAL_DPI = 0;
 	static bool hasUnfinishedLine = false;
-#region structs
+	#region structs and hashtables
+	private static Hashtable _containList = null;
+	internal static Hashtable containList
+	{
+		get
+		{
+			if (_containList == null)
+			{
+				_containList = new Hashtable();
+			}
+			return _containList;
+		}
+		set
+		{
+			_containList = value;
+		}
+	}
 
 	public struct pointD
 	{
@@ -47,9 +66,176 @@ public class svgParser : MonoBehaviour
 			return result;
 		}
 	}
-#endregion
+	#endregion
 
-#region helperfunctions
+	#region helperfunctions
+	internal static string rebuildString(string Text, int pos, char newChar)
+	{
+		string NewText = string.Empty;
+		for (int i = 0; i < Text.Length; i++)
+		{
+			if (i != pos)
+			{
+				NewText += Text[i];
+			}
+			else
+			{
+				NewText += newChar;
+			}
+		}
+		return NewText;
+	}
+
+	internal static object addPoint(float x, float y, bool noCutLineSegment = false)
+	{
+
+		int n = 0;
+
+		if (pData[currentLine].Points[pData[currentLine].Points.GetUpperBound(0)].x == x && pData[currentLine].Points[pData[currentLine].Points.GetUpperBound(0)].y == y && pData[currentLine].Points.GetUpperBound(0) > 0)
+		{
+			// No point to add
+			//Debug.Print "same as last point"
+
+		}
+		else
+		{
+
+			// Once we get over 5000 points, we enter a special allocation mode.
+			if (pData[currentLine].Points.GetUpperBound(0) > 5000)
+			{
+				hasUnfinishedLine = true;
+
+				// Allocate in blocks of 5000 at a time.
+				n = pData[currentLine].SpecialNumPoints + 1;
+				if (n > pData[currentLine].Points.GetUpperBound(0))
+				{
+					pData[currentLine].Points = ArraysHelper.RedimPreserve(pData[currentLine].Points, new int[] { pData[currentLine].Points.GetUpperBound(0) + 5001 });
+				}
+
+			}
+			else
+			{
+				n = pData[currentLine].Points.GetUpperBound(0) + 1;
+				pData[currentLine].Points = ArraysHelper.RedimPreserve(pData[currentLine].Points, new int[] { n + 1 });
+			}
+
+
+			pData[currentLine].Points[n].x = x;
+			pData[currentLine].Points[n].y = y;
+			pData[currentLine].SpecialNumPoints = n;
+			if (noCutLineSegment)
+			{
+				pData[currentLine].Points[n].noCut = 1;
+			}
+		}
+
+
+		return null;
+	}
+
+	internal static float getPinSeg(pointD pStart, pointD pEnd)
+	{
+		float D = Polygons.pointDistance(pStart, pEnd) / GLOBAL_DPI;
+		//MsgBox "distance: " & D
+
+		//Select Case d
+		//    Case Is > 20
+		//        getPinSeg = 0.1
+		//    Case Is > 10
+		//        getPinSeg = 0.2
+		//    Case Is > 5
+		//        getPinSeg = 0.25
+		//    Case Else
+		//        getPinSeg = 0.3
+		//End Select
+
+
+		// with a resolution of 500 dpi, the curve should be split into 500 segments per inch. so a distance of 1 should be 500 segments, which is 0.002
+		float segments = 250 * D;
+
+		if (segments == 0)
+		{
+			segments = 1;
+		}
+
+		if (segments == 0)
+		{ // a zero-length line? what's the point
+			return 0.01f;
+		}
+		else
+		{
+			return Mathf.Max(0.01f, 1 / segments);
+
+		}
+
+
+
+
+
+	}
+
+	internal static pointD reflectAbout(pointD ptReflect, pointD ptOrigin)
+	{
+		// Reflect ptReflect 180 degrees around ptOrigin
+
+
+		pointD result = new pointD();
+		result.x = (-(ptReflect.x - ptOrigin.x)) + ptOrigin.x;
+		result.y = (-(ptReflect.y - ptOrigin.y)) + ptOrigin.y;
+
+
+		return result;
+	}
+
+	internal static string getAttr(Chilkat.Xml attr, string attrName, string DefaultValue = "")
+	{
+
+		return attr.GetAttrValue(attrName);
+
+	}
+
+	internal static float angleFromPoint(pointD pCenter, pointD pPoint)
+	{
+		// Calculate the angle of a point relative to the center
+
+		// Slope is rise over run
+		float result = 0;
+		float slope = 0;
+
+		if (pPoint.x == pCenter.x)
+		{
+			// Either 90 or 270
+			result = (pPoint.y > pCenter.y) ? Mathf.PI / 2 : (-Mathf.PI) / 2;
+
+		}
+		else if (pPoint.x > pCenter.x)
+		{
+			// 0 - 90 and 270-360
+			slope = (pPoint.y - pCenter.y) / (pPoint.x - pCenter.x);
+			result = Mathf.Atan(slope);
+		}
+		else
+		{
+			// 180-270
+			slope = (pPoint.y - pCenter.y) / (pPoint.x - pCenter.x);
+			result = Mathf.Atan(slope) + Mathf.PI;
+		}
+
+		if (result < 0)
+		{
+			result += (Mathf.PI * 2);
+		}
+
+
+
+
+		return result;
+	}
+
+	internal static float Deg2Rad(float inDeg)
+	{
+		return inDeg / (180 / Mathf.PI);
+	}
 	internal static string extractToken(string inPath, ref int pos)
 	{
 
@@ -61,7 +247,9 @@ public class svgParser : MonoBehaviour
 		bool seenPeriod = false;
 		int startPos = pos;
 
-
+		inPath = inPath.Replace("\r", " ");
+		inPath = inPath.Replace("\n", " ");
+		inPath = inPath.Replace("\t", " ");
 
 		while (pos <= inPath.Length)
 		{
@@ -182,7 +370,212 @@ public class svgParser : MonoBehaviour
 
 		return null;
 	}
+	internal static object mergeConnectedLines()
+	{
 
+		int j = 0;
+		int iCount = 0;
+		bool doMerge = false;
+		bool doFlip = false;
+		bool didMerge = false;
+
+		// Looks for polygons that begin/end exactly at the beginning/end of another polygon and merges them into one polygon.
+
+		int tempForEndVar = pData.GetUpperBound(0);
+		for (int i = 1; i <= tempForEndVar; i++)
+		{
+			pData[i].Optimized = false;
+		}
+
+		// Step 2: Loop through the unoptimized polygons
+		do
+		{
+			didMerge = false;
+			int tempForEndVar2 = pData.GetUpperBound(0) - 1;
+			for (int i = 1; i <= tempForEndVar2; i++)
+			{
+
+
+				if (!pData[i].Optimized)
+				{
+					iCount = pData[i].Points.GetUpperBound(0);
+
+					doMerge = false;
+					int tempForEndVar3 = pData.GetUpperBound(0);
+					for (j = 1; j <= tempForEndVar3; j++)
+					{
+						if (j != i && pData[j].LayerID == pData[i].LayerID)
+						{
+							if (pData[i].Points[iCount].x == pData[j].Points[1].x && pData[i].Points[iCount].y == pData[j].Points[1].y)
+							{
+
+
+								doMerge = true;
+								doFlip = false;
+								break;
+							}
+
+							if (pData[i].Points[iCount].x == pData[j].Points[pData[j].Points.GetUpperBound(0)].x && pData[i].Points[iCount].y == pData[j].Points[pData[j].Points.GetUpperBound(0)].y)
+							{
+								// OK, this shape ends where my shape ends.
+								doMerge = true;
+								doFlip = true; // Since its the end that matched, we need to flip it first.
+								break;
+							}
+						}
+					}
+
+					if (doMerge)
+					{
+						Debug.Log(("MERGING SHAPE "+ j.ToString()+ "INTO "+ i.ToString()));
+						didMerge = true;
+						if (doFlip)
+						{ // Flip it around first.
+							Polygons.flipPolyStartEnd(j);
+						}
+
+						// Merge the points from j into i
+						pData[i].Points = ArraysHelper.RedimPreserve(pData[i].Points, new int[] { iCount + pData[j].Points.GetUpperBound(0) + 1 });
+
+						int tempForEndVar4 = pData[j].Points.GetUpperBound(0);
+						for (int n = 1; n <= tempForEndVar4; n++)
+						{
+							pData[i].Points[iCount + n] = pData[j].Points[n];
+						}
+						// Delete shape j since we don't need it anymore
+						int tempForEndVar5 = pData.GetUpperBound(0) - 1;
+						for (int n = j; n <= tempForEndVar5; n++)
+						{
+							pData[n] = pData[n + 1];
+						}
+						pData = ArraysHelper.RedimPreserve(pData, new int[] { pData.GetUpperBound(0) });
+
+						// Then start the loop again.
+						Debug.Log(("COUNT IS NOW "+ pData.GetUpperBound(0).ToString()));
+						break; // Start the loop again
+					}
+					else
+					{
+						// Alright we're done with this one
+						pData[i].Optimized = true;
+					}
+				}
+			}
+		}
+		while (didMerge); // Continue looping until there's no more merging
+
+		// Finally, look for polygons that have a start and end point at the same co-ordinate and mark them as fillable.
+		int tempForEndVar6 = pData.GetUpperBound(0);
+		for (int i = 1; i <= tempForEndVar6; i++)
+		{
+			if (pData[i].Points[1].x == pData[i].Points[pData[i].Points.GetUpperBound(0)].x && pData[i].Points[1].y == pData[i].Points[pData[i].Points.GetUpperBound(0)].y)
+			{
+
+				// End of shape matches start
+				// Therefore it is fillable.
+				pData[i].Fillable = true;
+
+			}
+		}
+
+		return null;
+	}
+	internal static object optimizePolys()
+	{
+
+
+
+		double dist = 0;
+		double bestDist = 0;
+		int bestLine = 0;
+		bool bestIsEnd = false; // Is the best match actually the END of another line?
+
+
+		// Run through the list of polygons. Order them so that when we reach the end of one,
+		// we immediately find the nearest next line.
+
+		// Step 1: Mark all of the polygons as "unordered"
+
+
+		int tempForEndVar = pData.GetUpperBound(0);
+		for (int i = 1; i <= tempForEndVar; i++)
+		{
+			pData[i].Optimized = false;
+		}
+
+
+		// Step 2: Loop through the unoptimized polygons
+		int tempForEndVar2 = pData.GetUpperBound(0) - 1;
+		for (int i = 1; i <= tempForEndVar2; i++)
+		{
+			if (!pData[i].Optimized)
+			{
+
+				
+
+				// Find the next polygon that ends nearest this one.
+				bestDist = 10000000;
+				bestLine = 0;
+
+
+				int tempForEndVar3 = pData.GetUpperBound(0);
+				for (int j = 1; j <= tempForEndVar3; j++)
+				{
+					if (j != i && !pData[j].Optimized && pData[j].LayerID == pData[i].LayerID)
+					{
+						// Calculate the distance
+						dist = Polygons.pointDistance(pData[i].Points[pData[i].Points.GetUpperBound(0)], pData[j].Points[1]);
+						if (dist < bestDist)
+						{
+							bestDist = dist;
+							bestLine = j;
+							bestIsEnd = false;
+						}
+
+						// Try the End of the line, since the line can be flipped if this makes more sense
+						dist = Polygons.pointDistance(pData[i].Points[pData[i].Points.GetUpperBound(0)], pData[j].Points[pData[j].Points.GetUpperBound(0)]);
+						if (dist < bestDist)
+						{
+							bestDist = dist;
+							bestLine = j;
+							bestIsEnd = true;
+						}
+
+					}
+				}
+
+				// Now we know which line is best to go NEXT.
+				// So, move this line so that it is the next line after this one.
+				if (bestLine > 0)
+				{
+
+					if (bestIsEnd)
+					{
+						// We've got to flip the line around, since it's END point is closest to our end.
+						Polygons.flipPolyStartEnd(bestLine);
+					}
+
+					// For now, we just swap the desired line with the next one.
+					SwapLine(ref pData[i + 1], ref pData[bestLine]);
+
+
+				}
+
+				//Mark ourselves as optimized
+				pData[i].Optimized = true;
+
+			}
+		}
+
+		return null;
+	}
+	internal static void SwapLine(ref typLine A, ref typLine b)
+	{
+		typLine c = typLine.CreateInstance();
+		A = b;
+		b = c;
+
+	}
 	internal static object transformLine(int lineID, string transformText)
 	{
 
@@ -200,7 +593,8 @@ public class svgParser : MonoBehaviour
 		if (e > 0)
 		{
 			func = transformText.Substring(0, Mathf.Min(e - 1, transformText.Length));
-			f = Strings.InStr(e + 1, transformText, ")", CompareMethod.Binary);
+			//f = Strings.InStr(e + 1, transformText, ")", CompareMethod.Binary);
+			f = transformText.Substring(e).IndexOf(char.Parse(")"));
 			if (f > 0)
 			{
 				params_Renamed = transformText.Substring(e, Mathf.Min(f - e - 1, transformText.Length - e));
@@ -266,12 +660,257 @@ public class svgParser : MonoBehaviour
 
 		return null;
 	}
-#endregion
+	#endregion
 
-#region Parsers
-	internal static object parsePath(ref string inPath, string currentLayer)
+	#region Parsers
+
+
+	internal static object parseCircle(float cX, float cY, float Radi)
 	{
 
+		float x = 0, y = 0;
+
+		int rr = 2;
+		if (Radi > 100)
+		{
+			rr = 1;
+		}
+
+
+		int tempForStepVar = rr;
+		for (float A = 0; (tempForStepVar < 0) ? A >= 360 : A <= 360; A += tempForStepVar)
+		{
+
+			x = Mathf.Cos(A * (Mathf.PI / 180)) * Radi + cX;
+			y = Mathf.Sin(A * (Mathf.PI / 180)) * Radi + cY;
+
+			addPoint(x, y);
+
+
+		}
+
+		pData[currentLine].Fillable = true;
+
+		return null;
+	}
+
+
+	internal static object parseArcSegment(ref float RX, ref float RY, float rotAng, pointD P1, pointD P2, bool largeArcFlag, bool sweepFlag)
+	{
+
+		// Parse "A" command in SVG, which is segments of an arc
+		// P1 is start point
+		// P2 is end point
+
+		pointD centerPoint = new pointD();
+		pointD P1Prime = new pointD();
+		pointD P2Prime = new pointD();
+
+		pointD CPrime = new pointD();
+		float Q = 0;
+		float c = 0;
+
+
+		pointD tempPoint = new pointD();
+		float tempAng = 0;
+		float tempDist = 0;
+
+
+
+
+
+		// Turn the degrees of rotation into radians
+		float Theta = Deg2Rad(rotAng);
+
+		// Calculate P1Prime
+		P1Prime.x = (Mathf.Cos(Theta) * ((P1.x - P2.x) / 2)) + (Mathf.Sin(Theta) * ((P1.y - P2.y) / 2));
+		P1Prime.y = ((-Mathf.Sin(Theta)) * ((P1.x - P2.x) / 2)) + (Mathf.Cos(Theta) * ((P1.y - P2.y) / 2));
+
+		P2Prime.x = (Mathf.Cos(Theta) * ((P2.x - P1.x) / 2)) + (Mathf.Sin(Theta) * ((P2.y - P1.y) / 2));
+		P2Prime.y = ((-Mathf.Sin(Theta)) * ((P2.x - P1.x) / 2)) + (Mathf.Cos(Theta) * ((P2.y - P1.y) / 2));
+
+		float qTop = ((Mathf.Pow(RX, 2)) * (Mathf.Pow(RY, 2))) - ((Mathf.Pow(RX, 2)) * (Mathf.Pow(P1Prime.y, 2))) - ((Mathf.Pow(RY, 2)) * (Mathf.Pow(P1Prime.x, 2)));
+
+		if (qTop < 0)
+		{ // We've been given an invalid arc. Calculate the correct value.
+
+			c = Mathf.Sqrt(((Mathf.Pow(P1Prime.y, 2)) / (Mathf.Pow(RY, 2))) + ((Mathf.Pow(P1Prime.x, 2)) / (Mathf.Pow(RX, 2))));
+
+			RX *= c;
+			RY *= c;
+
+			qTop = 0;
+		}
+
+		float qBot = ((Mathf.Pow(RX, 2)) * (Mathf.Pow(P1Prime.y, 2))) + ((Mathf.Pow(RY, 2)) * (Mathf.Pow(P1Prime.x, 2)));
+		if (qBot != 0)
+		{
+			Q = Mathf.Sqrt((qTop) / (qBot));
+		}
+		else
+		{
+			Q = 0;
+		}
+		// Q is negative
+		if (largeArcFlag == sweepFlag)
+		{
+			Q = -Q;
+		}
+
+		// Calculate Center Prime
+		CPrime.x = 0;
+
+		if (RY != 0)
+		{
+			CPrime.x = Q * ((RX * P1Prime.y) / RY);
+		}
+		if (RX != 0)
+		{
+			CPrime.y = Q * (-((RY * P1Prime.x) / RX));
+		}
+
+		// Calculate center point
+		centerPoint.x = ((Mathf.Cos(Theta) * CPrime.x) - (Mathf.Sin(Theta) * CPrime.y)) + ((P1.x + P2.x) / 2);
+		centerPoint.y = ((Mathf.Sin(Theta) * CPrime.x) + (Mathf.Cos(Theta) * CPrime.y)) + ((P1.y + P2.y) / 2);
+
+
+		// Calculate Theta1
+
+		float Theta1 = angleFromPoint(P1Prime, CPrime);
+		float ThetaDelta = angleFromPoint(P2Prime, CPrime);
+
+		Theta1 -= Mathf.PI;
+		ThetaDelta -= Mathf.PI;
+
+		//Theta1 = angleFromVect(((P1Prime.X - CPrime.X) / RX), ((P1Prime.Y - CPrime.Y) / RY), (P1Prime.X - CPrime.X), (P1Prime.Y - CPrime.Y))
+		//ThetaDelta = angleFromVect(((-P1Prime.X - CPrime.X) / RX), ((-P1Prime.Y - CPrime.Y) / RY), (-P1Prime.X - CPrime.X), (-P1Prime.Y - CPrime.Y))
+
+		//Theta1 = Theta1 - (PI / 2)
+		//ThetaDelta = ThetaDelta - (PI / 2)
+
+		//If Theta1 = ThetaDelta Then ThetaDelta = ThetaDelta + (PI * 2)
+
+		//Debug.Print Theta1
+
+
+		if (sweepFlag)
+		{ // Sweep is going POSITIVELY
+			if (ThetaDelta < Theta1)
+			{
+				ThetaDelta += (Mathf.PI * 2);
+			}
+		}
+		else
+		{
+			// Sweep  is going NEGATIVELY
+			//If ThetaDelta < 0 Then ThetaDelta = ThetaDelta + (PI * 2)
+			if (ThetaDelta > Theta1)
+			{
+				ThetaDelta -= (Mathf.PI * 2);
+			}
+		}
+
+
+		float startAng = Theta1;
+		float endAng = ThetaDelta;
+
+
+		float AngStep = (Mathf.PI / 180);
+		if (!sweepFlag)
+		{
+			AngStep = -AngStep;
+		} // Sweep flag indicates a positive step
+
+		
+		//Theta = Deg2Rad(-40)
+
+		// Hackhack
+		//startAng = startAng + AngStep * 2
+
+
+		float Ang = startAng;
+		do
+		{
+			// X   =   RX
+			//pt4.X = (pt1.X * Cos(Ang))
+			//pt4.Y = (pt1.Y * Sin(Ang))
+
+			//pt4.X = (Cos(Theta) * pt4.X) + (-Sin(Theta) * pt4.Y)
+			//pt4.Y = (Sin(Theta) * pt4.X) + (Cos(Theta) * pt4.Y)
+
+			//         X      CX
+			//pt4.X = pt4.X + pt3.X
+			//pt4.Y = pt4.Y + pt3.Y
+
+			tempPoint.x = (RX * Mathf.Cos(Ang)) + centerPoint.x;
+			tempPoint.y = (RY * Mathf.Sin(Ang)) + centerPoint.y;
+
+			tempAng = angleFromPoint(centerPoint, tempPoint) + Theta;
+			tempDist = Polygons.pointDistance(centerPoint, tempPoint);
+
+			tempPoint.x = (tempDist * Mathf.Cos(tempAng)) + centerPoint.x;
+			tempPoint.y = (tempDist * Mathf.Sin(tempAng)) + centerPoint.y;
+
+
+
+
+
+			//tempPoint.X = (Cos(Theta) * tempPoint.X) + (-Sin(Theta) * tempPoint.Y)
+			//tempPoint.Y = (Sin(Theta) * tempPoint.X) + (Cos(Theta) * tempPoint.Y)
+
+
+			addPoint(tempPoint.x, tempPoint.y);
+
+
+			Ang += AngStep;
+		}
+		while (!((Ang >= endAng && AngStep > 0) || (Ang <= endAng && AngStep < 0)));
+
+		// Add the final point
+
+		addPoint(P2.x, P2.y);
+
+
+		return null;
+	}
+
+
+
+	internal static object parsePolyLine(ref string inLine)
+	{
+		// Parse a polyline
+		string token1 = "", token2 = "";
+		inLine = inLine.Replace("\r", " ");
+		inLine = inLine.Replace("\n", " ");
+		inLine = inLine.Replace("\t", " ");
+		int pos = 1;
+		for(int i =0; i < inLine.Length;i++)
+		{
+			token1 = extractToken(inLine, ref pos);
+			token2 = extractToken(inLine, ref pos);
+
+			if (token1 != "" && token2 != "")
+			{
+				addPoint(float.Parse(token1), float.Parse(token2));
+			}
+		};
+
+
+		// Close the shape.
+		if (pData[currentLine].Points.GetUpperBound(0) > 0)
+		{
+			addPoint(pData[currentLine].Points[1].x, pData[currentLine].Points[1].y);
+		}
+
+
+		return null;
+	}
+
+	internal static object parsePath(ref string inPath, string currentLayer)
+	{
+		inPath = inPath.Replace("\r", " ");
+		inPath = inPath.Replace("\n", " ");
+		inPath = inPath.Replace("\t", " ");
 
 
 
@@ -597,7 +1236,8 @@ public class svgParser : MonoBehaviour
 					parseArcSegment(ref tempRefParam, ref tempRefParam2, float.Parse(token3), pt0, pt1, token4 == "1", token5 == "1");
 
 					//pData(currentLine).PathCode = pData(currentLine).PathCode & "Partial Arc to " & currX & ", " & currY & vbCrLf 
-
+					inPath = inPath.Replace("\r", " ");
+					inPath = inPath.Replace("\n", " ");
 					if (!gotFirstItem)
 					{
 						startX = currX;
@@ -622,9 +1262,9 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -633,9 +1273,9 @@ public class svgParser : MonoBehaviour
 
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 1 
@@ -643,9 +1283,9 @@ public class svgParser : MonoBehaviour
 					pt2.y = ((isRelative) ? currY : 0) + float.Parse(token2);
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 2 
@@ -692,9 +1332,9 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -702,9 +1342,9 @@ public class svgParser : MonoBehaviour
 					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 1 
@@ -753,9 +1393,8 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -763,9 +1402,9 @@ public class svgParser : MonoBehaviour
 					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 1 
@@ -812,9 +1451,9 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -932,7 +1571,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "M":
 				case "m":  // MOVE TO 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -943,9 +1582,8 @@ public class svgParser : MonoBehaviour
 
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set our "current" co-ordinates to this 
@@ -981,7 +1619,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "L":
 				case "l":  // LINE TO 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -992,9 +1630,9 @@ public class svgParser : MonoBehaviour
 
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// Set our "current" co-ordinates to this 
@@ -1025,7 +1663,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "V":
 				case "v":  // VERTICAL LINE TO 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1035,7 +1673,7 @@ public class svgParser : MonoBehaviour
 					}  //Relative not valid for first item 
 
 					// Extract one co-ordinate 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
 
 					// Set our "current" co-ordinates to this 
@@ -1064,7 +1702,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "H":
 				case "h":  // HORIZONTAL LINE TO 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1074,7 +1712,7 @@ public class svgParser : MonoBehaviour
 					}  //Relative not valid for first item 
 
 					// Extract one co-ordinate 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
 
 					// Set our "current" co-ordinates to this 
@@ -1102,7 +1740,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "A":
 				case "a":  // PARTIAL ARC TO 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1114,27 +1752,22 @@ public class svgParser : MonoBehaviour
 					//(rx ry x-axis-rotation large-arc-flag sweep-flag x y)+ 
 
 					// Radii X and Y 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
+
 					token2 = extractToken(inPath, ref pos);
 
 					// X axis rotation 
-					skipWhiteSpace(inPath, ref pos);
 					token3 = extractToken(inPath, ref pos);
 
 					// Large arc flag 
-					skipWhiteSpace(inPath, ref pos);
 					token4 = extractToken(inPath, ref pos);
 
 					// Sweep flag 
-					skipWhiteSpace(inPath, ref pos);
 					token5 = extractToken(inPath, ref pos);
 
 					// X and y 
-					skipWhiteSpace(inPath, ref pos);
 					token6 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token7 = extractToken(inPath, ref pos);
 
 					// Start point 
@@ -1173,7 +1806,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "C":
 				case "c":  // CURVE TO 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1186,9 +1819,8 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -1197,9 +1829,7 @@ public class svgParser : MonoBehaviour
 
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 1 
@@ -1207,9 +1837,7 @@ public class svgParser : MonoBehaviour
 					pt2.y = ((isRelative) ? currY : 0) + float.Parse(token2);
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 2 
@@ -1243,7 +1871,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "S":
 				case "s":  // CURVE TO with 3 points 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1256,9 +1884,8 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -1266,9 +1893,7 @@ public class svgParser : MonoBehaviour
 					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 1 
@@ -1304,7 +1929,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "Q":
 				case "q":  // Quadratic Bezier TO with 3 points 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1317,9 +1942,7 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -1327,9 +1950,7 @@ public class svgParser : MonoBehaviour
 					pt1.y = ((isRelative) ? currY : 0) + float.Parse(token2);
 
 					// Extract next two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 1 
@@ -1363,7 +1984,7 @@ public class svgParser : MonoBehaviour
 					break;
 				case "T":
 				case "t":  // Quadratic Bezier TO with 3 points, but use reflection of last 
-					if (char_Renamed.ToLower() == char_Renamed)
+					if (inPath[pos].ToString().ToLower() == inPath[pos].ToString())
 					{
 						isRelative = true;
 					}  // Lowercase means relative co-ordinates 
@@ -1376,9 +1997,8 @@ public class svgParser : MonoBehaviour
 					pt0.y = currY;
 
 					// Extract two co-ordinates 
-					skipWhiteSpace(inPath, ref pos);
+					
 					token1 = extractToken(inPath, ref pos);
-					skipWhiteSpace(inPath, ref pos);
 					token2 = extractToken(inPath, ref pos);
 
 					// Set into point 0 
@@ -1434,7 +2054,7 @@ public class svgParser : MonoBehaviour
 
 					break;
 				default:
-					Debug.WriteLine(Support.TabLayout("UNSUPPORTED PATH CODE: ", char_Renamed));
+					Debug.Log(("Line 1782: UNSUPPORTED PATH CODE: ", inPath[pos].ToString()));
 
 
 					break;
@@ -1444,8 +2064,6 @@ public class svgParser : MonoBehaviour
 			if (pos > lastUpdate + 2000)
 			{
 				lastUpdate = pos;
-				frmInterface.DefInstance.Text = "Parsing path: " + pos.ToString() + " / " + Strings.Len(inPath).ToString();
-				Application.DoEvents();
 			}
 
 		};
@@ -1457,79 +2075,13 @@ public class svgParser : MonoBehaviour
 	}
 
 
-	internal static string rebuildString(string Text, int pos, char newChar)
-	{
-		string NewText = string.Empty;
-		for (int i = 0; i < Text.Length; i++)
-		{
-			if (i != pos)
-			{
-				NewText += Text[i];
-			}
-			else
-			{
-				NewText += newChar;
-			}
-		}
-		return NewText;
-	}
-
-	internal static object addPoint(float x, float y, bool noCutLineSegment = false)
-	{
-
-		int n = 0;
-
-		if (pData[currentLine].Points[pData[currentLine].Points.GetUpperBound(0)].x == x && pData[currentLine].Points[pData[currentLine].Points.GetUpperBound(0)].y == y && pData[currentLine].Points.GetUpperBound(0) > 0)
-		{
-			// No point to add
-			//Debug.Print "same as last point"
-
-		}
-		else
-		{
-
-			// Once we get over 5000 points, we enter a special allocation mode.
-			if (pData[currentLine].Points.GetUpperBound(0) > 5000)
-			{
-				hasUnfinishedLine = true;
-
-				// Allocate in blocks of 5000 at a time.
-				n = pData[currentLine].SpecialNumPoints + 1;
-				if (n > pData[currentLine].Points.GetUpperBound(0))
-				{
-					pData[currentLine].Points = ArraysHelper.RedimPreserve(pData[currentLine].Points, new int[] { pData[currentLine].Points.GetUpperBound(0) + 5001 });
-				}
-
-			}
-			else
-			{
-				n = pData[currentLine].Points.GetUpperBound(0) + 1;
-				pData[currentLine].Points = ArraysHelper.RedimPreserve(pData[currentLine].Points, new int[] { n + 1 });
-			}
 
 
-			pData[currentLine].Points[n].x = x;
-			pData[currentLine].Points[n].y = y;
-			pData[currentLine].SpecialNumPoints = n;
-			if (noCutLineSegment)
-			{
-				pData[currentLine].Points[n].noCut = 1;
-			}
-		}
-
-
-		return null;
-	}
-
-#endregion
-	internal static string getAttr(Chilkat.Xml attr, string attrName, string DefaultValue = "")
-	{
-
-		return attr.GetAttrValue(attrName);
-
-	}
 	internal static object parseSVG(string inFile)
 	{
+		inFile = inFile.Replace("\r", " ");
+		inFile = inFile.Replace("\n", " ");
+		inFile = inFile.Replace("\t", " ");
 
 		Chilkat.Xml SVG = new Chilkat.Xml();
 		Chilkat.Xml x = null;
@@ -1544,8 +2096,7 @@ public class svgParser : MonoBehaviour
 		currentLine = 0;
 
 		float realDPI = 90;
-
-		SVG.LoadXmlFile(inFile);
+		
 
 		if (SVG == null)
 		{
@@ -1691,6 +2242,33 @@ public class svgParser : MonoBehaviour
 
 		return null;
 	}
+	internal static object parseEllipse(float cX, float cY, float RadiX, float RadiY)
+	{
+
+		float x = 0, y = 0;
+
+		int rr = 2;
+		if (RadiX > 100 || RadiY > 100)
+		{
+			rr = 1;
+		}
+
+
+		int tempForStepVar = rr;
+		for (float A = 0; (tempForStepVar < 0) ? A >= 360 : A <= 360; A += tempForStepVar)
+		{
+
+			x = Mathf.Cos(A * (Mathf.PI / 180)) * RadiX + cX;
+			y = Mathf.Sin(A * (Mathf.PI / 180)) * RadiY + cY;
+
+			addPoint(x, y);
+
+		}
+
+		pData[currentLine].Fillable = true;
+
+		return null;
+	}
 
 
 	internal static object parseSVGKids(Chilkat.Xml inEle, ref string currentLayer)
@@ -1715,175 +2293,178 @@ public class svgParser : MonoBehaviour
 
 		Debug.Log(("PARSING A KIDS:", currentLayer));
 
-
-		Chilkat.Xml x = (Chilkat.Xml)inEle.FirstChild();
-		string thePath = "";
-
-		while (x != null)
+		for (int i = 0; i < inEle.NumChildren; i++)
 		{
+			//XMLNode x = (Chilkat.Xml)inEle.FirstChild();
+			Chilkat.Xml x = inEle.GetChild(i) as Chilkat.Xml;
+			string thePath = "";
 
-			//MsgBox X.nodeName
-
-			switch (x.Tag.ToLower())
+			while (x != null)
 			{
-				case "g":  // g is GROUP 
-					beforeGroup = currentLine;
 
-					// Is this group a layer? 
-					layerName = getAttr(x, "inkscape:label", "");
-					if (layerName == "")
-					{
-						if (getAttr(x, "id", "").IndexOf("layer", System.StringComparison.CurrentCultureIgnoreCase) >= 0)
+				//MsgBox X.nodeName
+
+				switch (x.Tag.ToLower())
+				{
+					case "g":  // g is GROUP 
+						beforeGroup = currentLine;
+
+						// Is this group a layer? 
+						layerName = getAttr(x, "inkscape:label", "");
+						if (layerName == "")
 						{
-							layerName = getAttr(x, "id", "");
+							if (getAttr(x, "id", "").IndexOf("layer", System.StringComparison.CurrentCultureIgnoreCase) >= 0)
+							{
+								layerName = getAttr(x, "id", "");
+							}
 						}
-					}
 
-					if (layerName == "")
-					{
-						layerName = currentLayer;
-					}
-
-					//If layerName = "" Then layerName = getAttr(x, "id", "") 
-
-					parseSVGKids(x, ref layerName);
-
-					if (getAttr(x, "transform", "") != "")
-					{
-						// Transform these lines
-						int tempForEndVar = currentLine;
-						for (int j = beforeGroup + 1; j <= tempForEndVar; j++)
+						if (layerName == "")
 						{
-							transformLine(j, getAttr(x, "transform", ""));
+							layerName = currentLayer;
 						}
-					}
 
-					break;
-				case "switch":  // stupid crap 
-					parseSVGKids(x);
+						//If layerName = "" Then layerName = getAttr(x, "id", "") 
 
-					// SHAPES 
-					break;
-				case "rect":
-				case "path":
-				case "line":
-				case "polyline":
-				case "circle":
-				case "polygon":
-				case "ellipse":
-					beforeLine = currentLine;
+						parseSVGKids(x, ref layerName);
 
-					switch (x.Tag.ToLower())
-					{
-						case "rect":  // RECTANGLE 
+						if (getAttr(x, "transform", "") != "")
+						{
+							// Transform these lines
+							int tempForEndVar = currentLine;
+							for (int j = beforeGroup + 1; j <= tempForEndVar; j++)
+							{
+								transformLine(j, getAttr(x, "transform", ""));
+							}
+						}
 
-							newLine(currentLayer);
-							cX = float.Parse(getAttr(x, "x", ""));
-							cY = float.Parse(getAttr(x, "y", ""));
-							cW = float.Parse(getAttr(x, "width", ""));
-							cH = float.Parse(getAttr(x, "height", ""));
-							addPoint(cX, cY);
-							addPoint(cX + cW, cY);
-							addPoint(cX + cW, cY + cH);
-							addPoint(cX, cY + cH);
-							addPoint(cX, cY);
-							finishLine();
+						break;
+					case "switch":  // stupid crap 
+						parseSVGKids(x);
 
-							pData[currentLine].Fillable = true;
+						// SHAPES 
+						break;
+					case "rect":
+					case "path":
+					case "line":
+					case "polyline":
+					case "circle":
+					case "polygon":
+					case "ellipse":
+						beforeLine = currentLine;
 
-							break;
-						case "path":
+						switch (x.Tag.ToLower())
+						{
+							case "rect":  // RECTANGLE 
 
-							// Parse the path. 
-							thePath = getAttr(x, "d", "");
-							if (x.GetAttrValue("fill") != "" && x.GetAttrValue("fill") != "none")
-							{ // For some reason Illustrator doesn't close paths that are filled
-								if (thePath.Length > 0)
-								{
-									if (thePath.Substring(Mathf.Max(thePath.Length - 1, 0)).ToLower() == "z")
+								newLine(currentLayer);
+								cX = float.Parse(getAttr(x, "x", ""));
+								cY = float.Parse(getAttr(x, "y", ""));
+								cW = float.Parse(getAttr(x, "width", ""));
+								cH = float.Parse(getAttr(x, "height", ""));
+								addPoint(cX, cY);
+								addPoint(cX + cW, cY);
+								addPoint(cX + cW, cY + cH);
+								addPoint(cX, cY + cH);
+								addPoint(cX, cY);
+								finishLine();
+
+								pData[currentLine].Fillable = true;
+
+								break;
+							case "path":
+
+								// Parse the path. 
+								thePath = getAttr(x, "d", "");
+								if (x.GetAttrValue("fill") != "" && x.GetAttrValue("fill") != "none")
+								{ // For some reason Illustrator doesn't close paths that are filled
+									if (thePath.Length > 0)
 									{
-										// ALready closed
-									}
-									else
-									{
-										thePath = thePath + "z";
+										if (thePath.Substring(Mathf.Max(thePath.Length - 1, 0)).ToLower() == "z")
+										{
+											// ALready closed
+										}
+										else
+										{
+											thePath = thePath + "z";
+										}
 									}
 								}
-							}
 
-							parsePath(ref thePath, currentLayer);
-
+								parsePath(ref thePath, currentLayer);
 
 
 
-							break;
-						case "line":
-							// Add this line 
-							newLine(currentLayer);
-							addPoint(float.Parse(getAttr(x, "x1", "")), float.Parse(getAttr(x, "y1", "")));
-							addPoint(float.Parse(getAttr(x, "x2", "")), float.Parse(getAttr(x, "y2", "")));
-							finishLine();
 
-							break;
-						case "polyline":
-							newLine(currentLayer);
-							string tempRefParam = getAttr(x, "points", "");
-							parsePolyLine(ref tempRefParam);
-							finishLine();
+								break;
+							case "line":
+								// Add this line 
+								newLine(currentLayer);
+								addPoint(float.Parse(getAttr(x, "x1", "")), float.Parse(getAttr(x, "y1", "")));
+								addPoint(float.Parse(getAttr(x, "x2", "")), float.Parse(getAttr(x, "y2", "")));
+								finishLine();
 
-							break;
-						case "polygon":
-							newLine(currentLayer);
-							string tempRefParam2 = getAttr(x, "points", "");
-							parsePolyLine(ref tempRefParam2);
-							finishLine();
+								break;
+							case "polyline":
+								newLine(currentLayer);
+								string tempRefParam = getAttr(x, "points", "");
+								parsePolyLine(ref tempRefParam);
+								finishLine();
 
-							pData[currentLine].Fillable = true;
+								break;
+							case "polygon":
+								newLine(currentLayer);
+								string tempRefParam2 = getAttr(x, "points", "");
+								parsePolyLine(ref tempRefParam2);
+								finishLine();
+
+								pData[currentLine].Fillable = true;
 
 
-							break;
-						case "circle":
-							// Draw a circle. 
-							newLine(currentLayer);
-							parseCircle(float.Parse(getAttr(x, "cx", "")), float.Parse(getAttr(x, "cy", "")), float.Parse(getAttr(x, "r", "")));
+								break;
+							case "circle":
+								// Draw a circle. 
+								newLine(currentLayer);
+								parseCircle(float.Parse(getAttr(x, "cx", "")), float.Parse(getAttr(x, "cy", "")), float.Parse(getAttr(x, "r", "")));
 
-							break;
-						case "ellipse":  // Draw an ellipse 
-							newLine(currentLayer);
-							//   cx="245.46707" 
-							//   cy = "469.48389" 
-							//   rx = "13.131983" 
-							//   ry="14.142136" /> 
+								break;
+							case "ellipse":  // Draw an ellipse 
+								newLine(currentLayer);
+								//   cx="245.46707" 
+								//   cy = "469.48389" 
+								//   rx = "13.131983" 
+								//   ry="14.142136" /> 
 
-							parseEllipse(float.Parse(getAttr(x, "cx", "")), float.Parse(getAttr(x, "cy", "")), float.Parse(getAttr(x, "rx", "")), float.Parse(getAttr(x, "ry", "")));
-							break;
-					}
-
-					// Shape transformations 
-					if (getAttr(x, "transform", "") != "")
-					{
-						// Transform these lines
-						int tempForEndVar2 = currentLine;
-						for (int j = beforeLine + 1; j <= tempForEndVar2; j++)
-						{
-							transformLine(j, getAttr(x, "transform", ""));
+								parseEllipse(float.Parse(getAttr(x, "cx", "")), float.Parse(getAttr(x, "cy", "")), float.Parse(getAttr(x, "rx", "")), float.Parse(getAttr(x, "ry", "")));
+								break;
 						}
-					}
-					break;
-			}
-			x = (Chilkat.Xml)x.NextSibling();
-		};
 
+						// Shape transformations 
+						if (getAttr(x, "transform", "") != "")
+						{
+							// Transform these lines
+							int tempForEndVar2 = currentLine;
+							for (int j = beforeLine + 1; j <= tempForEndVar2; j++)
+							{
+								transformLine(j, getAttr(x, "transform", ""));
+							}
+						}
+						break;
+				}
+
+			};
+		}
 
 
 		return null;
 	}
 
-	internal static object parseSVGKids(Chilkat.Xml inEle)
+	internal static object parseSVGKids(Chilkat.Xml  inEle)
 	{
 		string tempRefParam = "";
 		return parseSVGKids(inEle, ref tempRefParam);
 	}
 
 }
+#endregion
 #endif
