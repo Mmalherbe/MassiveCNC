@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts;
 using UnityEngine;
-
+#if !UNITY_EDITOR_LINUX
 namespace Assets.Scripts.Classes
 {
 	internal static class Polygons
 	{
-		#region Helper
+#region Helper
 
 
 		public static Dictionary<K, V> HashtableToDictionary<K, V>(Hashtable table)
@@ -23,7 +23,7 @@ namespace Assets.Scripts.Classes
 
 
 
-		#endregion
+#endregion
 
 
 		//UPGRADE_NOTE: (2041) The following line was commented. More Information: https://www.mobilize.net/vbtonet/ewis/ewi2041
@@ -258,3 +258,4 @@ namespace Assets.Scripts.Classes
 	}
 
 }
+#endif

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-
+#if UNITY_EDITOR_LINUX
+using Chilkat;
 public class svgController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -42,3 +43,4 @@ public class svgController : MonoBehaviour
         return true;
     }
 }
+#endif

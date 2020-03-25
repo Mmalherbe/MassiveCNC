@@ -1,0 +1,9 @@
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\x64\Debug\svg-parser.csprojAssemblyReference.cache
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\x64\Debug\svg-parser.csproj.CoreCompileInputs.cache
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\bin\x64\Debug\svg-parser.exe.config
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\bin\x64\Debug\svg-parser.exe
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\bin\x64\Debug\svg-parser.pdb
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\bin\x64\Debug\ChilkatDotNet47.dll
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\x64\Debug\svg-parser.csproj.CopyComplete
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\x64\Debug\svg-parser.exe
+C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\x64\Debug\svg-parser.pdb

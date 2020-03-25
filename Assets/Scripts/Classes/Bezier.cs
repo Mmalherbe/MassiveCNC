@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-
+#if !UNITY_EDITOR_LINUX
 namespace Assets.Scripts.Classes
 {
 	internal static class Bezier
@@ -101,3 +101,4 @@ namespace Assets.Scripts.Classes
 	}
 
 }
+#endif

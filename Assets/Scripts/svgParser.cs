@@ -3,9 +3,12 @@ using System.Collections;
 using Hashtable = System.Collections.Hashtable;
 using Assets.Scripts.Classes;
 using System.Text;
+using System.Runtime.InteropServices;
+ 
 #if !UNITY_EDITOR_LINUX
 public class svgParser : MonoBehaviour
 {
+ 
 	public static typLine[] pData = null;
 	public static int currentLine = 0;
 	public static float GLOBAL_DPI = 0;
@@ -68,7 +71,7 @@ public class svgParser : MonoBehaviour
 	}
 	#endregion
 
-	#region helperfunctions
+	#region helperfunctions 
 	internal static string rebuildString(string Text, int pos, char newChar)
 	{
 		string NewText = string.Empty;
@@ -187,7 +190,7 @@ public class svgParser : MonoBehaviour
 		return result;
 	}
 
-	internal static string getAttr(Chilkat.Xml attr, string attrName, string DefaultValue = "")
+	internal static string getAttr(Xml attr, string attrName, string DefaultValue = "")
 	{
 
 		return attr.GetAttrValue(attrName);
@@ -241,7 +244,7 @@ public class svgParser : MonoBehaviour
 
 		// Exract until we get a space or a comma
 		string char_Renamed = "";
-		StringBuilder build = new StringBuilder();
+		Chilkat.StringBuilder build = new Chilkat.StringBuilder();
 		bool seenMinus = false;
 		bool seenE = false;
 		bool seenPeriod = false;
@@ -2271,7 +2274,7 @@ public class svgParser : MonoBehaviour
 	}
 
 
-	internal static object parseSVGKids(Chilkat.Xml inEle, ref string currentLayer)
+	internal static object parseSVGKids(Xml inEle, ref string currentLayer)
 	{
 
 		// Loop through my kids and figure out what to do!
