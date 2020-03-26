@@ -6,6 +6,8 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using UnityEngine;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 public class GCodeFromSVG : MonoBehaviour
 {
@@ -161,7 +163,7 @@ public class GCodeFromSVG : MonoBehaviour
             if (!Plotter.IsPathFigureEnd)
             {
                 Plotter.Comment(xmlMarker.figureEnd + Plotter.PathCount + ">");     // reached if SVG code via copy & paste was converted
-                Logger.Debug(" FigureEnd");
+                cncLogger.Log(" FigureEnd");
             }
             Plotter.IsPathFigureEnd = true;
         }
@@ -325,23 +327,21 @@ public class GCodeFromSVG : MonoBehaviour
     private static void parseAttributs(XElement element)
     {
         if (element.Attribute("style") != null)
-        {   //if (svgComments) Plotter.Comment(string.Format(" style '{0}'", element.Attribute("style").Value));
+        {   //if (svgComments) Plotter.Comment(string.Format(" style "+element.Attribute("style").Value));
             string pathColor = getStyleProperty(element, "stroke");
             if (pathColor.Length > 1)
                 Plotter.PathColor = pathColor.Substring(1);       //getColor(pathElement);
-            Plotter.PathToolNr = toolTable.getToolNr(Plotter.PathColor, 0);
+
             setDashPattern(getStyleProperty(element, "stroke-dasharray"));
-            if (gcode.loggerTrace) Logger.Trace(" parseAttributs: stroke: {0} P-color: {1} P-toolNr: {2}", pathColor, Plotter.PathColor, Plotter.PathToolNr);
         }
         if (element.Attribute("stroke") != null)
-        {   //if (svgComments) Plotter.Comment(string.Format(" stroke '{0}'", element.Attribute("stroke").Value));
+        {   //if (svgComments) Plotter.Comment(string.Format(" stroke "+element.Attribute("stroke").Value));
             string pathColor = element.Attribute("stroke").Value;
             Plotter.PathColor = pathColor.StartsWith("#") ? pathColor.Substring(1) : pathColor;
-            Plotter.PathToolNr = toolTable.getToolNr(Plotter.PathColor, 0);
-            if (gcode.loggerTrace) Logger.Trace(" parseAttributs: stroke: {0} P-color: {1} P-toolNr: {2}", pathColor, Plotter.PathColor, Plotter.PathToolNr);
+           
         }
         if (element.Attribute("stroke-dasharray") != null)
-        {   //if (svgComments) Plotter.Comment(string.Format(" stroke-dasharray '{0}'", element.Attribute("stroke-dasharray").Value));
+        {   //if (svgComments) Plotter.Comment(string.Format(" stroke-dasharray "+element.Attribute("stroke-dasharray").Value));
             setDashPattern(element.Attribute("stroke-dasharray").Value);
         }
     }
@@ -473,9 +473,9 @@ public class GCodeFromSVG : MonoBehaviour
                 { return (test * factor); }
             }
         }
-        cncLogger.Log("convertToPixel source '{0}' ", logSource);
-        cncLogger.Log("convertToPixel TryParse failed '{0}' ", str);
-        Plotter.AddToHeader(string.Format(" !!! Error: convert to float, string is: '{0}'", str));
+        cncLogger.Log("convertToPixel source "+ logSource);
+        cncLogger.Log("convertToPixel TryParse failed "+ str);
+        Plotter.AddToHeader(string.Format(" !!! Error: convert to float, string is: "+str));
         return 0f;
     }
     private static string removeUnit(string str)
@@ -507,7 +507,7 @@ public class GCodeFromSVG : MonoBehaviour
                 else
                 {
                     string[] pattern;
-                    if (dasharray.Contains(',')) { pattern = dasharray.Split(','); }
+                    if (dasharray.Contains(",")) { pattern = dasharray.Split(','); }
                     else { pattern = dasharray.Split(' '); }
                     //  float[] dash = Array.ConvertAll(pattern, float.Parse);
                     double tmp;
@@ -794,6 +794,7 @@ public class GCodeFromSVG : MonoBehaviour
     private static float cxMirror = 0, cyMirror = 0;
     private static Vector cMirror = new Vector();
     private static StringBuilder secondMove = new StringBuilder();
+    private static string logSource;
 
     /// <summary>
     /// Convert all Path commands, check: http://www.w3.org/TR/SVG/paths.html
@@ -844,7 +845,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (i + 2))
                     {
-                        cncLogger.Log("Move to command needs 2 arguments '{0}'", svgPath);
+                        cncLogger.Log("Move to command needs 2 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: Move to command needs 2 arguments '" + svgPath + "'");
                         break;
                     }
@@ -902,7 +903,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (i + 2))
                     {
-                        cncLogger.Log("Line to command needs 2 arguments '{0}'", svgPath);
+                        cncLogger.Log("Line to command needs 2 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: Line to command needs 2 arguments '" + svgPath + "'");
                         break;
                     }
@@ -966,7 +967,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (rep + 7))
                     {
-                        cncLogger.Log("Elliptical arc curve command needs 7 arguments '{0}'", svgPath);
+                        cncLogger.Log("Elliptical arc curve command needs 7 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: Elliptical arc curve command needs 7 arguments '" + svgPath + "'");
                         break;
                     }
@@ -998,7 +999,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (rep + 6))
                     {
-                        cncLogger.Log("Cubic Bézier curve command needs 6 arguments '{0}'", svgPath);
+                        cncLogger.Log("Cubic Bézier curve command needs 6 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: Cubic Bézier curve command needs 6 arguments '" + svgPath + "'");
                         break;
                     }
@@ -1072,7 +1073,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (rep + 4))
                     {
-                        cncLogger.Log("Smooth curveto command needs 4 arguments '{0}'", svgPath);
+                        cncLogger.Log("Smooth curveto command needs 4 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: smooth curveto command needs 4 arguments '" + svgPath + "'");
                         break;
                     }
@@ -1135,7 +1136,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (rep + 4))
                     {
-                        cncLogger.Log("Quadratic Bézier curveto command needs 4 arguments '{0}'", svgPath);
+                        cncLogger.Log("Quadratic Bézier curveto command needs 4 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: Quadratic Bézier curveto command needs 4 arguments '" + svgPath + "'");
                         break;
                     }
@@ -1166,7 +1167,7 @@ public class GCodeFromSVG : MonoBehaviour
                 {
                     if (floatArgs.Length < (rep + 2))
                     {
-                        cncLogger.Log("Smooth quadratic Bézier curveto command needs 2 arguments '{0}'", svgPath);
+                        cncLogger.Log("Smooth quadratic Bézier curveto command needs 2 arguments "+svgPath);
                         Plotter.AddToHeader(" !!! Error: Smooth quadratic Bézier curveto command needs 2 arguments '" + svgPath + "'");
                         break;
                     }
