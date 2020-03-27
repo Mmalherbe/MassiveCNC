@@ -8,6 +8,9 @@ using System.Xml.Linq;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Linq;
+using System.Windows;
+using Assets.Scripts.ImageProcessor;
 
 public class GCodeFromSVG : MonoBehaviour
 {
@@ -449,7 +452,7 @@ public class GCodeFromSVG : MonoBehaviour
     private static float convertToPixel(string str, float ext = 1)        // return value in px
     {       // https://www.w3.org/TR/SVG/coords.html#Units          // in=90 or 96 ???
         bool percent = false;
-        //       Logger.Trace("convert to pixel in {0}", str);
+        //       Logger.Trace("convert to pixel in "+ str);
         float factor = 1;   // no unit = px
         if (str.IndexOf("mm") > 0) { factor = factor_Mm2Px; }               // Millimeter
         else if (str.IndexOf("cm") > 0) { factor = factor_Cm2Px; }          // Centimeter
@@ -518,7 +521,7 @@ public class GCodeFromSVG : MonoBehaviour
             }
         }
         catch (Exception er)
-        { cncLogger.Log(er, "dasharray: {0}", dasharray); }
+        { cncLogger.Log(er, "dasharray: "+ dasharray); }
     }
 
 
@@ -768,7 +771,7 @@ public class GCodeFromSVG : MonoBehaviour
                 if (d.Length > 0)
                 {
                     // split complete path in to command-tokens
-                    if (gcode.loggerTrace) Logger.Trace("  Path d {0}", d);
+                  
                     string separators = @"(?=[A-Za-z-[e]])";
                     var tokens = Regex.Split(d, separators).Where(t => !string.IsNullOrEmpty(t));
                     int objCount = 0;
@@ -815,7 +818,7 @@ public class GCodeFromSVG : MonoBehaviour
 
         /*            if (gcode.loggerTrace)
                         foreach (string str in splitArgs)
-                            Logger.Trace("    {0}", str);
+                            Logger.Trace("    "+ str);
         */            // get command coordinates
         float[] floatArgs = splitArgs.Select(arg => convertToPixel(arg)).ToArray();
 
@@ -831,7 +834,7 @@ public class GCodeFromSVG : MonoBehaviour
                     }
                     if (gcode.loggerTrace)
                         foreach (string str in tmp)
-                            Logger.Trace("    {0}", str);
+                            Logger.Trace("    "+ str);
                     floatArgs = tmp.Select(arg => convertToPixel(arg)).ToArray();
         */
 

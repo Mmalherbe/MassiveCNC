@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -76,7 +77,7 @@ public static class Plotter
     public static string DocDescription { get; set; } = "";
 
     // Trace, Debug, Info, Warn, Error, Fatal
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
 
     public static void StartCode()
     {
