@@ -1,9 +1,38 @@
-﻿using Assets.Scripts;
+﻿/* MassiveCNC Playground. An Unity3D based framework for controller CNC-based machines.
+    Created and altered by Max Malherbe.
+    
+    Originally created by Sven Hasemann, altered and rewritten by me.
+
+    Origibal Project : GRBL-Plotter. Another GCode sender for GRBL.
+    This file is part of the GRBL-Plotter application.
+   
+    Copyright (C) 2019 Sven Hasemann contact: svenhb@web.de
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/using Assets.Scripts;
+using Assets.Scripts.ImageProcessor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
+
 using System.Text;
 using UnityEngine;
+using System.Windows;
+using static Assets.Scripts.Dimensions;
+using Assets.Scripts.FontProcessor;
+using System.Drawing;
+using Point = System.Windows.Point;
 
 public static class Plotter
 {
@@ -81,19 +110,15 @@ public static class Plotter
 
     public static void StartCode()
     {
-        Logger.Trace("startCode()");
-        pauseBeforePath = Properties.Settings.Default.importPauseElement;
-        pauseBeforePenDown = Properties.Settings.Default.importPausePenDown;
-        groupObjects = Properties.Settings.Default.importGroupObjects;           // DXF-Import group objects
-        sortOption = Properties.Settings.Default.importGroupSort;                // SVG-Import sort by tool
-        sortInvert = Properties.Settings.Default.importGroupSortInvert;
-        gcodeUseSpindle = Properties.Settings.Default.importGCZEnable;
-        gcodeReduce = Properties.Settings.Default.importRemoveShortMovesEnable;
-        gcodeReduceVal = (float)Properties.Settings.Default.importRemoveShortMovesLimit;
-        gcodeTangEnable = Properties.Settings.Default.importGCTangentialEnable;
-        gcodeTangName = Properties.Settings.Default.importGCTangentialAxis;
-        gcodeTangTurn = (double)Properties.Settings.Default.importGCTangentialTurn;
-        comments = Properties.Settings.Default.importSVGAddComments;
+        cncLogger.RealTimeLog("startCode()");
+        pauseBeforePath = CNC_Settings.importPauseBeforePath;
+        pauseBeforePenDown = CNC_Settings.importPauseBeforePenDown;
+        sortInvert = CNC_Settings.importGroupSortInvert;
+        gcodeReduce = CNC_Settings.importRemoveShortMovesEnable;
+        gcodeReduceVal = (float)CNC_Settings.importRemoveShortMovesLimit;
+        gcodeTangEnable = CNC_Settings.importGCTangentialEnable;
+        gcodeTangName = CNC_Settings.importGCTangentialAxis;
+        gcodeTangTurn = (double)CNC_Settings.importGCTangentialTurn;
         lastSetGroup = -1;
         penIsDown = false;
 
@@ -124,16 +149,9 @@ public static class Plotter
         DocTitle = "";
         DocDescription = "";
 
-        amountOfTools = toolTable.init();
+      
         gcode.setup();                              // initialize GCode creation (get stored settings for export)
 
-        if (!groupObjects)       // Load initial tool
-        {
-            toolProp tmpTool = toolTable.getToolProperties((int)Properties.Settings.Default.importGCToolDefNr);
-            gcode.Tool(gcodeString[gcodeStringIndex], tmpTool.toolnr, tmpTool.name);    // add tool change commands (if enabled) and set XYFeed etc.
-        }
-        else
-        { }
     }
 
     /// <summary>
@@ -143,7 +161,7 @@ public static class Plotter
     {
         if (!comments) { cmt = ""; }
 
-        if (loggerTrace) Logger.Trace(" StartPath at X{0:0.000} Y{1:0.000} {2}", coordxy.X, coordxy.Y, cmt);
+        if (loggerTrace) cncLogger.RealTimeLog(" StartPath at X"+ coordxy.X + " Y" + coordxy.Y + " "+ cmt);
 
         if ((gcodeStringIndex != gcodeStringIndexOld) || (lastGC != coordxy))    // only if change in position, do pen-up -down
         {
@@ -163,7 +181,7 @@ public static class Plotter
             Comment(xml);
             lastFigureStart[gcodeStringIndex].lastIndexEnd = gcodeString[gcodeStringIndex].Length;
             lastFigureStart[gcodeStringIndex].codeLength = lastFigureStart[gcodeStringIndex].lastIndexEnd - lastFigureStart[gcodeStringIndex].lastIndexStart;
-            if (loggerTrace) Logger.Trace("{0}", xml);
+            if (loggerTrace) cncLogger.RealTimeLog( xml);
 
             if (comments && (PathName.Length > 0)) { Comment(PathName); }
 
@@ -174,7 +192,7 @@ public static class Plotter
             isStartPathIsPending = true;                  // and angle of desired
             posStartPath = coordxy;                     // start-point
             posStartAngle = gcodeMath.cutAngle;                   // Apply G0 on Pen-down, when needed (in Arc or MoveTo)
-            if (loggerTrace) Logger.Trace("   StartPath get angle for x{0:0.000} y{1:0.000} a={2:0.00}", coordxy.X, coordxy.Y, 180 * posStartAngle / Math.PI);
+            if (loggerTrace) cncLogger.RealTimeLog("   StartPath get angle for x "+ coordxy.X + " y" + coordxy.Y + " a=" + (coordxy.Y, 180 * posStartAngle / Math.PI).ToString()+ "");
         }
         lastGC = coordxy;
         lastSetGC = coordxy;
@@ -187,13 +205,13 @@ public static class Plotter
         if (gcodeString[gcodeStringIndex].Length == (lastFigureStart[gcodeStringIndex].lastIndexEnd))     // no code generated
         {
             gcodeString[gcodeStringIndex].Remove(lastFigureStart[gcodeStringIndex].lastIndexStart, lastFigureStart[gcodeStringIndex].codeLength);
-            if (loggerTrace) Logger.Trace("Code removed figure {0}", lastFigureStart[gcodeStringIndex].figureNr);
+            if (loggerTrace) cncLogger.RealTimeLog("Code removed figure "+ lastFigureStart[gcodeStringIndex].figureNr);
         }
         else
         {
             string xml = string.Format("{0} {1}>", xmlMarker.figureEnd, nr);    //string.Format("{0} nr=\"{1}\" >", xmlMarker.figureEnd, nr);
             Comment(xml);
-            if (loggerTrace) Logger.Trace("{0}", xml);
+            if (loggerTrace) cncLogger.RealTimeLog(xml);
         }
     }
 
@@ -202,16 +220,16 @@ public static class Plotter
     /// </summary>
     public static void StopPath(string cmt)
     {
-        if (loggerTrace) Logger.Trace("  StopPath {0}", cmt);
+        if (loggerTrace) cncLogger.RealTimeLog("  StopPath "+ cmt);
 
         if (gcodeReduce)
         {
-            if (loggerTrace) Logger.Trace("   StopPath get angle");
+            if (loggerTrace) cncLogger.RealTimeLog("   StopPath get angle");
             gcodeMath.cutAngle = getAngle(lastSetGC, lastGC, 0, 0);
 
             if (!gcodeMath.isEqual(lastSetGC, lastGC))        //(lastSetGC.X != lastGC.X) || (lastSetGC.Y != lastGC.Y)) // restore last skipped point for accurat G2/G3 use
             {
-                if (loggerTrace) Logger.Trace("   StopPath get angle - restore point");
+                if (loggerTrace) cncLogger.RealTimeLog("   StopPath get angle - restore point");
                 gcodeMath.cutAngle = getAngle(lastGC, lastSetGC, 0, 0);
                 processTangentialAxis(gcodeMath.cutAngleLast, gcodeMath.cutAngle);
                 MoveToDashed(lastGC, cmt);
@@ -238,12 +256,12 @@ public static class Plotter
         }
         if (!gcodeReduce || !rejectPoint)       // write GCode
         {
-            if (loggerTrace) Logger.Trace(" MoveTo get angle p1 {0:0.000};{1:0.000}  p2 {2:0.000};{3:0.000}", lastSetGC.X, lastSetGC.Y, coordxy.X, coordxy.Y);
+            if (loggerTrace) cncLogger.RealTimeLog(" MoveTo get angle p1 "+ lastSetGC.X + ";"+ lastSetGC.Y+ "  p2 "+ coordxy.X+ ";"+ coordxy.Y+ "");
             gcodeMath.cutAngle = getAngle(lastSetGC, coordxy, 0, 0);
             posStartAngle = gcodeMath.cutAngle;
 
             PenDown(cmt + " moveto");                           // also process tangetial axis
-            if (loggerTrace) Logger.Trace(" MoveTo X{0:0.000} Y{1:0.000}", coordxy.X, coordxy.Y);
+            if (loggerTrace) cncLogger.RealTimeLog(" MoveTo X:"+coordxy.X+" Y:"+coordxy.Y+"");
             gcode.setTangential(gcodeString[gcodeStringIndex], 180 * gcodeMath.cutAngle / Math.PI);
             gcodeMath.cutAngleLast = gcodeMath.cutAngle;
             MoveToDashed(coordxy, cmt);
@@ -256,7 +274,7 @@ public static class Plotter
     { MoveToSimple(new Point(coordxy.X, coordxy.Y), cmt, rapid); }
     public static void MoveToSimple(Point coordxy, string cmt, bool rapid = false)
     {
-        if (loggerTrace) Logger.Trace(" MoveToSimple X{0:0.000} Y{1:0.000} rapid {2}", coordxy.X, coordxy.Y, rapid);
+        if (loggerTrace) cncLogger.RealTimeLog(" MoveToSimple X"+coordxy.X+ " Y" + coordxy.Y + " rapid "+ rapid);
 
         gcodeMath.cutAngle = gcodeMath.getAngle(lastGC, coordxy, 0, 0); // get and store position
         if (rapid)
@@ -280,18 +298,18 @@ public static class Plotter
 
     private static void MoveToDashed(Point coordxy, string cmt)
     {
-        if (loggerTrace) Logger.Trace(" MoveToDashed X{0:0.000} Y{1:0.000}", coordxy.X, coordxy.Y);
+        if (loggerTrace) cncLogger.RealTimeLog(" MoveToDashed X" + coordxy.X + " Y" + coordxy.Y);
 
         bool showDashInfo = false;
         string dashInfo = "";
 
         gcodeDimension[gcodeStringIndex].setDimensionXY(coordxy.X, coordxy.Y);
 
-        if (!Properties.Settings.Default.importLineDashPattern || (PathDashArray.Length <= 1))
+        if (!CNC_Settings.importLineDashPattern || (PathDashArray.Length <= 1))
         { gcode.MoveTo(gcodeString[gcodeStringIndex], coordxy, cmt); }
         else
         {
-            bool penUpG1 = !Properties.Settings.Default.importLineDashPatternG0;
+            bool penUpG1 = !CNC_Settings.importLineDashPatternG0;
             double dX = coordxy.X - lastGC.X;
             double dY = coordxy.Y - lastGC.Y;
             double xx = lastGC.X, yy = lastGC.Y, dd;
@@ -451,13 +469,13 @@ public static class Plotter
     {
         Point center = new Point(lastGC.X + coordij.X, lastGC.Y + coordij.Y);
         double offset = +Math.PI / 2;
-        if (loggerTrace) Logger.Trace("  Start ArcToCCW G{0} X{1:0.000} Y{2:0.000} cx{3:0.000} cy{4:0.000} ", 2, coordxy.X, coordxy.Y, center.X, center.Y);
+        if (loggerTrace) cncLogger.RealTimeLog("  Start ArcToCCW G2 X" + coordxy.X + " Y" + coordxy.Y+ " cX X" + center.X + " cY" + center.Y + " ");
 
         if (gcodeReduce && IsPathReduceOk)                  // restore last skipped point for accurat G2/G3 use
         {
             if (!gcodeMath.isEqual(lastSetGC, lastGC))
             {
-                if (loggerTrace) Logger.Trace(" gcodeReduce MoveTo X{0:0.000} Y{1:0.000}", lastGC.X, lastGC.Y);
+                if (loggerTrace) cncLogger.RealTimeLog(" gcodeReduce MoveTo X" + coordxy.X + " Y" + coordxy.Y );
                 gcodeMath.cutAngle = getAngle(lastSetGC, lastGC, 0, 0);
                 posStartAngle = gcodeMath.cutAngle;
                 gcode.setTangential(gcodeString[gcodeStringIndex], 180 * gcodeMath.cutAngle / Math.PI);
@@ -489,14 +507,14 @@ public static class Plotter
         Point coordxy = new Point(x, y);
         Point center = new Point(lastGC.X + i, lastGC.Y + j);
         double offset = +Math.PI / 2;
-        if (loggerTrace) Logger.Trace("  Start Arc G{0} X{1:0.000} Y{2:0.000} cx{3:0.000} cy{4:0.000} ", gnr, x, y, center.X, center.Y);
+        if (loggerTrace) cncLogger.RealTimeLog("  Start Arc G"+gnr+ " X" + coordxy.X + " Y" + coordxy.Y + " cX X" + center.X + " cY" + center.Y + " ");
         if (gnr > 2) { offset = -offset; }
 
         if (gcodeReduce && IsPathReduceOk)                  // restore last skipped point for accurat G2/G3 use
         {
             if (!gcodeMath.isEqual(lastSetGC, lastGC))
             {
-                if (loggerTrace) Logger.Trace("   gcodeReduce MoveTo X{0:0.000} Y{1:0.000}", lastGC.X, lastGC.Y);
+                if (loggerTrace) cncLogger.RealTimeLog("   gcodeReduce MoveTo X"+ lastGC.X+" Y"+ lastGC.Y);
                 gcodeMath.cutAngle = getAngle(lastSetGC, lastGC, 0, 0);
                 posStartAngle = gcodeMath.cutAngle;
                 gcode.setTangential(gcodeString[gcodeStringIndex], 180 * gcodeMath.cutAngle / Math.PI);
@@ -507,7 +525,7 @@ public static class Plotter
 
         gcodeMath.cutAngle = getAngle(lastGC, center, offset, 0);       // start angle
         posStartAngle = gcodeMath.cutAngle;
-        if (loggerTrace) Logger.Trace("   Start Arc alpha{0:0.000} offset{1:0.000}  ", 180 * gcodeMath.cutAngle / Math.PI, 180 * offset / Math.PI);
+        if (loggerTrace) cncLogger.RealTimeLog("   Start Arc alpha"+ (180 * gcodeMath.cutAngle / Math.PI).ToString() +" offset "+( 180 * offset / Math.PI).ToString());
 
         PenDown(cmt + " from Arc");
 
@@ -550,7 +568,7 @@ public static class Plotter
         if (gcodeTangEnable)
         {
             double angleDiff = 180 * Math.Abs(angleNew - angleOld) / Math.PI;
-            double swivelAngle = (double)Properties.Settings.Default.importGCTangentialAngle;
+            double swivelAngle = (double)CNC_Settings.importGCTangentialAngle;
             if (angleDiff > swivelAngle)
             {   // do pen up, turn, pen down
                 if (penIsDown)
@@ -559,11 +577,11 @@ public static class Plotter
                     if (comments) { cmt = "Tangential axis PenUp"; }
                     bool tmp = gcode.RepeatZ;
                     gcode.RepeatZ = false;              // doesn't solve the problem with repeatZ
-                    if (loggerTrace) Logger.Trace("processTangentialAxis PenUp");
+                    if (loggerTrace) cncLogger.RealTimeLog("processTangentialAxis PenUp");
                     gcode.PenUp(gcodeString[gcodeStringIndex], cmt);
                     gcodeString[gcodeStringIndex].AppendFormat("G00 {0}{1:0.000} (a > {2:0.0})\r\n", gcodeTangName, (gcodeTangTurn / 2) * angleNew / Math.PI, swivelAngle);
                     if (comments) { cmt = "Tangential axis PenDown"; }
-                    if (loggerTrace) Logger.Trace("processTangentialAxis PenDown");
+                    if (loggerTrace) cncLogger.RealTimeLog("processTangentialAxis PenDown");
                     gcode.PenDown(gcodeString[gcodeStringIndex], cmt);
                     gcodeMath.cutAngleLast = angleNew;
                     gcode.RepeatZ = tmp;
@@ -588,82 +606,10 @@ public static class Plotter
         if (!gcodeTangEnable)
             return 0;
         double w = gcodeMath.getAngle(a, b, offset, dir);           //monitorAngle(gcodeMath.getAlpha(a, b) + offset, dir);
-        if (loggerTrace) Logger.Trace("   getAngle p1 {0:0.000};{1:0.000}  p2 {2:0.000};{3:0.000} a{4}", a.X, a.Y, b.X, b.Y, 180 * w / Math.PI);
+        if (loggerTrace) cncLogger.RealTimeLog("   getAngle p1 " + a.X +":"+ a.Y +"  p2 " + b.X + ":" + b.Y + " a "+(180 * w / Math.PI).ToString());
         return w;
     }
 
-    /// <summary>
-    /// Insert Start, End code, sort indexed code inbetween
-    /// </summary>
-    public static void SortCode()
-    {
-        gcode.jobStart(finalGcodeString, "StartJob");
-        Logger.Trace("SortCode() group:{0}", groupObjects);
-
-        #region sort
-        if (groupObjects)
-        {
-            string tmp = "toolnr ";
-            int toolnr;
-            for (int i = 1; i < amountOfTools; i++)     // get code-size information
-            {
-                toolTable.setIndex(toolTable.getIndexByToolNr(i));      // set index in svgPalette
-                toolnr = toolTable.indexToolNr();                       // get value from set index
-                if (toolnr >= 0)
-                {
-                    toolTable.indexSetCodeSize(gcodeString[toolnr].Length);
-                    toolTable.indexSetCodeDimension(gcodeDimension[toolnr].getArea());
-                }
-                tmp += toolnr.ToString() + "  ";
-            }
-
-            if (sortOption == 1)
-                toolTable.sortByToolNr(sortInvert);
-            else if (sortOption == 2)
-                toolTable.sortByCodeSize(sortInvert);
-            else if (sortOption == 3)
-                toolTable.sortByCodeDim(sortInvert);
-
-            finalGcodeString.AppendLine();
-            int groupnr = 0;
-            bool useDefTool = Properties.Settings.Default.importGCToolTableUse && Properties.Settings.Default.importGCToolDefNrUse;
-            int useDefToolNr = (int)Properties.Settings.Default.importGCToolDefNr;
-            int toolUse = 0;
-            string toolName = "";
-            for (int i = 0; i < gcodeStringMax; i++)
-            {
-                toolTable.setIndex(i);                  // set index in svgPalette
-                toolnr = toolTable.indexToolNr();       // get value from set index
-                toolUse = useDefTool ? useDefToolNr : toolnr;
-                toolName = useDefTool ? "Default" : toolTable.indexName();
-                if ((toolnr >= 0) && (gcodeString[toolnr].Length > 1))
-                {
-                    gcode.Comment(finalGcodeString, string.Format("{0} {1} ToolNr='{2}' ToolName='{3}'>", xmlMarker.groupStart, ++groupnr, toolUse, toolName));
-                    gcode.Tool(finalGcodeString, toolUse, toolName); // add tool change commands (if enabled) and set XYFeed etc.
-                    finalGcodeString.Append(gcodeString[toolnr]);
-                    gcode.Comment(finalGcodeString, xmlMarker.groupEnd + " " + groupnr + ">");
-                    gcodeString[toolnr].Clear();            // don't append a 2nd time
-                }
-            }
-            toolName = useDefTool ? "Default" : "not in tool table";
-            for (int i = 0; i < gcodeStringMax; i++)
-            {
-                if (gcodeString[i].Length > 1)
-                {
-                    gcode.Comment(finalGcodeString, string.Format("{0} {1} ToolNr='{2}' {3}>", xmlMarker.groupStart, ++groupnr, useDefToolNr, toolName));
-                    gcode.Tool(finalGcodeString, useDefToolNr, toolName); // add tool change commands (if enabled) and set XYFeed etc.
-                    finalGcodeString.Append(gcodeString[i]);
-                    gcode.Comment(finalGcodeString, xmlMarker.groupEnd + " " + groupnr + ">");
-                    gcodeString[i].Clear();         // don't append a 2nd time
-                }
-            }
-        }
-        else
-            finalGcodeString.Append(gcodeString[0]);
-        #endregion
-
-        gcode.jobEnd(finalGcodeString, "EndJob");      // Spindle / laser off
-    }
 
     /// <summary>
     /// set new index for code
@@ -685,15 +631,9 @@ public static class Plotter
             else
             {
                 gcode.Comment(gcodeString[gcodeStringIndex], "[plotter - setGroup] new index out of range");
-                Logger.Warn(string.Format("setGroup - new gcodeStringIndex out of range: {0}", grp));
+                cncLogger.Warn(string.Format("setGroup - new gcodeStringIndex out of range: "+ grp));
             }
         }
-
-        // set gcode variable from tool properties - XY feed, Z values
-        int toolnr = PathToolNr;
-        if (Properties.Settings.Default.importGCToolTableUse && Properties.Settings.Default.importGCToolDefNrUse)
-            toolnr = (int)Properties.Settings.Default.importGCToolDefNr;
-        gcode.getValuesFromToolTable(toolTable.getToolProperties(toolnr));
     }
 
     /// <summary>
@@ -701,10 +641,10 @@ public static class Plotter
     /// </summary>
     public static string FinalGCode(string titel, string file)
     {
-        Logger.Trace("FinalGCode() ");
+        cncLogger.RealTimeLog("FinalGCode() ");
         gcode.docTitle = DocTitle;
         gcode.docDescription = DocDescription;
-        string header = string.Format("( Use case: {0} )\r\n", Properties.Settings.Default.useCaseLastLoaded);
+        string header = string.Format("( Use case: {0} )\r\n", CNC_Settings.useCaseLastLoaded);
         header += gcode.GetHeader(titel, file);
 
         string footer = gcode.GetFooter();
@@ -712,9 +652,9 @@ public static class Plotter
         if (gcodeTangEnable)
             footer = string.Format("G00 {0}{1:0.000} ({2})\r\n", gcodeTangName, 0, "Tangential axis move to zero") + footer;
 
-        if (Properties.Settings.Default.importRepeatEnable)      // repeat code x times
+        if (CNC_Settings.importRepeatEnable)      // repeat code x times
         {
-            for (int i = 0; i < Properties.Settings.Default.importRepeatCnt; i++)
+            for (int i = 0; i < CNC_Settings.importRepeatCnt; i++)
                 output += finalGcodeString.ToString().Replace(',', '.');
 
             return header + output + footer;
@@ -740,7 +680,7 @@ public static class Plotter
     /// </summary>
     public static bool PenUp(string cmt = "", bool endFigure = true)
     {
-        if (loggerTrace) Logger.Trace("  PenUp {0}", cmt);
+        if (loggerTrace) cncLogger.RealTimeLog("  PenUp "+ cmt);
 
         if (!comments)
             cmt = "";
@@ -763,7 +703,7 @@ public static class Plotter
     /// </summary>
     public static void PenDown(string cmt)
     {
-        if (loggerTrace) Logger.Trace(" PenDown {0}", cmt);
+        if (loggerTrace) cncLogger.RealTimeLog(" PenDown "+ cmt);
         if (!comments)
             cmt = "";
 
@@ -771,7 +711,7 @@ public static class Plotter
         {
             if (isStartPathIsPending)
             {
-                if (loggerTrace) Logger.Trace("  PenDown - MoveToRapid X{0:0.000} Y{1:0.000} alpha {2:0.00}", posStartPath.X, posStartPath.Y, 180 * posStartAngle / Math.PI);
+                if (loggerTrace) cncLogger.RealTimeLog("  PenDown - MoveToRapid X"+posStartPath.X+" Y" + posStartPath.Y + " alpha"+ (180 * posStartAngle / Math.PI).ToString());
                 gcode.setTangential(gcodeString[gcodeStringIndex], 180 * posStartAngle / Math.PI);
                 gcode.MoveToRapid(gcodeString[gcodeStringIndex], posStartPath, cmt);
                 gcodeMath.cutAngleLast = gcodeMath.cutAngle;

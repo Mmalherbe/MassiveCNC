@@ -143,10 +143,9 @@ namespace Assets.Scripts.ImageProcessor
             gcodeZUp = (float)CNC_Settings.importGCZUp;
             gcodeZDown = (float)CNC_Settings.importGCZDown;
             gcodeZFeed = (float)CNC_Settings.importGCZFeed;
-            gcodeZFeedToolTable = useValueFromToolTable && CNC_Settings.importGCTTZAxis;
             gcodeZInc = (float)CNC_Settings.importGCZIncrement;             // depth per pass
 
-            repeatZ = convertGraphics && CNC_Settings.importGCZIncEnable;    // do final Z in several passes?
+           
             repeatZStartZero = CNC_Settings.importGCZIncStartZero;
             finalZ = (float)CNC_Settings.importGCZDown;                      // final Z
 
@@ -164,21 +163,9 @@ namespace Assets.Scripts.ImageProcessor
             gcodeReduce = CNC_Settings.importRemoveShortMovesEnable;
             gcodeReduceVal = (float)CNC_Settings.importRemoveShortMovesLimit;
 
-            gcodeToolChange = CNC_Settings.importGCTool;
-            gcodeToolChangeM0 = CNC_Settings.importGCToolM0;
-
-            gcodeCompress = CNC_Settings.importGCCompress;        // reduce code by 
-            gcodeRelative = CNC_Settings.importGCRelative;        // reduce code by 
-            gcodeNoArcs = CNC_Settings.importGCNoArcs;        // reduce code by 
             gcodeAngleStep = (float)CNC_Settings.importGCSegment;
 
-            gcodeDragCompensation = CNC_Settings.importGCDragKnifeEnable;
-            gcodeDragRadius = (float)CNC_Settings.importGCDragKnifeLength;
-            if (CNC_Settings.importGCDragKnifePercentEnable)
-            { gcodeDragRadius = Math.Abs(gcodeZDown * (float)CNC_Settings.importGCDragKnifePercent / 100); }
-
-            gcodeDragAngle = (float)CNC_Settings.importGCDragKnifeAngle;
-
+           
             gcodeInsertSubroutine = CNC_Settings.importGCSubEnable;
             gcodeSubroutineCount = 0;
             lastMovewasG0 = true;
@@ -369,7 +356,7 @@ namespace Assets.Scripts.ImageProcessor
 
         public static void PenDown(StringBuilder gcodeString, string cmto = "")
         {
-            if (loggerTraceImport) Logger.Trace("    PenDown");
+            if (loggerTraceImport) cncLogger.RealTimeLog("    PenDown");
 
             StringBuilder tmpString = new StringBuilder();
             string cmt = cmto;
@@ -398,7 +385,7 @@ namespace Assets.Scripts.ImageProcessor
                     gcodeFigureTime = 0;
                     gcodeFigureLines = 0;  //
                     gcodeFigureDistance = 0;
-                    if (loggerTraceImport) Logger.Trace("    figureString.Clear()");
+                    if (loggerTraceImport) cncLogger.RealTimeLog("    figureString.Clear()");
                 }
                 else
                 {
@@ -452,7 +439,7 @@ namespace Assets.Scripts.ImageProcessor
 
         public static void PenUp(StringBuilder gcodeString, string cmto = "")
         {
-            if (loggerTraceImport) Logger.Trace("    PenUp");
+            if (loggerTraceImport) cncLogger.RealTimeLog("    PenUp");
 
             string cmt = cmto;
             string comment = "";
@@ -497,7 +484,7 @@ namespace Assets.Scripts.ImageProcessor
             }
             if (gcodeZApply)
             {
-                //                Logger.Trace("  PenUp repeatZ {0}  figurestring {1}", repeatZ, figureString.Length);
+                //                cncLogger.RealTimeLog("  PenUp repeatZ {0}  figurestring {1}", repeatZ, figureString.Length);
                 if (repeatZ)
                 {
                     if (figureString.Length > 0)
@@ -596,7 +583,7 @@ namespace Assets.Scripts.ImageProcessor
         private static int lastCharCount = 0;
         private static void MoveSplit(StringBuilder gcodeStringFinal, int gnr, float finalx, float finaly, float? z, bool applyFeed, string cmt)
         {
-            if (loggerTraceImport) Logger.Trace("  MoveSplit G{0} X{1:0.000} Y{2:0.000}", gnr, finalx, finaly);
+            if (loggerTraceImport) cncLogger.RealTimeLog("  MoveSplit G"+gnr+" X"+finalx+" Y"+finaly+"");
 
             if (lastMovewasG0)
             {
@@ -617,7 +604,7 @@ namespace Assets.Scripts.ImageProcessor
             else
             {
                 if (gcodeZApply && repeatZ)
-                { gcodeString = figureString; }// if (loggerTrace) Logger.Trace("    gcodeString = figureString"); }
+                { gcodeString = figureString; }// if (loggerTrace) cncLogger.RealTimeLog("    gcodeString = figureString"); }
             }
 
 
@@ -807,7 +794,7 @@ namespace Assets.Scripts.ImageProcessor
         { Move(gcodeString, gnr, x, y, null, applyFeed, cmt); }
         private static void Move(StringBuilder gcodeStringFinal, int gnr, float x, float y, float? z, bool applyFeed, string cmt)
         {
-            if (loggerTraceImport) Logger.Trace("  Move G{0} X{1:0.000} Y{2:0.000}  {3}", gnr, x, y, gcodeTangentialCommand);
+            if (loggerTraceImport) cncLogger.RealTimeLog("  Move G"+gnr+" X"+x+" Y"+y+"  "+gcodeTangentialCommand);
 
             StringBuilder gcodeString = gcodeStringFinal;
 
@@ -819,7 +806,7 @@ namespace Assets.Scripts.ImageProcessor
             else
             {
                 if (gcodeZApply && repeatZ)
-                { gcodeString = figureString; }// if (loggerTrace) Logger.Trace("    gcodeString = figureString"); }
+                { gcodeString = figureString; }// if (loggerTrace) cncLogger.RealTimeLog("    gcodeString = figureString"); }
             }
             string feed = "";
             StringBuilder gcodeTmp = new StringBuilder();
@@ -952,11 +939,11 @@ namespace Assets.Scripts.ImageProcessor
         { MoveArc(gcodeString, gnr, x, y, i, j, applyXYFeedRate, cmt, avoidG23); }
         private static void MoveArc(StringBuilder gcodeStringFinal, int gnr, float x, float y, float i, float j, bool applyFeed, string cmt = "", bool avoidG23 = false)
         {
-            if (loggerTraceImport) Logger.Trace("  MoveArc G{0} X{1:0.000} Y{2:0.000}", gnr, x, y);
+            if (loggerTraceImport) cncLogger.RealTimeLog("  MoveArc G"+gnr+" X"+x+" Y"+ y);
 
             StringBuilder gcodeString = gcodeStringFinal;
             if (gcodeZApply && repeatZ)
-            { gcodeString = figureString; if (loggerTraceImport) Logger.Trace("    gcodeString = figureString"); }
+            { gcodeString = figureString; if (loggerTraceImport) cncLogger.RealTimeLog("    gcodeString = figureString"); }
 
             string feed = "";
             float x_relative = x - lastx;
@@ -1271,7 +1258,7 @@ namespace Assets.Scripts.ImageProcessor
         }
         private static void intermediateZ(StringBuilder gcodeString)
         {
-            if (loggerTraceImport) Logger.Trace("   intermediateZ");
+            if (loggerTraceImport) cncLogger.RealTimeLog("   intermediateZ");
 
             float zStep = 0;
             int passCount = 1;
@@ -1291,7 +1278,7 @@ namespace Assets.Scripts.ImageProcessor
                 gcodeZDown = zStep;
                 xml = string.Format("{0} {1} step='{2:0.000}' final='{3:0.000}' >", xmlMarker.passStart, passCount, zStep, finalZ);
                 Comment(gcodeString, xml);
-                Logger.Trace("{0}", xml);
+                cncLogger.RealTimeLog(xml);
                 gcodeTangentialCommand = figureStartAlpha;
                 Move(gcodeString, 0, (float)figureStart.X, (float)figureStart.Y, false, ""); lastMovewasG0 = true;
                 gcodeFigureLines--; // avoid double count
@@ -1315,7 +1302,7 @@ namespace Assets.Scripts.ImageProcessor
 
                 gcodeDownUp++;
                 gcodeString.Append(figureString.ToString());                                                        // draw figure
-                Logger.Trace(" intermediateZ Copy code");
+                cncLogger.RealTimeLog(" intermediateZ Copy code");
 
                 // PenUp
                 if (gcodeIndividualTool)

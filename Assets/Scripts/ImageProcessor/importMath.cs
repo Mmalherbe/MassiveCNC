@@ -1,16 +1,43 @@
-﻿using System;
+﻿/* MassiveCNC Playground. An Unity3D based framework for controller CNC-based machines.
+    Created and altered by Max Malherbe.
+    
+    Originally created by Sven Hasemann, altered and rewritten by me.
+
+    Origibal Project : GRBL-Plotter. Another GCode sender for GRBL.
+    This file is part of the GRBL-Plotter application.
+   
+    Copyright (C) 2019 Sven Hasemann contact: svenhb@web.de
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Runtime;
 using System.Windows.Media;
+using System.Drawing;
+using Point = System.Windows.Point;
 
 namespace Assets.Scripts.ImageProcessor
 {
     class importMath
     {
-        //        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+       
 
         /// <summary>
         /// Calculate Path-Arc-Command - Code from https://github.com/vvvv/SVG/blob/master/Source/Paths/SvgArcSegment.cs
@@ -18,12 +45,9 @@ namespace Assets.Scripts.ImageProcessor
         public static void calcArc(float StartX, float StartY, float RadiusX, float RadiusY,
             float Angle, float Size, float Sweep, float EndX, float EndY, Action<Point, string> moveTo)
         {
-            //           Logger.Trace(" calcArc Start: {0};{1} rx: {2} ry: {3} a: {4} size: {5} sweep: {6} End: {7};{8}", StartX, StartY, RadiusX, RadiusY,
-            //            Angle, Size, Sweep, EndX, EndY);
+           
             if (RadiusX == 0.0f && RadiusY == 0.0f)
-            {
-                //              graphicsPath.AddLine(this.Start, this.End);
-                return;
+            {                return;
             }
             double sinPhi = Math.Sin(Angle * Math.PI / 180.0);
             double cosPhi = Math.Cos(Angle * Math.PI / 180.0);

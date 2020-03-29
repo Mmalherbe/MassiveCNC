@@ -1,12 +1,38 @@
-﻿using System;
+﻿/* MassiveCNC Playground. An Unity3D based framework for controller CNC-based machines.
+    Created and altered by Max Malherbe.
+    
+    Originally created by Sven Hasemann, altered and rewritten by me.
+
+    Origibal Project : GRBL-Plotter. Another GCode sender for GRBL.
+    This file is part of the GRBL-Plotter application.
+   
+    Copyright (C) 2019 Sven Hasemann contact: svenhb@web.de
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
+using System.Windows;
 using static Assets.Scripts.Dimensions;
 using Assets.Scripts.ImageProcessor;
 using UnityEditor.Localization.Editor;
+using UnityEngine;
+using Color = UnityEngine.Color;
+using System.Drawing;
+using Point = System.Windows.Point;
 
 namespace Assets.Scripts
 {
@@ -427,16 +453,16 @@ namespace Assets.Scripts
                 {
 
                     //    public enum grblState { idle, run, hold, jog, alarm, door, check, home, sleep, probe, unknown };
-                    statusConvert[0].msg = "Idle"; statusConvert[0].text = ("grblIdle"); statusConvert[0].state = grblState.idle; statusConvert[0].color = Color.Lime;
-                    statusConvert[1].msg = "Run"; statusConvert[1].text = ("grblRun"); statusConvert[1].state = grblState.run; statusConvert[1].color = Color.Yellow;
-                    statusConvert[2].msg = "Hold"; statusConvert[2].text = ("grblHold"); statusConvert[2].state = grblState.hold; statusConvert[2].color = Color.YellowGreen;
-                    statusConvert[3].msg = "Jog"; statusConvert[3].text = ("grblJog"); statusConvert[3].state = grblState.jog; statusConvert[3].color = Color.LightGreen;
-                    statusConvert[4].msg = "Alarm"; statusConvert[4].text = ("grblAlarm"); statusConvert[4].state = grblState.alarm; statusConvert[4].color = Color.Red;
-                    statusConvert[5].msg = "Door"; statusConvert[5].text = ("grblDoor"); statusConvert[5].state = grblState.door; statusConvert[5].color = Color.Orange;
-                    statusConvert[6].msg = "Check"; statusConvert[6].text = ("grblCheck"); statusConvert[6].state = grblState.check; statusConvert[6].color = Color.Orange;
-                    statusConvert[7].msg = "Home"; statusConvert[7].text = ("grblHome"); statusConvert[7].state = grblState.home; statusConvert[7].color = Color.Magenta;
-                    statusConvert[8].msg = "Sleep"; statusConvert[8].text = ("grblSleep"); statusConvert[8].state = grblState.sleep; statusConvert[8].color = Color.Yellow;
-                    statusConvert[9].msg = "Probe"; statusConvert[9].text = ("grblProbe"); statusConvert[9].state = grblState.probe; statusConvert[9].color = Color.LightBlue;
+                    statusConvert[0].msg = "Idle"; statusConvert[0].text = ("grblIdle"); statusConvert[0].state = grblState.idle;
+                    statusConvert[1].msg = "Run"; statusConvert[1].text = ("grblRun"); statusConvert[1].state = grblState.run; 
+                    statusConvert[2].msg = "Hold"; statusConvert[2].text = ("grblHold"); statusConvert[2].state = grblState.hold; 
+                    statusConvert[3].msg = "Jog"; statusConvert[3].text = ("grblJog"); statusConvert[3].state = grblState.jog; 
+                    statusConvert[4].msg = "Alarm"; statusConvert[4].text = ("grblAlarm"); statusConvert[4].state = grblState.alarm; 
+                    statusConvert[5].msg = "Door"; statusConvert[5].text = ("grblDoor"); statusConvert[5].state = grblState.door; 
+                    statusConvert[6].msg = "Check"; statusConvert[6].text = ("grblCheck"); statusConvert[6].state = grblState.check; 
+                    statusConvert[7].msg = "Home"; statusConvert[7].text = ("grblHome"); statusConvert[7].state = grblState.home; 
+                    statusConvert[8].msg = "Sleep"; statusConvert[8].text = ("grblSleep"); statusConvert[8].state = grblState.sleep; 
+                    statusConvert[9].msg = "Probe"; statusConvert[9].text = ("grblProbe"); statusConvert[9].state = grblState.probe; 
 
                     settings.Clear();
                     coordinates.Clear();
@@ -670,15 +696,7 @@ namespace Assets.Scripts
                     }
                     return "Unknown";
                 }
-                public static Color grblStateColor(grblState state)
-                {
-                    for (int i = 0; i < statusConvert.Length; i++)
-                    {
-                        if (state == statusConvert[i].state)
-                            return statusConvert[i].color;
-                    }
-                    return Color.Fuchsia;
-                }
+               
                 public static void getPosition(string text, ref xyzPoint position)
                 {
                     string[] dataField = text.Split(':');
@@ -875,12 +893,12 @@ namespace Assets.Scripts
     {
         private static double precision = 0.00001;
 
-        public static bool isEqual(System.Windows.Point a, System.Windows.Point b)
+        public static bool isEqual(Point a,Point b)
         { return ((Math.Abs(a.X - b.X) < precision) && (Math.Abs(a.Y - b.Y) < precision)); }
         public static bool isEqual(xyPoint a, xyPoint b)
         { return ((Math.Abs(a.X - b.X) < precision) && (Math.Abs(a.Y - b.Y) < precision)); }
 
-        public static double distancePointToPoint(System.Windows.Point a, System.Windows.Point b)
+        public static double distancePointToPoint(Point a, Point b)
         { return Math.Sqrt(((a.X - b.X) * (a.X - b.X)) + ((a.Y - b.Y) * (a.Y - b.Y))); }
 
         public static ArcProperties getArcMoveProperties(xyPoint pOld, xyPoint pNew, double? I, double? J, bool isG2)
@@ -928,9 +946,9 @@ namespace Assets.Scripts
             return tmp;
         }
 
-        public static double getAlpha(System.Windows.Point pOld, double P2x, double P2y)
+        public static double getAlpha(Point pOld, double P2x, double P2y)
         { return getAlpha(pOld.X, pOld.Y, P2x, P2y); }
-        public static double getAlpha(System.Windows.Point pOld, System.Windows.Point pNew)
+        public static double getAlpha(Point pOld, Point pNew)
         { return getAlpha(pOld.X, pOld.Y, pNew.X, pNew.Y); }
         public static double getAlpha(xyPoint pOld, xyPoint pNew)
         { return getAlpha(pOld.X, pOld.Y, pNew.X, pNew.Y); }
@@ -970,7 +988,7 @@ namespace Assets.Scripts
         public static double cutAngle = 0, cutAngleLast = 0, angleOffset = 0;
         public static void resetAngles()
         { angleOffset = cutAngle = cutAngleLast = 0.0; }
-        public static double getAngle(System.Windows.Point a, System.Windows.Point b, double offset, int dir)
+        public static double getAngle(Point a, Point b, double offset, int dir)
         { return monitorAngle(getAlpha(a, b) + offset, dir); }
         private static double monitorAngle(double angle, int direction)		// take care of G2 cw G3 ccw direction
         {
@@ -989,5 +1007,7 @@ namespace Assets.Scripts
             angle += angleOffset;
             return angle;
         }
+
+
     }
 }

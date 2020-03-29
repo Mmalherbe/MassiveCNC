@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Windows.Media;
 using System.IO;
 using System.Text;
 using System.Xml.Linq;
@@ -9,8 +6,11 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using Assets.Scripts.ImageProcessor;
+using System.Windows.Media;
+using System.Windows;
+using System.Drawing.Drawing2D;
+using Matrix = System.Windows.Media.Matrix;
 
 public class GCodeFromSVG : MonoBehaviour
 {
@@ -124,7 +124,7 @@ public class GCodeFromSVG : MonoBehaviour
 
         Plotter.StartCode();        // initalize variables
         GetVectorSVG(svgCode);      // convert graphics
-        Plotter.SortCode();         // sort objects
+       
         return Plotter.FinalGCode("SVG import", txt);
     }
 
@@ -452,7 +452,7 @@ public class GCodeFromSVG : MonoBehaviour
     private static float convertToPixel(string str, float ext = 1)        // return value in px
     {       // https://www.w3.org/TR/SVG/coords.html#Units          // in=90 or 96 ???
         bool percent = false;
-        //       Logger.Trace("convert to pixel in "+ str);
+        //        cncLogger.RealTimeLog("convert to pixel in "+ str);
         float factor = 1;   // no unit = px
         if (str.IndexOf("mm") > 0) { factor = factor_Mm2Px; }               // Millimeter
         else if (str.IndexOf("cm") > 0) { factor = factor_Cm2Px; }          // Centimeter
@@ -521,7 +521,7 @@ public class GCodeFromSVG : MonoBehaviour
             }
         }
         catch (Exception er)
-        { cncLogger.Log(er, "dasharray: "+ dasharray); }
+        { cncLogger.Log(er +"  , at :dasharray: "+ dasharray); }
     }
 
 
@@ -537,7 +537,7 @@ public class GCodeFromSVG : MonoBehaviour
             {
                 if (pathElement != null)
                 {
-                    if (gcode.loggerTrace) Logger.Trace("parseBasicElements: {0} Level: {1}", form, level);
+                    if (gcode.loggerTrace) cncLogger.RealTimeLog("parseBasicElements: "+form+" Level: "+ level);
 
                     parseAttributs(pathElement);   // process color and stroke-dasharray
                     logSource = "Basic element " + form;
@@ -579,7 +579,7 @@ public class GCodeFromSVG : MonoBehaviour
                         else if (rx == 0) { rx = ry; }
                         else if (rx != ry) { rx = Math.Min(rx, ry); ry = rx; }   // only same r for x and y are possible
                         if (svgComments) Plotter.Comment(string.Format(" SVG-Rect x:{0} y:{1} width:{2} height:{3} rx:{4} ry:{5}", x, y, width, height, rx, ry));
-                        if (gcode.loggerTrace) Logger.Trace(" SVG-Rect x:{0} y:{1} width:{2} height:{3} rx:{4} ry:{5}", x, y, width, height, rx, ry);
+                        if (gcode.loggerTrace)  cncLogger.RealTimeLog(" SVG-Rect x:"+x+" y:"+y+" width:"+width+" height:"+height+" rx:"+rx+" ry:"+ry);
                         x += offsetX; y += offsetY;
                         if (!svgNodesOnly)
                         {
@@ -614,7 +614,7 @@ public class GCodeFromSVG : MonoBehaviour
                     else if (form == "circle")
                     {
                         if (svgComments) Plotter.Comment(string.Format(" circle cx:{0} cy:{1} r:{2} ", cx, cy, r));
-                        if (gcode.loggerTrace) Logger.Trace(" circle cx:{0} cy:{1} r:{2} ", cx, cy, r);
+                        if (gcode.loggerTrace)  cncLogger.RealTimeLog(" circle cx:"+cx+" cy:"+cy+" r:"+ r);
                         cx += offsetX; cy += offsetY;
                         if (!svgNodesOnly)
                         {
@@ -631,7 +631,7 @@ public class GCodeFromSVG : MonoBehaviour
                     else if (form == "ellipse")
                     {
                         if (svgComments) Plotter.Comment(string.Format(" ellipse cx:{0} cy:{1} rx:{2}  ry:{3}", cx, cy, rx, ry));
-                        if (gcode.loggerTrace) Logger.Trace(" ellipse cx:{0} cy:{1} rx:{2}  ry:{3}", cx, cy, rx, ry);
+                        if (gcode.loggerTrace)  cncLogger.RealTimeLog(" ellipse cx:"+cx+" cy:"+cy+" rx:"+rx+"  ry:"+ ry);
                         cx += offsetX; cy += offsetY;
                         if (!svgNodesOnly)
                         {
@@ -650,7 +650,7 @@ public class GCodeFromSVG : MonoBehaviour
                     else if (form == "line")
                     {
                         if (svgComments) Plotter.Comment(string.Format(" SVG-Line x1:{0} y1:{1} x2:{2} y2:{3} ", x1, y1, x2, y2));
-                        if (gcode.loggerTrace) Logger.Trace(" SVG-Line x1:{0} y1:{1} x2:{2} y2:{3} ", x1, y1, x2, y2);
+                        if (gcode.loggerTrace)  cncLogger.RealTimeLog(" SVG-Line x1:"+x1+" y1:"+y1+" x2:"+x2+" y2:"+ y2);
                         x1 += offsetX; y1 += offsetY;
                         if (!svgNodesOnly)
                         {
@@ -670,14 +670,14 @@ public class GCodeFromSVG : MonoBehaviour
                         //offsetY = 0;// (float)matrixElement.OffsetY;
                         x1 = -1; y1 = -1;
                         if (svgComments) Plotter.Comment(" SVG-Polyline ");
-                        //                            if (gcode.loggerTrace) Logger.Trace("{0} {1}", form, pathElement.Attribute("points"));
+                        //                            if (gcode.loggerTrace)  cncLogger.RealTimeLog("{0} {1}", form, pathElement.Attribute("points"));
                         for (int index = 0; index < points.Length; index++)
                         {
                             if (points[index].IndexOf(",") >= 0)
                             {
                                 string[] coord = points[index].Split(',');
                                 x = convertToPixel(coord[0]) + offsetX; y = convertToPixel(coord[1]) + offsetY;
-                                //                                    if (gcode.loggerTrace) Logger.Trace("{0} {1} x{2:0.00}  y{3:0.00}   {4}",form, index, x, y, points[index]);
+                                //                                    if (gcode.loggerTrace)  cncLogger.RealTimeLog("{0} {1} x{2:0.00}  y{3:0.00}   {4}",form, index, x, y, points[index]);
                                 if (index == 0)
                                 {
                                     x1 = x; y1 = y;
@@ -818,7 +818,7 @@ public class GCodeFromSVG : MonoBehaviour
 
         /*            if (gcode.loggerTrace)
                         foreach (string str in splitArgs)
-                            Logger.Trace("    "+ str);
+                             cncLogger.RealTimeLog("    "+ str);
         */            // get command coordinates
         float[] floatArgs = splitArgs.Select(arg => convertToPixel(arg)).ToArray();
 
@@ -834,7 +834,7 @@ public class GCodeFromSVG : MonoBehaviour
                     }
                     if (gcode.loggerTrace)
                         foreach (string str in tmp)
-                            Logger.Trace("    "+ str);
+                             cncLogger.RealTimeLog("    "+ str);
                     floatArgs = tmp.Select(arg => convertToPixel(arg)).ToArray();
         */
 
@@ -1268,7 +1268,7 @@ public class GCodeFromSVG : MonoBehaviour
     /// </summary>
     private static void svgMoveTo(Point orig, string cmt)
     {
-        if (gcode.loggerTrace) Logger.Trace(" svgMoveTo x{0:0.000} y{1:0.000} cmt {2}", orig.X, orig.Y, cmt);
+        if (gcode.loggerTrace)  cncLogger.RealTimeLog(" svgMoveTo x"+orig.X+" y"+orig.Y+" cmt "+ cmt);
         Point tmp = translateXY(orig);
         Plotter.MoveTo(tmp, cmt);
     }
