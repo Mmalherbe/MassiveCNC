@@ -1,21 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Assets.Scripts.Dimensions;
 
 public static class CNC_Settings 
 {
-    public static int importBezierLineSegmentsCnt;
-    public static bool importResizeSVG;
-    public static float importSVGMaxSize;
-    public static bool importSVGPathClose;
-    public static bool importSVGToMM;
-    public static bool importSVGNodesOnly;
-    public static bool importSVGGroups;
-    internal static double importGCTangentialTurn;
-    internal static double machineLimitsHomeX;
-    internal static double machineLimitsRangeX;
-    internal static double machineLimitsHomeY;
-    internal static double machineLimitsRangeY;
+    public static int importBezierLineSegmentsCnt; // Amount of linesegments per Bezier
+    public static bool importResizeSVG; // Resize the SVG ?
+    public static float importSVGMaxSize; // Max size SVG
+    public static bool importSVGPathClose; // Close the SVG path?
+    public static bool importSVGToMM;  // Import SVG To MM
+    public static bool importSVGNodesOnly; // Only import SVG nodes
+    public static bool importSVGGroups; // Import SVG groups
+    internal static double importGCTangentialTurn; // Amount of turns per tangetial in GC
+    internal static double machineLimitsHomeX; // Home pos X
+    internal static double machineLimitsRangeX; // Max pos X
+    internal static double machineLimitsHomeY; // Home Pos Y
+    internal static double machineLimitsRangeY; // Max pos Y
     internal static float importGCLineSegmentLength;
     internal static bool importGCLineSegmentEquidistant;
     internal static string importGCHeader;
@@ -61,6 +62,16 @@ public static class CNC_Settings
     internal static bool importGCLineSegmentation;
     internal static bool importGCSubFirst; // subroutines in g-code first before the rest?
     internal static string importGCSubroutine;
+    internal static int feedYmax;
+    internal static int feedXmax;
+    internal static int feedZmax;
+    internal static int feedAmax;
+    internal static int feedBmax;
+    internal static int feedCmax;
+    internal static xyzPoint homePos;
+    internal static float rotarySubstitutionDiameter;
+    internal static bool ctrl4thInvert;
+    internal static bool ctrl4thOverX;
 
     public static class datapath
     {

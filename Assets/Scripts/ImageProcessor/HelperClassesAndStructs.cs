@@ -27,9 +27,344 @@ using Assets.Scripts.ImageProcessor;
 using Color = UnityEngine.Color;
 using System.Drawing;
 using Point = System.Windows.Point;
+using UnityEngine;
 
 namespace Assets.Scripts
 {
+    class modalGroup
+    {
+        public byte motionMode;           // G0, G1, G2, G3, //G38.2, G38.3, G38.4, G38.5, G80
+        public byte coordinateSystem;     // G54, G55, G56, G57, G58, G59
+        public byte planeSelect;          // G17, G18, G19
+        public byte distanceMode;         // G90, G91
+        public byte feedRateMode;         // G93, G94
+        public byte unitsMode;            // G20, G21
+        public byte programMode;          // M0, M1, M2, M30
+        public byte spindleState;         // M3, M4, M5
+        public byte coolantState;         // M7, M8, M9
+        public byte tool;                 // T
+        public int spindleSpeed;          // S
+        public int feedRate;              // F
+        public int mWord;
+        public int pWord;
+        public int oWord;
+        public int lWord;
+        public bool containsG2G3;
+        public bool ismachineCoordG53;
+        public bool isdistanceModeG90;
+        public bool containsG91;
+
+        public modalGroup()     // reset state
+        { reset(); }
+
+        public void reset()
+        {
+            motionMode = 0;             // G0, G1, G2, G3, G38.2, G38.3, G38.4, G38.5, G80
+            coordinateSystem = 54;      // G54, G55, G56, G57, G58, G59
+            planeSelect = 17;           // G17, G18, G19
+            distanceMode = 90;          // G90, G91
+            feedRateMode = 94;          // G93, G94
+            unitsMode = 21;             // G20, G21
+            programMode = 0;            // M0, M1, M2, M30
+            spindleState = 5;           // M3, M4, M5
+            coolantState = 9;           // M7, M8, M9
+            tool = 0;                   // T
+            spindleSpeed = 0;           // S
+            feedRate = 0;               // F
+            mWord = 0;
+            pWord = 0;
+            oWord = 0;
+            lWord = 1;
+            containsG2G3 = false;
+            ismachineCoordG53 = false;
+            isdistanceModeG90 = true;
+            containsG91 = false;
+        }
+        public void resetSubroutine()
+        {
+            mWord = 0;
+            pWord = 0;
+            oWord = 0;
+            lWord = 1;
+        }
+    }
+    class gcodeByLine
+    {   // ModalGroups
+        public int lineNumber;          // line number in fCTBCode
+        public int figureNumber;
+        public string codeLine;         // copy of original gcode line
+        public byte motionMode;         // G0,1,2,3
+        public bool isdistanceModeG90;  // G90,91
+        public bool ismachineCoordG53;  // don't apply transform to machine coordinates
+        public bool isSubroutine;
+        public bool isSetCoordinateSystem;  // don't process x,y,z if set coordinate system
+
+        public byte spindleState;       // M3,4,5
+        public byte coolantState;       // M7,8,9
+        public int spindleSpeed;        // actual spindle spped
+        public int feedRate;            // actual feed rate
+        public float? x, y, z, a, b, c, u, v, w, i, j; // current parameters
+        public xyzabcuvwPoint actualPos;      // accumulates position
+        public float alpha;            // angle between old and this position
+        public float distance;         // distance to specific point
+        public string otherCode;
+        public string info;
+        public struct xyzabcuvwPoint
+        {
+            public float X, Y, Z, A, B, C, U, V, W;
+            public xyzabcuvwPoint(xyzPoint tmp)
+            { X = tmp.X; Y = tmp.Y; Z = tmp.Z; A = tmp.A; B = 0; C = 0; U = 0; V = 0; W = 0; }
+
+            public static explicit operator xyPoint(xyzabcuvwPoint tmp)
+            { return new xyPoint(tmp.X, tmp.Y); }
+            public static explicit operator xyArcPoint(xyzabcuvwPoint tmp)
+            { return new xyArcPoint(tmp.X, tmp.Y, 0, 0, 0); }
+        }
+
+        public gcodeByLine()
+        { resetAll(); }
+        public gcodeByLine(gcodeByLine tmp)
+        {
+            resetAll();
+            lineNumber = tmp.lineNumber; figureNumber = tmp.figureNumber; codeLine = tmp.codeLine;
+            motionMode = tmp.motionMode; isdistanceModeG90 = tmp.isdistanceModeG90; ismachineCoordG53 = tmp.ismachineCoordG53;
+            isSubroutine = tmp.isSubroutine; spindleState = tmp.spindleState; coolantState = tmp.coolantState;
+            spindleSpeed = tmp.spindleSpeed; feedRate = tmp.feedRate;
+            x = tmp.x; y = tmp.y; z = tmp.z; i = tmp.i; j = tmp.j; a = tmp.a; b = tmp.b; c = tmp.c; u = tmp.u; v = tmp.v; w = tmp.w;
+            actualPos = tmp.actualPos; distance = tmp.distance; alpha = tmp.alpha;
+            isSetCoordinateSystem = tmp.isSetCoordinateSystem; otherCode = tmp.otherCode;
+        }
+
+        public string listData()
+        { return string.Format("{0} mode {1} figure {2}\r", lineNumber, motionMode, figureNumber); }
+
+        /// <summary>
+        /// Reset coordinates and set G90, M5, M9
+        /// </summary>
+        public void resetAll()
+        {
+            lineNumber = 0; figureNumber = 0; codeLine = "";
+            motionMode = 0; isdistanceModeG90 = true; ismachineCoordG53 = false; isSubroutine = false;
+            isSetCoordinateSystem = false; spindleState = 5; coolantState = 9; spindleSpeed = 0; feedRate = 0;
+
+            actualPos.X = 0; actualPos.Y = 0; actualPos.Z = 0; actualPos.A = 0; actualPos.B = 0; actualPos.C = 0;
+            actualPos.U = 0; actualPos.V = 0; actualPos.W = 0;
+            distance = -1; otherCode = ""; info = ""; alpha = 0;
+
+            x = y = z = a = b = c = u = v = w = i = j = null;
+
+            resetCoordinates();
+        }
+        public void resetAll(xyzPoint tmp)
+        {
+            resetAll();
+            actualPos = new xyzabcuvwPoint(tmp);
+        }
+        /// <summary>
+        /// Reset coordinates
+        /// </summary>
+        public void resetCoordinates()
+        {
+            x = null; y = null; z = null; a = null; b = null; c = null; u = null; v = null; w = null; i = null; j = null;
+        }
+        public void presetParsing(int lineNr, string line)
+        {
+            resetCoordinates();
+            ismachineCoordG53 = false; isSubroutine = false;
+            otherCode = "";
+            lineNumber = lineNr;
+            codeLine = line;
+        }
+
+        /// <summary>
+        /// parse gcode line
+        /// </summary>
+        public void parseLine(int lineNr, string line, ref modalGroup modalState)
+        {
+            presetParsing(lineNr, line);
+            char cmd = '\0';
+            string num = "";
+            bool comment = false;
+            float value = 0;
+            line = line.ToUpper().Trim();
+            isSetCoordinateSystem = false;
+            #region parse
+            if (!(line.StartsWith("$") || line.StartsWith("("))) //do not parse grbl comments
+            {
+                try
+                {
+                    foreach (char c in line)
+                    {
+                        if (c == ';')                                   // comment?
+                            break;
+                        if (c == '(')                                   // comment starts
+                            comment = true;
+                        if (!comment)
+                        {
+                            if (Char.IsLetter(c))                       // if char is letter
+                            {
+                                if (cmd != '\0')                        // and command is set
+                                {
+                                    if (float.TryParse(num, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out value))
+                                        parseGCodeToken(cmd, value, ref modalState);
+                                }
+                                cmd = c;                                // char is a command
+                                num = "";
+                            }
+                            else if (Char.IsNumber(c) || c == '.' || c == '-')  // char is not letter but number
+                            {
+                                num += c;
+                            }
+                        }
+                        if (c == ')')                                   // comment ends
+                            comment = false;
+                    }
+                    if (cmd != '\0')                                    // finally after for-each process final command and number
+                    {
+                        if (float.TryParse(num, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out value))
+                            parseGCodeToken(cmd, value, ref modalState);
+                    }
+                }
+                catch { }
+            }
+            #endregion
+            if (isSetCoordinateSystem)
+                resetCoordinates();
+        }
+
+        /// <summary>
+        /// fill current gcode line structure
+        /// </summary>
+        private void parseGCodeToken(char cmd, float value, ref modalGroup modalState)
+        {
+            switch (Char.ToUpper(cmd))
+            {
+                case 'X':
+                    x = value;
+                    break;
+                case 'Y':
+                    y = value;
+                    break;
+                case 'Z':
+                    z = value;
+                    break;
+                case 'A':
+                    a = value;
+                    break;
+                case 'B':
+                    b = value;
+                    break;
+                case 'C':
+                    c = value;
+                    break;
+                case 'U':
+                    u = value;
+                    break;
+                case 'V':
+                    v = value;
+                    break;
+                case 'W':
+                    w = value;
+                    break;
+                case 'I':
+                    i = value;
+                    break;
+                case 'J':
+                    j = value;
+                    break;
+                case 'F':
+                    modalState.feedRate = feedRate = (int)value;
+                    break;
+                case 'S':
+                    modalState.spindleSpeed = spindleSpeed = (int)value;
+                    break;
+                case 'G':
+                    if (value <= 3)                                 // Motion Mode 0-3 c
+                    {
+                        modalState.motionMode = motionMode = (byte)value;
+                        if (value >= 2)
+                            modalState.containsG2G3 = true;
+                    }
+                    else
+                    {
+                        otherCode += "G" + ((int)value).ToString() + " ";
+                    }
+
+                    if (value == 10)
+                    { isSetCoordinateSystem = true; }
+
+                    else if ((value == 20) || (value == 21))             // Units Mode
+                    { modalState.unitsMode = (byte)value; }
+
+                    else if (value == 53)                                // move in machine coord.
+                    { ismachineCoordG53 = true; }
+
+                    else if ((value >= 54) && (value <= 59))             // Coordinate System Select
+                    { modalState.coordinateSystem = (byte)value; }
+
+                    else if (value == 90)                                // Distance Mode
+                    { modalState.distanceMode = (byte)value; modalState.isdistanceModeG90 = true; }
+                    else if (value == 91)
+                    {
+                        modalState.distanceMode = (byte)value; modalState.isdistanceModeG90 = false;
+                        modalState.containsG91 = true;
+                    }
+                    else if ((value == 93) || (value == 94))             // Feed Rate Mode
+                    { modalState.feedRateMode = (byte)value; }
+                    break;
+                case 'M':
+                    if ((value < 3) || (value == 30))                   // Program Mode 0, 1 ,2 ,30
+                    { modalState.programMode = (byte)value; }
+                    else if (value >= 3 && value <= 5)                   // Spindle State
+                    { modalState.spindleState = spindleState = (byte)value; }
+                    else if (value >= 7 && value <= 9)                   // Coolant State
+                    { modalState.coolantState = coolantState = (byte)value; }
+                    modalState.mWord = (byte)value;
+                    if ((value < 3) || (value > 9))
+                        otherCode += "M" + ((int)value).ToString() + " ";
+                    break;
+                case 'T':
+                    modalState.tool = (byte)value;
+                    otherCode += "T" + ((int)value).ToString() + " ";
+                    break;
+                case 'P':
+                    modalState.pWord = (int)value;
+                    otherCode += "P" + value.ToString() + " ";
+                    break;
+                case 'O':
+                    modalState.oWord = (int)value;
+                    break;
+                case 'L':
+                    modalState.lWord = (int)value;
+                    break;
+            }
+            isdistanceModeG90 = modalState.isdistanceModeG90;
+        }
+    };
+    class coordByLine
+    {
+        public int lineNumber;          // line number in fCTBCode
+        public int figureNumber;
+        public xyPoint actualPos;       // accumulates position
+        public float alpha;            // angle between old and this position
+        public float distance;         // distance to specific point
+        public bool isArc;
+
+        public coordByLine(int line, int figure, xyPoint p, float a, bool isarc)
+        { lineNumber = line; figureNumber = figure; actualPos = p; alpha = a; distance = -1; isArc = isarc; }
+
+        public coordByLine(int line, int figure, xyPoint p, float a, float dist)
+        { lineNumber = line; figureNumber = figure; actualPos = p; alpha = a; distance = dist; isArc = false; }
+
+        public void calcDistance(xyPoint tmp)
+        {
+            xyPoint delta = new xyPoint(tmp - actualPos);
+            distance = Mathf.Sqrt(delta.X * delta.X + delta.Y * delta.Y);
+        }
+    }
+
+
+
     public enum grblState { idle, run, hold, jog, alarm, door, check, home, sleep, probe, unknown };
 
     public struct sConvert
@@ -41,38 +376,38 @@ namespace Assets.Scripts
     };
     struct ArcProperties
     {
-        public double angleStart, angleEnd, angleDiff, radius;
+        public float angleStart, angleEnd, angleDiff, radius;
         public xyPoint center;
     };
 
     public class XYEventArgs : EventArgs
     {
-        private double angle, scale;
+        private float angle, scale;
         private xyPoint point;
         string command;
-        public XYEventArgs(double a, double s, xyPoint p, string cmd)
+        public XYEventArgs(float a, float s, xyPoint p, string cmd)
         {
             angle = a;
             scale = s;
             point = p;
             command = cmd;
         }
-        public XYEventArgs(double a, double x, double y, string cmd)
+        public XYEventArgs(float a, float x, float y, string cmd)
         {
             angle = a;
             point.X = x;
             point.Y = y;
             command = cmd;
         }
-        public double Angle
+        public float Angle
         { get { return angle; } }
-        public double Scale
+        public float Scale
         { get { return scale; } }
         public xyPoint Point
         { get { return point; } }
-        public double PosX
+        public float PosX
         { get { return point.X; } }
-        public double PosY
+        public float PosY
         { get { return point.Y; } }
         public string Command
         { get { return command; } }
@@ -80,112 +415,113 @@ namespace Assets.Scripts
 
     public class XYZEventArgs : EventArgs
     {
-        private double? posX, posY, posZ;
+        private float? posX, posY, posZ;
         string command;
-        public XYZEventArgs(double? x, double? y, string cmd)
+        public XYZEventArgs(float? x, float? y, string cmd)
         {
             posX = x;
             posY = y;
             posZ = null;
             command = cmd;
         }
-        public XYZEventArgs(double? x, double? y, double? z, string cmd)
+        public XYZEventArgs(float? x, float? y, float? z, string cmd)
         {
             posX = x;
             posY = y;
             posZ = z;
             command = cmd;
         }
-        public double? PosX
+        public float? PosX
         { get { return posX; } }
-        public double? PosY
+        public float? PosY
         { get { return posY; } }
-        public double? PosZ
+        public float? PosZ
         { get { return posZ; } }
         public string Command
         { get { return command; } }
     }
     public class Dimensions
     {
-        public double minx, maxx, miny, maxy, minz, maxz;
-        public double dimx, dimy, dimz;
+        public float minx, maxx, miny, maxy, minz, maxz;
+        public float dimx, dimy, dimz;
 
         public Dimensions()
         { resetDimension(); }
-        public void setDimensionXYZ(double? x, double? y, double? z)
+        public void setDimensionXYZ(float? x, float? y, float? z)
         {
-            if (x != null) { setDimensionX((double)x); }
-            if (y != null) { setDimensionY((double)y); }
-            if (z != null) { setDimensionZ((double)z); }
+            if (x != null) { setDimensionX((float)x); }
+            if (y != null) { setDimensionY((float)y); }
+            if (z != null) { setDimensionZ((float)z); }
         }
-        public void setDimensionXY(double? x, double? y)
+        public void setDimensionXY(float? x, float? y)
         {
-            if (x != null) { setDimensionX((double)x); }
-            if (y != null) { setDimensionY((double)y); }
+            if (x != null) { setDimensionX((float)x); }
+            if (y != null) { setDimensionY((float)y); }
         }
-        public void setDimensionX(double value)
+        public void setDimensionX(float value)
         {
-            minx = Math.Min(minx, value);
-            maxx = Math.Max(maxx, value);
+            minx = Mathf.Min(minx, value);
+            maxx = Mathf.Max(maxx, value);
             dimx = maxx - minx;
         }
-        public void setDimensionY(double value)
+        public void setDimensionY(float value)
         {
-            miny = Math.Min(miny, value);
-            maxy = Math.Max(maxy, value);
+            miny = Mathf.Min(miny, value);
+            maxy = Mathf.Max(maxy, value);
             dimy = maxy - miny;
         }
-        public void setDimensionZ(double value)
+        public void setDimensionZ(float value)
         {
-            minz = Math.Min(minz, value);
-            maxz = Math.Max(maxz, value);
+            minz = Mathf.Min(minz, value);
+            maxz = Mathf.Max(maxz, value);
             dimz = maxz - minz;
         }
 
-        public double getArea()
+        public float getArea()
         { return dimx * dimy; }
 
         // calculate min/max dimensions of a circle
-        public void setDimensionCircle(double x, double y, double radius, double start, double delta)
+        public void setDimensionCircle(float x, float y, float radius, float start, float delta)
         {
-            double end = start + delta;
+            float end = start + delta;
             if (delta > 0)
             {
-                for (double i = start; i < end; i += 5)
+                for (float i = start; i < end; i += 5)
                 {
-                    setDimensionX(x + radius * Math.Cos(i / 180 * Math.PI));
-                    setDimensionY(y + radius * Math.Sin(i / 180 * Math.PI));
+                    setDimensionX(x + radius * Mathf.Cos(i / 180 * Mathf.PI));
+                    setDimensionY(y + radius * Mathf.Sin(i / 180 * Mathf.PI));
                 }
             }
             else
             {
-                for (double i = start; i > end; i -= 5)
+                for (float i = start; i > end; i -= 5)
                 {
-                    setDimensionX(x + radius * Math.Cos(i / 180 * Math.PI));
-                    setDimensionY(y + radius * Math.Sin(i / 180 * Math.PI));
+                    setDimensionX(x + radius * Mathf.Cos(i / 180 * Mathf.PI));
+                    setDimensionY(y + radius * Mathf.Sin(i / 180 * Mathf.PI));
                 }
             }
 
         }
+
         public void resetDimension()
         {
-            minx = Double.MaxValue;
-            miny = Double.MaxValue;
-            minz = Double.MaxValue;
-            maxx = Double.MinValue;
-            maxy = Double.MinValue;
-            maxz = Double.MinValue;
+            minx = float.MaxValue;
+            miny = float.MaxValue;
+            minz = float.MaxValue;
+            maxx = float.MinValue;
+            maxy = float.MinValue;
+            maxz = float.MinValue;
             dimx = 0;
             dimy = 0;
             dimz = 0;
         }
         public struct xyPoint
         {
-            public double X, Y;
-            public xyPoint(double x, double y)
+            public float X, Y;
+            public xyPoint(float x, float y)
             { X = x; Y = y; }
             public xyPoint(Point xy)
-            { X = xy.X; Y = xy.Y; }
+            { X = float.Parse(xy.X.ToString()); Y = float.Parse(xy.Y.ToString()); }
             public xyPoint(xyPoint tmp)
             { X = tmp.X; Y = tmp.Y; }
 
@@ -203,22 +539,22 @@ namespace Assets.Scripts
 
             //       public static explicit operator System.Windows.Point(xyPoint tmp) => new System.Windows.Point(tmp.X,tmp.Y);
 
-            public double DistanceTo(xyPoint anotherPoint)
+            public float DistanceTo(xyPoint anotherPoint)
             {
-                double distanceCodeX = X - anotherPoint.X;
-                double distanceCodeY = Y - anotherPoint.Y;
-                return Math.Sqrt(distanceCodeX * distanceCodeX + distanceCodeY * distanceCodeY);
+                float distanceCodeX = X - anotherPoint.X;
+                float distanceCodeY = Y - anotherPoint.Y;
+                return Mathf.Sqrt(distanceCodeX * distanceCodeX + distanceCodeY * distanceCodeY);
             }
-            public double AngleTo(xyPoint anotherPoint)
+            public float AngleTo(xyPoint anotherPoint)
             {
-                double distanceX = anotherPoint.X - X;
-                double distanceY = anotherPoint.Y - Y;
-                double radius = Math.Sqrt(distanceX * distanceX + distanceY * distanceY);
+                float distanceX = anotherPoint.X - X;
+                float distanceY = anotherPoint.Y - Y;
+                float radius = Mathf.Sqrt(distanceX * distanceX + distanceY * distanceY);
                 if (radius == 0) { return 0; }
-                double cosinus = distanceX / radius;
+                float cosinus = distanceX / radius;
                 if (cosinus > 1) { cosinus = 1; }
                 if (cosinus < -1) { cosinus = -1; }
-                double angle = 180 * (float)(Math.Acos(cosinus) / Math.PI);
+                float angle = 180 * (float)(Mathf.Acos(cosinus) / Mathf.PI);
                 if (distanceY > 0) { angle = -angle; }
                 return angle;
             }
@@ -240,7 +576,7 @@ namespace Assets.Scripts
                 return a;
             }
             // Overload * operator 
-            public static xyPoint operator *(xyPoint b, double c)
+            public static xyPoint operator *(xyPoint b, float c)
             {
                 xyPoint a = new xyPoint();
                 a.X = b.X * c;
@@ -248,7 +584,7 @@ namespace Assets.Scripts
                 return a;
             }
             // Overload / operator 
-            public static xyPoint operator /(xyPoint b, double c)
+            public static xyPoint operator /(xyPoint b, float c)
             {
                 xyPoint a = new xyPoint();
                 a.X = b.X / c;
@@ -266,7 +602,7 @@ namespace Assets.Scripts
                                              // uint8_t distance_arc; // {G91.1} NOTE: Don't track. Only default supported. 
             public int plane_select = 17;    // {G17,G18,G19} 
                                              // uint8_t cutter_comp;  // {G40} NOTE: Don't track. Only default supported. 
-            public double tool_length = 0;       // {G43.1,G49} 
+            public float tool_length = 0;       // {G43.1,G49} 
             public int coord_select = 54;    // {G54,G55,G56,G57,G58,G59} 
                                              // uint8_t control;      // {G61} NOTE: Don't track. Only default supported. 
             public int program_flow = 0;    // {M0,M1,M2,M30} 
@@ -274,8 +610,8 @@ namespace Assets.Scripts
             public int spindle = 5;         // {M3,M4,M5} 
             public bool toolchange = false;
             public int tool = 0;            // tool number
-            public double FR = 0;           // feedrate
-            public double SS = 0;           // spindle speed
+            public float FR = 0;           // feedrate
+            public float SS = 0;           // spindle speed
             public bool TLOactive = false;// Tool length offset
 
             public void reset()
@@ -292,9 +628,9 @@ namespace Assets.Scripts
 
         public struct xyArcPoint
         {
-            public double X, Y, CX, CY;
+            public float X, Y, CX, CY;
             public byte mode;
-            public xyArcPoint(double x, double y, double cx, double cy, byte m)
+            public xyArcPoint(float x, float y, float cx, float cy, byte m)
             {
                 X = x; Y = y; CX = cx; CY = cy; mode = m;
             }
@@ -304,7 +640,7 @@ namespace Assets.Scripts
             }
             public xyArcPoint(Point tmp)
             {
-                X = tmp.X; Y = tmp.Y; CX = 0; CY = 0; mode = 0;
+                X = float.Parse(tmp.X.ToString()); Y = float.Parse(tmp.Y.ToString()); CX = 0; CY = 0; mode = 0;
             }
             public xyArcPoint(xyzPoint tmp)
             {
@@ -323,8 +659,8 @@ namespace Assets.Scripts
 
         public xyPoint getCenter()
         {
-            double cx = minx + ((maxx - minx) / 2);
-            double cy = miny + ((maxy - miny) / 2);
+            float cx = minx + ((maxx - minx) / 2);
+            float cy = miny + ((maxy - miny) / 2);
             return new xyPoint(cx, cy);
         }
 
@@ -334,19 +670,19 @@ namespace Assets.Scripts
             string x = String.Format("X:{0,8:####0.000} |{1,8:####0.000}\r\n", minx, maxx);
             string y = String.Format("Y:{0,8:####0.000} |{1,8:####0.000}\r\n", miny, maxy);
             string z = String.Format("Z:{0,8:####0.000} |{1,8:####0.000}", minz, maxz);
-            if ((minx == Double.MaxValue) || (maxx == Double.MinValue))
+            if ((minx == float.MaxValue) || (maxx == float.MinValue))
                 x = "X: unknown | unknown\r\n";
-            if ((miny == Double.MaxValue) || (maxy == Double.MinValue))
+            if ((miny == float.MaxValue) || (maxy == float.MinValue))
                 y = "Y: unknown | unknown\r\n";
-            if ((minz == Double.MaxValue) || (maxz == Double.MinValue))
+            if ((minz == float.MaxValue) || (maxz == float.MinValue))
                 z = "";// z = "Z: unknown | unknown";
             return "    Min.   | Max.\r\n" + x + y + z;
         }
 
         public struct xyzPoint
         {
-            public double X, Y, Z, A, B, C;
-            public xyzPoint(double x, double y, double z, double a = 0)
+            public float X, Y, Z, A, B, C;
+            public xyzPoint(float x, float y, float z, float a = 0)
             { X = x; Y = y; Z = z; A = a; B = 0; C = 0; }
             // Overload + operator 
             public static xyzPoint operator +(xyzPoint b, xyzPoint c)
@@ -373,7 +709,7 @@ namespace Assets.Scripts
             }
             public static bool AlmostEqual(xyzPoint a, xyzPoint b)
             {
-                //     return (Math.Abs(a.X - b.X) <= grbl.resolution) && (Math.Abs(a.Y - b.Y) <= grbl.resolution) && (Math.Abs(a.Z - b.Z) <= grbl.resolution);
+                //     return (Mathf.Abs(a.X - b.X) <= grbl.resolution) && (Mathf.Abs(a.Y - b.Y) <= grbl.resolution) && (Mathf.Abs(a.Z - b.Z) <= grbl.resolution);
                 return (gcode.isEqual(a.X, b.X) && gcode.isEqual(a.Y, b.Y) && gcode.isEqual(a.Z, b.Z));
             }
 
@@ -401,7 +737,7 @@ namespace Assets.Scripts
                 private static Dictionary<string, xyzPoint> coordinates = new Dictionary<string, xyzPoint>();    // keep []-settings
 
                 private static xyPoint _posMarker = new xyPoint(0, 0);
-                private static double _posMarkerAngle = 0;
+                private static float _posMarkerAngle = 0;
                 private static xyPoint _posMarkerOld = new xyPoint(0, 0);
                 public static xyPoint posMarker
                 {
@@ -420,7 +756,7 @@ namespace Assets.Scripts
                     set
                     { _posMarkerOld = value; }
                 }
-                public static double posMarkerAngle
+                public static float posMarkerAngle
                 {
                     get
                     { return _posMarkerAngle; }
@@ -437,7 +773,7 @@ namespace Assets.Scripts
                 //        public static bool isVers0 = true;
                 //        public List<string> GRBLSettings = new List<string>();  // keep $$ settings
 
-                public static double resolution = 0.000001;
+                public static float resolution = 0.000001f;
 
                 public static Dictionary<string, string> messageAlarmCodes = new Dictionary<string, string>();
                 public static Dictionary<string, string> messageErrorCodes = new Dictionary<string, string>();
@@ -557,7 +893,7 @@ namespace Assets.Scripts
                     char cmd = '\0';
                     string num = "";
                     bool comment = false;
-                    double value = 0;
+                    float value = 0;
                     getTLO = false;
                     myParserState.changed = false;
 
@@ -580,7 +916,7 @@ namespace Assets.Scripts
                                             value = 0;
                                             if (num.Length > 0)
                                             {
-                                                try { value = double.Parse(num, System.Globalization.NumberFormatInfo.InvariantInfo); }
+                                                try { value = float.Parse(num, System.Globalization.NumberFormatInfo.InvariantInfo); }
                                                 catch { }
                                             }
                                             try { setParserState(cmd, value, ref myParserState); }
@@ -597,7 +933,7 @@ namespace Assets.Scripts
                             }
                             if (cmd != '\0')
                             {
-                                try { setParserState(cmd, double.Parse(num, System.Globalization.NumberFormatInfo.InvariantInfo), ref myParserState); }
+                                try { setParserState(cmd, float.Parse(num, System.Globalization.NumberFormatInfo.InvariantInfo), ref myParserState); }
                                 catch { }
                             }
                         }
@@ -608,7 +944,7 @@ namespace Assets.Scripts
                 /// <summary>
                 /// set parser state
                 /// </summary>
-                private static void setParserState(char cmd, double value, ref pState myParserState)
+                private static void setParserState(char cmd, float value, ref pState myParserState)
                 {
                     //            myParserState.changed = false;
                     switch (Char.ToUpper(cmd))
@@ -699,30 +1035,30 @@ namespace Assets.Scripts
                     axisCount = 0;
                     if (dataValue.Length == 1)
                     {
-                        Double.TryParse(dataValue[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.Z);
+                        float.TryParse(dataValue[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.Z);
                         position.X = 0;
                         position.Y = 0;
                     }
                     if (dataValue.Length > 2)
                     {
-                        Double.TryParse(dataValue[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.X);
-                        Double.TryParse(dataValue[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.Y);
-                        Double.TryParse(dataValue[2], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.Z);
+                        float.TryParse(dataValue[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.X);
+                        float.TryParse(dataValue[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.Y);
+                        float.TryParse(dataValue[2], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.Z);
                         axisCount = 3;
                     }
                     if (dataValue.Length > 3)
                     {
-                        Double.TryParse(dataValue[3], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.A);
+                        float.TryParse(dataValue[3], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.A);
                         axisA = true; axisCount++;
                     }
                     if (dataValue.Length > 4)
                     {
-                        Double.TryParse(dataValue[4], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.B);
+                        float.TryParse(dataValue[4], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.B);
                         axisB = true; axisCount++;
                     }
                     if (dataValue.Length > 5)
                     {
-                        Double.TryParse(dataValue[5], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.C);
+                        float.TryParse(dataValue[5], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out position.C);
                         axisC = true; axisCount++;
                     }
                     //axisA = true; axisB = true; axisC = true;     // for test only
@@ -868,12 +1204,12 @@ namespace Assets.Scripts
         {
             return (withinLimits(actualMachine, minx - actualWorld.X, miny - actualWorld.Y) && withinLimits(actualMachine, maxx - actualWorld.X, maxy - actualWorld.Y));
         }
-        public bool withinLimits(xyzPoint actualMachine, double tstx, double tsty)
+        public bool withinLimits(xyzPoint actualMachine, float tstx, float tsty)
         {
-            double minlx = (double)CNC_Settings.machineLimitsHomeX;
-            double maxlx = minlx + (double)CNC_Settings.machineLimitsRangeX;
-            double minly = (double)CNC_Settings.machineLimitsHomeY;
-            double maxly = minly + (double)CNC_Settings.machineLimitsRangeY;
+            float minlx = (float)CNC_Settings.machineLimitsHomeX;
+            float maxlx = minlx + (float)CNC_Settings.machineLimitsRangeX;
+            float minly = (float)CNC_Settings.machineLimitsHomeY;
+            float maxly = minly + (float)CNC_Settings.machineLimitsRangeY;
             tstx += actualMachine.X;
             tsty += actualMachine.Y;
             if ((tstx < minlx) || (tstx > maxlx))
@@ -885,78 +1221,83 @@ namespace Assets.Scripts
     }
     class gcodeMath
     {
-        private static double precision = 0.00001;
+        private static float precision = 0.00001f;
 
         public static bool isEqual(Point a,Point b)
-        { return ((Math.Abs(a.X - b.X) < precision) && (Math.Abs(a.Y - b.Y) < precision)); }
+        { return ((Mathf.Abs(float.Parse(a.X.ToString()) - float.Parse(b.X.ToString())) < precision) && (Mathf.Abs(float.Parse(a.Y.ToString()) - float.Parse(b.Y.ToString())) < precision)); }
         public static bool isEqual(xyPoint a, xyPoint b)
-        { return ((Math.Abs(a.X - b.X) < precision) && (Math.Abs(a.Y - b.Y) < precision)); }
+        { return ((Mathf.Abs(a.X - b.X) < precision) && (Mathf.Abs(a.Y - b.Y) < precision)); }
 
-        public static double distancePointToPoint(Point a, Point b)
-        { return Math.Sqrt(((a.X - b.X) * (a.X - b.X)) + ((a.Y - b.Y) * (a.Y - b.Y))); }
+        public static float distancePointToPoint(Point a, Point b)
+        {
+           float aX = float.Parse(a.X.ToString());
+            float bX = float.Parse(b.X.ToString());
+            float aY = float.Parse(a.Y.ToString());
+            float bY = float.Parse(b.Y.ToString());
+            return Mathf.Sqrt(((aX - bX) * (aX - bX)) + ((aY - bY) * (aY - bY))); }
 
-        public static ArcProperties getArcMoveProperties(xyPoint pOld, xyPoint pNew, double? I, double? J, bool isG2)
+        public static ArcProperties getArcMoveProperties(xyPoint pOld, xyPoint pNew, float? I, float? J, bool isG2)
         {
             ArcProperties tmp = getArcMoveAngle(pOld, pNew, I, J);
-            if (!isG2) { tmp.angleDiff = Math.Abs(tmp.angleEnd - tmp.angleStart + 2 * Math.PI); }
-            if (tmp.angleDiff > (2 * Math.PI)) { tmp.angleDiff -= (2 * Math.PI); }
-            if (tmp.angleDiff < (-2 * Math.PI)) { tmp.angleDiff += (2 * Math.PI); }
+            if (!isG2) { tmp.angleDiff = Mathf.Abs(tmp.angleEnd - tmp.angleStart + 2 * Mathf.PI); }
+            if (tmp.angleDiff > (2 * Mathf.PI)) { tmp.angleDiff -= (2 * Mathf.PI); }
+            if (tmp.angleDiff < (-2 * Mathf.PI)) { tmp.angleDiff += (2 * Mathf.PI); }
 
             if ((pOld.X == pNew.X) && (pOld.Y == pNew.Y))
             {
-                if (isG2) { tmp.angleDiff = -2 * Math.PI; }
-                else { tmp.angleDiff = 2 * Math.PI; }
+                if (isG2) { tmp.angleDiff = -2 * Mathf.PI; }
+                else { tmp.angleDiff = 2 * Mathf.PI; }
             }
             return tmp;
         }
 
-        public static ArcProperties getArcMoveAngle(xyPoint pOld, xyPoint pNew, double? I, double? J)
+        public static ArcProperties getArcMoveAngle(xyPoint pOld, xyPoint pNew, float? I, float? J)
         {
             ArcProperties tmp;
             if (I == null) { I = 0; }
             if (J == null) { J = 0; }
-            double i = (double)I;
-            double j = (double)J;
-            tmp.radius = Math.Sqrt(i * i + j * j);  // get radius of circle
+            float i = (float)I;
+            float j = (float)J;
+            tmp.radius = Mathf.Sqrt(i * i + j * j);  // get radius of circle
             tmp.center.X = pOld.X + i;
             tmp.center.Y = pOld.Y + j;
             tmp.angleStart = tmp.angleEnd = tmp.angleDiff = 0;
             if (tmp.radius == 0)
                 return tmp;
 
-            double cos1 = i / tmp.radius;
+            float cos1 = i / tmp.radius;
             if (cos1 > 1) cos1 = 1;
             if (cos1 < -1) cos1 = -1;
-            tmp.angleStart = Math.PI - Math.Acos(cos1);
+            tmp.angleStart = Mathf.PI - Mathf.Acos(cos1);
             if (j > 0) { tmp.angleStart = -tmp.angleStart; }
 
-            double cos2 = (tmp.center.X - pNew.X) / tmp.radius;
+            float cos2 = (tmp.center.X - pNew.X) / tmp.radius;
             if (cos2 > 1) cos2 = 1;
             if (cos2 < -1) cos2 = -1;
-            tmp.angleEnd = Math.PI - Math.Acos(cos2);
+            tmp.angleEnd = Mathf.PI - Mathf.Acos(cos2);
             if ((tmp.center.Y - pNew.Y) > 0) { tmp.angleEnd = -tmp.angleEnd; }
 
-            tmp.angleDiff = tmp.angleEnd - tmp.angleStart - 2 * Math.PI;
+            tmp.angleDiff = tmp.angleEnd - tmp.angleStart - 2 * Mathf.PI;
             return tmp;
         }
 
-        public static double getAlpha(Point pOld, double P2x, double P2y)
-        { return getAlpha(pOld.X, pOld.Y, P2x, P2y); }
-        public static double getAlpha(Point pOld, Point pNew)
+        public static float getAlpha(Point pOld, float P2x, float P2y)
+        { return getAlpha(float.Parse(pOld.X.ToString()), float.Parse(pOld.Y.ToString()), P2x, P2y); }
+        public static float getAlpha(Point pOld, Point pNew)
+        { return getAlpha(float.Parse(pOld.X.ToString()), float.Parse(pOld.Y.ToString()), float.Parse(pNew.X.ToString()), float.Parse(pNew.Y.ToString())); }
+        public static float getAlpha(xyPoint pOld, xyPoint pNew)
         { return getAlpha(pOld.X, pOld.Y, pNew.X, pNew.Y); }
-        public static double getAlpha(xyPoint pOld, xyPoint pNew)
-        { return getAlpha(pOld.X, pOld.Y, pNew.X, pNew.Y); }
-        public static double getAlpha(double P1x, double P1y, double P2x, double P2y)
+        public static float getAlpha(float P1x, float P1y, float P2x, float P2y)
         {
-            double s = 1, a = 0;
-            double dx = P2x - P1x;
-            double dy = P2y - P1y;
+            float s = 1, a = 0;
+            float dx = P2x - P1x;
+            float dy = P2y - P1y;
             if (dx == 0)
             {
                 if (dy > 0)
-                    a = Math.PI / 2;
+                    a = Mathf.PI / 2;
                 else
-                    a = 3 * Math.PI / 2;
+                    a = 3 * Mathf.PI / 2;
                 if (dy == 0)
                     return 0;
             }
@@ -965,38 +1306,38 @@ namespace Assets.Scripts
                 if (dx > 0)
                     a = 0;
                 else
-                    a = Math.PI;
+                    a = Mathf.PI;
                 if (dx == 0)
                     return 0;
             }
             else
             {
                 s = dy / dx;
-                a = Math.Atan(s);
+                a = Mathf.Atan(s);
                 if (dx < 0)
-                    a += Math.PI;
+                    a += Mathf.PI;
             }
             return a;
         }
 
-        public static double cutAngle = 0, cutAngleLast = 0, angleOffset = 0;
+        public static float cutAngle = 0, cutAngleLast = 0, angleOffset = 0;
         public static void resetAngles()
-        { angleOffset = cutAngle = cutAngleLast = 0.0; }
-        public static double getAngle(Point a, Point b, double offset, int dir)
+        { angleOffset = cutAngle = cutAngleLast = 0.0f; }
+        public static float getAngle(Point a, Point b, float offset, int dir)
         { return monitorAngle(getAlpha(a, b) + offset, dir); }
-        private static double monitorAngle(double angle, int direction)		// take care of G2 cw G3 ccw direction
+        private static float monitorAngle(float angle, int direction)		// take care of G2 cw G3 ccw direction
         {
-            double diff = angle - cutAngleLast + angleOffset;
+            float diff = angle - cutAngleLast + angleOffset;
             if (direction == 2)
-            { if (diff > 0) { angleOffset -= 2 * Math.PI; } }    // clock wise, more negative
+            { if (diff > 0) { angleOffset -= 2 * Mathf.PI; } }    // clock wise, more negative
             else if (direction == 3)
-            { if (diff < 0) { angleOffset += 2 * Math.PI; } }    // counter clock wise, more positive
+            { if (diff < 0) { angleOffset += 2 * Mathf.PI; } }    // counter clock wise, more positive
             else
             {
-                if (diff > Math.PI)
-                    angleOffset -= 2 * Math.PI;
-                if (diff < -Math.PI)
-                    angleOffset += 2 * Math.PI;
+                if (diff > Mathf.PI)
+                    angleOffset -= 2 * Mathf.PI;
+                if (diff < -Mathf.PI)
+                    angleOffset += 2 * Mathf.PI;
             }
             angle += angleOffset;
             return angle;
