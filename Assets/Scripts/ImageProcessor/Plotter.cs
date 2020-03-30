@@ -31,8 +31,8 @@ using UnityEngine;
 using System.Windows;
 using static Assets.Scripts.Dimensions;
 using Assets.Scripts.FontProcessor;
-using System.Drawing;
-using Point = System.Windows.Point;
+//using System.Drawing;
+
 
 public static class Plotter
 {

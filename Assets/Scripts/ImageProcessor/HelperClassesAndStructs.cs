@@ -22,14 +22,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using static Assets.Scripts.Dimensions;
 using Assets.Scripts.ImageProcessor;
-using UnityEditor.Localization.Editor;
-using UnityEngine;
 using Color = UnityEngine.Color;
 using System.Drawing;
 using Point = System.Windows.Point;

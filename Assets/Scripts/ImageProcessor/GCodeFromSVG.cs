@@ -9,8 +9,6 @@ using System.Linq;
 using Assets.Scripts.ImageProcessor;
 using System.Windows.Media;
 using System.Windows;
-using System.Drawing.Drawing2D;
-using Matrix = System.Windows.Media.Matrix;
 
 public class GCodeFromSVG : MonoBehaviour
 {

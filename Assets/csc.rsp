@@ -1,6 +1,0 @@
--r:System.Drawing.dll
--r:System.Collections.dll
--r:System.Windows.dll
--r:System.Runtime.dll
--r:WindowsBase.dll
--r:PresentationCore.dll

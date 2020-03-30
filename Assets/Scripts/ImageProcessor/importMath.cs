@@ -22,16 +22,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Drawing;
 using System.Windows;
-using System.Runtime;
 using System.Windows.Media;
-using System.Drawing;
-using Point = System.Windows.Point;
+
+
 
 namespace Assets.Scripts.ImageProcessor
 {
