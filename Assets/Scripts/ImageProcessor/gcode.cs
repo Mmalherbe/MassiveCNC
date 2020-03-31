@@ -550,7 +550,7 @@ namespace Assets.Scripts.ImageProcessor
             }*/
         public static void MoveToRapid(StringBuilder gcodeString, Point coord, string cmt = "")
         {
-            figureStart.X = coord.X; figureStart.Y = coord.Y;
+            figureStart.X = (float)coord.X; figureStart.Y = (float)coord.Y;
             segLastFinalX = segFinalX; segLastFinalY = segFinalY;
             segFinalX = (float)coord.X; segFinalY = (float)coord.X;
             figureStartAlpha = gcodeTangentialCommand;

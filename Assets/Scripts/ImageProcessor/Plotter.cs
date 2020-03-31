@@ -68,12 +68,12 @@ public static class Plotter
     private static int lastSetGroup = -1;
     private static bool gcodeTangEnable = false;
     private static string gcodeTangName = "C";
-    private static double gcodeTangTurn = 360;
+    private static float gcodeTangTurn = 360;
 
     private static Point lastGC, lastSetGC;             // store last position
     private static bool isStartPathIsPending = false;
     private static Point posStartPath;
-    private static double posStartAngle = 0;
+    private static float posStartAngle = 0;
 
     public static int PathCount { get; set; } = 0;
     public static int PathToolNr { get; set; } = 0;
@@ -100,7 +100,7 @@ public static class Plotter
         }
     }
     public static string PathComment { get; set; } = "";
-    public static double[] PathDashArray { get; set; } = { };
+    public static float[] PathDashArray { get; set; } = { };
 
     public static string DocTitle { get; set; } = "";
     public static string DocDescription { get; set; } = "";
@@ -118,7 +118,7 @@ public static class Plotter
         gcodeReduceVal = (float)CNC_Settings.importRemoveShortMovesLimit;
         gcodeTangEnable = CNC_Settings.importGCTangentialEnable;
         gcodeTangName = CNC_Settings.importGCTangentialAxis;
-        gcodeTangTurn = (double)CNC_Settings.importGCTangentialTurn;
+        gcodeTangTurn = (float)CNC_Settings.importGCTangentialTurn;
         lastSetGroup = -1;
         penIsDown = false;
 
@@ -250,7 +250,7 @@ public static class Plotter
 
         if (gcodeReduce && IsPathReduceOk)
         {
-            double distance = gcodeMath.distancePointToPoint(coordxy, lastSetGC);
+            float distance = gcodeMath.distancePointToPoint(coordxy, lastSetGC);
             if (distance < gcodeReduceVal)      // discard actual G1 movement
             { rejectPoint = true; }
         }
@@ -303,16 +303,16 @@ public static class Plotter
         bool showDashInfo = false;
         string dashInfo = "";
 
-        gcodeDimension[gcodeStringIndex].setDimensionXY(coordxy.X, coordxy.Y);
+        gcodeDimension[gcodeStringIndex].setDimensionXY((float?)coordxy.X, (float?)coordxy.Y);
 
         if (!CNC_Settings.importLineDashPattern || (PathDashArray.Length <= 1))
         { gcode.MoveTo(gcodeString[gcodeStringIndex], coordxy, cmt); }
         else
         {
             bool penUpG1 = !CNC_Settings.importLineDashPatternG0;
-            double dX = coordxy.X - lastGC.X;
-            double dY = coordxy.Y - lastGC.Y;
-            double xx = lastGC.X, yy = lastGC.Y, dd;
+            float dX = (float)coordxy.X - (float)lastGC.X;
+            float dY = (float)coordxy.Y - (float)lastGC.Y;
+            float xx = (float)lastGC.X, yy = (float)lastGC.Y, dd;
             int i = 0;
             int save = 1000;
             if (dX == 0)
@@ -384,9 +384,9 @@ public static class Plotter
             }
             else
             {
-                double dC = Math.Sqrt(dX * dX + dY * dY);
-                double fX = dX / dC;        // factor X
-                double fY = dY / dC;
+                float dC = Mathf.Sqrt(dX * dX + dY * dY);
+                float fX = dX / dC;        // factor X
+                float fY = dY / dC;
                 if (dX > 0)
                 {
                     while (xx < coordxy.X)
@@ -468,7 +468,7 @@ public static class Plotter
     public static void ArcToCCW(Point coordxy, Point coordij, string cmt)
     {
         Point center = new Point(lastGC.X + coordij.X, lastGC.Y + coordij.Y);
-        double offset = +Math.PI / 2;
+        float offset = +Mathf.PI / 2;
         if (loggerTrace) cncLogger.RealTimeLog("  Start ArcToCCW G2 X" + coordxy.X + " Y" + coordxy.Y+ " cX X" + center.X + " cY" + center.Y + " ");
 
         if (gcodeReduce && IsPathReduceOk)                  // restore last skipped point for accurat G2/G3 use
@@ -492,7 +492,7 @@ public static class Plotter
         gcodeMath.cutAngle = getAngle(coordxy, center, offset, 2);    // end angle
         if (gcodeMath.isEqual(coordxy, lastGC))             // end = start position? Full circle!
         {
-            gcodeMath.cutAngle -= 2 * Math.PI;                      // CCW 360°
+            gcodeMath.cutAngle -= 2 * Mathf.PI;                      // CCW 360°
         }
         setG2Dimension(3, coordxy, coordij);
         gcode.setTangential(gcodeString[gcodeStringIndex], 180 * gcodeMath.cutAngle / Math.PI);
@@ -506,7 +506,7 @@ public static class Plotter
     {
         Point coordxy = new Point(x, y);
         Point center = new Point(lastGC.X + i, lastGC.Y + j);
-        double offset = +Math.PI / 2;
+        float offset = +Mathf.PI / 2;
         if (loggerTrace) cncLogger.RealTimeLog("  Start Arc G"+gnr+ " X" + coordxy.X + " Y" + coordxy.Y + " cX X" + center.X + " cY" + center.Y + " ");
         if (gnr > 2) { offset = -offset; }
 
@@ -533,9 +533,9 @@ public static class Plotter
         if (gcodeMath.isEqual(coordxy, lastGC))             // end = start position? Full circle!
         {
             if (gnr > 2)
-                gcodeMath.cutAngle += 2 * Math.PI;                  // CW 360°
+                gcodeMath.cutAngle += 2 * Mathf.PI;                  // CW 360°
             else
-                gcodeMath.cutAngle -= 2 * Math.PI;                  // CCW 360°
+                gcodeMath.cutAngle -= 2 * Mathf.PI;                  // CCW 360°
         }
 
         setG2Dimension(gnr, x, y, i, j);
@@ -547,12 +547,12 @@ public static class Plotter
         lastGC = coordxy;
     }
 
-    private static void setG2Dimension(int gnr, double x, double y, double i, double j)
+    private static void setG2Dimension(int gnr, float x, float y, float i, float j)
     { setG2Dimension(gnr, new Point(x, y), new Point(i, j)); }
     private static void setG2Dimension(int gnr, Point xy, Point ij)
     {
         ArcProperties arcMove;
-        arcMove = gcodeMath.getArcMoveProperties(new xyPoint(lastSetGC), new xyPoint(xy), ij.X, ij.Y, (gnr == 2));
+        arcMove = gcodeMath.getArcMoveProperties(new xyPoint(lastSetGC), new xyPoint(xy), (float)ij.X, (float)ij.Y, (gnr == 2));
 
         float x1 = (float)(arcMove.center.X - arcMove.radius);
         float x2 = (float)(arcMove.center.X + arcMove.radius);
@@ -563,12 +563,12 @@ public static class Plotter
         float aDiff = (float)(arcMove.angleDiff * 180 / Math.PI);
         gcodeDimension[gcodeStringIndex].setDimensionCircle(arcMove.center.X, arcMove.center.Y, arcMove.radius, aStart, aDiff);        // calculate new dimensions
     }
-    private static void processTangentialAxis(double angleOld, double angleNew)
+    private static void processTangentialAxis(float angleOld, float angleNew)
     {
         if (gcodeTangEnable)
         {
-            double angleDiff = 180 * Math.Abs(angleNew - angleOld) / Math.PI;
-            double swivelAngle = (double)CNC_Settings.importGCTangentialAngle;
+            float angleDiff = 180 * Math.Abs(float.Parse(angleNew.ToString()) - float.Parse(angleOld.ToString())) / Mathf.PI;
+            float swivelAngle = (float)CNC_Settings.importGCTangentialAngle;
             if (angleDiff > swivelAngle)
             {   // do pen up, turn, pen down
                 if (penIsDown)
@@ -601,11 +601,11 @@ public static class Plotter
         }
     }
 
-    private static double getAngle(Point a, Point b, double offset, int dir)
+    private static float getAngle(Point a, Point b, float offset, int dir)
     {
         if (!gcodeTangEnable)
             return 0;
-        double w = gcodeMath.getAngle(a, b, offset, dir);           //monitorAngle(gcodeMath.getAlpha(a, b) + offset, dir);
+        float w = gcodeMath.getAngle(a, b, offset, dir);           //monitorAngle(gcodeMath.getAlpha(a, b) + offset, dir);
         if (loggerTrace) cncLogger.RealTimeLog("   getAngle p1 " + a.X +":"+ a.Y +"  p2 " + b.X + ":" + b.Y + " a "+(180 * w / Math.PI).ToString());
         return w;
     }

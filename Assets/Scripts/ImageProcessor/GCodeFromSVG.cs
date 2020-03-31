@@ -311,7 +311,7 @@ public class GCodeFromSVG : MonoBehaviour
                 Plotter.PathId = groupElement.Attribute("id").Value;
 
             Plotter.PathId = "";
-            Plotter.PathDashArray = new double[0];      // reset dash pattern
+            Plotter.PathDashArray = new float[0];      // reset dash pattern
 
             parseTransform(groupElement, true, level);   // transform will be applied in gcodeMove
             parseAttributs(groupElement);               // process color and stroke-dasharray
@@ -504,16 +504,16 @@ public class GCodeFromSVG : MonoBehaviour
             if (dasharray.Length > 2)
             {
                 if (dasharray.Contains("none"))
-                { Plotter.PathDashArray = new double[0]; }
+                { Plotter.PathDashArray = new float[0]; }
                 else
                 {
                     string[] pattern;
                     if (dasharray.Contains(",")) { pattern = dasharray.Split(','); }
                     else { pattern = dasharray.Split(' '); }
                     //  float[] dash = Array.ConvertAll(pattern, float.Parse);
-                    double tmp;
-                    double[] dash = Array.ConvertAll(pattern,
-                           s => double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out tmp) ? (tmp * (double)gcodeScale) : 0);
+                    float tmp;
+                    float[] dash = Array.ConvertAll(pattern,
+                           s => float.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out tmp) ? (tmp * (float)gcodeScale) : 0);
                     Plotter.PathDashArray = dash;
                 }
             }

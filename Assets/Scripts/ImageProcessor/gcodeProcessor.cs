@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using static Assets.Scripts.Dimensions;
 
 namespace Assets.Scripts.ImageProcessor
@@ -20,8 +21,8 @@ namespace Assets.Scripts.ImageProcessor
         private static int figureMarkerCount;
         private static int onlyZ = 0;
         private static int figureCount = 0;
-        private static int gcodeMinutes;
-        private static int gcodeDistance;
+        private static float gcodeMinutes;
+        private static float gcodeDistance;
         private static int feedXmax;
         private static int feedYmax;
         private static int feedZmax;
@@ -140,13 +141,13 @@ namespace Assets.Scripts.ImageProcessor
                 isArc = ((newLine.motionMode == 2) || (newLine.motionMode == 3));
                 if (tangentialAxisEnable)
                 {
-                    if (tangentialAxisName == "C") { newLine.alpha = Math.PI * newLine.actualPos.C / 180; }
-                    else if (tangentialAxisName == "B") { newLine.alpha = Math.PI * newLine.actualPos.B / 180; }
-                    else if (tangentialAxisName == "A") { newLine.alpha = Math.PI * newLine.actualPos.A / 180; }
-                    else if (tangentialAxisName == "Z") { newLine.alpha = Math.PI * newLine.actualPos.Z / 180; }
-                    //                    else if (tangentialAxisName == "U") { newLine.alpha = Math.PI * newLine.actualPos.U / 180; }
-                    //                    else if (tangentialAxisName == "V") { newLine.alpha = Math.PI * newLine.actualPos.V / 180; }
-                    //                    else if (tangentialAxisName == "W") { newLine.alpha = Math.PI * newLine.actualPos.W / 180; }
+                    if (tangentialAxisName == "C") { newLine.alpha = Mathf.PI * newLine.actualPos.C / 180; }
+                    else if (tangentialAxisName == "B") { newLine.alpha = Mathf.PI * newLine.actualPos.B / 180; }
+                    else if (tangentialAxisName == "A") { newLine.alpha = Mathf.PI * newLine.actualPos.A / 180; }
+                    else if (tangentialAxisName == "Z") { newLine.alpha = Mathf.PI * newLine.actualPos.Z / 180; }
+                    //                    else if (tangentialAxisName == "U") { newLine.alpha = Mathf.PI * newLine.actualPos.U / 180; }
+                    //                    else if (tangentialAxisName == "V") { newLine.alpha = Mathf.PI * newLine.actualPos.V / 180; }
+                    //                    else if (tangentialAxisName == "W") { newLine.alpha = Mathf.PI * newLine.actualPos.W / 180; }
                 }
 
                 oldLine = new gcodeByLine(newLine);                     // get copy of newLine      
@@ -190,7 +191,7 @@ namespace Assets.Scripts.ImageProcessor
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
                     {
-                        newLine.actualPos.X = (double)newLine.x;
+                        newLine.actualPos.X = (float)newLine.x;
                         if (newLine.motionMode >= 1)//if (newLine.actualPos.X != toolPos.X)            // don't add actual tool pos
                         {
                             xyzSize.setDimensionX(newLine.actualPos.X);
@@ -198,7 +199,7 @@ namespace Assets.Scripts.ImageProcessor
                     }
                     else
                     {
-                        newLine.actualPos.X = oldLine.actualPos.X + (double)newLine.x;
+                        newLine.actualPos.X =(float) oldLine.actualPos.X + (float)newLine.x;
                         if (newLine.motionMode >= 1)//if (newLine.actualPos.X != toolPos.X)            // don't add actual tool pos
                         {
                             xyzSize.setDimensionX(newLine.actualPos.X);// - toolPosX);
@@ -212,7 +213,7 @@ namespace Assets.Scripts.ImageProcessor
                 {
                     if (newLine.isdistanceModeG90)
                     {
-                        newLine.actualPos.Y = (double)newLine.y;
+                        newLine.actualPos.Y = (float)newLine.y;
                         if (newLine.motionMode >= 1)//if (newLine.actualPos.Y != toolPos.Y)            // don't add actual tool pos
                         {
                             xyzSize.setDimensionY(newLine.actualPos.Y);
@@ -220,7 +221,7 @@ namespace Assets.Scripts.ImageProcessor
                     }
                     else
                     {
-                        newLine.actualPos.Y = oldLine.actualPos.Y + (double)newLine.y;
+                        newLine.actualPos.Y = oldLine.actualPos.Y + (float)newLine.y;
                         if (newLine.motionMode >= 1)//if (newLine.actualPos.Y != toolPos.Y)            // don't add actual tool pos
                         {
                             xyzSize.setDimensionY(newLine.actualPos.Y);// - toolPosY);
@@ -234,12 +235,12 @@ namespace Assets.Scripts.ImageProcessor
                 {
                     if (newLine.isdistanceModeG90)
                     {
-                        newLine.actualPos.Z = (double)newLine.z;
+                        newLine.actualPos.Z = (float)newLine.z;
                        
                     }
                     else
                     {
-                        newLine.actualPos.Z = oldLine.actualPos.Z + (double)newLine.z;
+                        newLine.actualPos.Z = oldLine.actualPos.Z + (float)newLine.z;
                     }
                 }
                 else
@@ -248,9 +249,9 @@ namespace Assets.Scripts.ImageProcessor
                 if (newLine.a != null)
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
-                        newLine.actualPos.A = (double)newLine.a;
+                        newLine.actualPos.A = (float)newLine.a;
                     else
-                        newLine.actualPos.A = oldLine.actualPos.A + (double)newLine.a;
+                        newLine.actualPos.A = oldLine.actualPos.A + (float)newLine.a;
                 }
                 else
                     newLine.actualPos.A = oldLine.actualPos.A;
@@ -258,9 +259,9 @@ namespace Assets.Scripts.ImageProcessor
                 if (newLine.b != null)
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
-                        newLine.actualPos.B = (double)newLine.b;
+                        newLine.actualPos.B = (float)newLine.b;
                     else
-                        newLine.actualPos.B = oldLine.actualPos.B + (double)newLine.b;
+                        newLine.actualPos.B = oldLine.actualPos.B + (float)newLine.b;
                 }
                 else
                     newLine.actualPos.B = oldLine.actualPos.B;
@@ -268,9 +269,9 @@ namespace Assets.Scripts.ImageProcessor
                 if (newLine.c != null)
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
-                        newLine.actualPos.C = (double)newLine.c;
+                        newLine.actualPos.C = (float)newLine.c;
                     else
-                        newLine.actualPos.C = oldLine.actualPos.C + (double)newLine.c;
+                        newLine.actualPos.C = oldLine.actualPos.C + (float)newLine.c;
                 }
                 else
                     newLine.actualPos.C = oldLine.actualPos.C;
@@ -278,9 +279,9 @@ namespace Assets.Scripts.ImageProcessor
                 if (newLine.u != null)
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
-                        newLine.actualPos.U = (double)newLine.u;
+                        newLine.actualPos.U = (float)newLine.u;
                     else
-                        newLine.actualPos.U = oldLine.actualPos.U + (double)newLine.u;
+                        newLine.actualPos.U = oldLine.actualPos.U + (float)newLine.u;
                 }
                 else
                     newLine.actualPos.U = oldLine.actualPos.U;
@@ -288,9 +289,9 @@ namespace Assets.Scripts.ImageProcessor
                 if (newLine.v != null)
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
-                        newLine.actualPos.V = (double)newLine.v;
+                        newLine.actualPos.V = (float)newLine.v;
                     else
-                        newLine.actualPos.V = oldLine.actualPos.V + (double)newLine.v;
+                        newLine.actualPos.V = oldLine.actualPos.V + (float)newLine.v;
                 }
                 else
                     newLine.actualPos.V = oldLine.actualPos.V;
@@ -298,9 +299,9 @@ namespace Assets.Scripts.ImageProcessor
                 if (newLine.w != null)
                 {
                     if (newLine.isdistanceModeG90)  // absolute move
-                        newLine.actualPos.W = (double)newLine.w;
+                        newLine.actualPos.W = (float)newLine.w;
                     else
-                        newLine.actualPos.W = oldLine.actualPos.W + (double)newLine.w;
+                        newLine.actualPos.W = oldLine.actualPos.W + (float)newLine.w;
                 }
                 else
                     newLine.actualPos.W = oldLine.actualPos.W;
@@ -452,8 +453,8 @@ namespace Assets.Scripts.ImageProcessor
                         float markerSize = 1;
                         if (!CNC_Settings.importUnitmm)
                         { markerSize /= 25.4F; }
-                        createMarker(pathPenDown, (xyPoint)newL.actualPos, markerSize, 1, false);       // draw cross
-                        createMarker(pathPenUp, (xyPoint)newL.actualPos, markerSize, 4, false);       // draw circle
+                        createMarker(pathPenDown, (float)newL.actualPos.X, (float)newL.actualPos.Y, markerSize, 1, false);       // draw cross
+                        createMarker(pathPenUp, (float)newL.actualPos.X, (float)newL.actualPos.Y, markerSize, 4, false);       // draw circle
                         path = pathPenUp;
                         onlyZ = 0;
                         passLimit = false;
@@ -469,14 +470,14 @@ namespace Assets.Scripts.ImageProcessor
                 arcMove = gcodeMath.getArcMoveProperties((xyPoint)oldL.actualPos, (xyPoint)newL.actualPos, newL.i, newL.j, (newL.motionMode == 2));
                 centerList.Add(new coordByLine(newL.lineNumber, figureCount, arcMove.center, 0, true));
 
-                newL.distance = Math.Abs(arcMove.radius * arcMove.angleDiff);
+                newL.distance = Mathf.Abs(arcMove.radius * arcMove.angleDiff);
                 float x1 = (float)(arcMove.center.X - arcMove.radius);
                 float x2 = (float)(arcMove.center.X + arcMove.radius);
                 float y1 = (float)(arcMove.center.Y - arcMove.radius);
                 float y2 = (float)(arcMove.center.Y + arcMove.radius);
                 float r2 = 2 * (float)arcMove.radius;
-                float aStart = (float)(arcMove.angleStart * 180 / Math.PI);
-                float aDiff = (float)(arcMove.angleDiff * 180 / Math.PI);
+                float aStart = (float)(arcMove.angleStart * 180 / Mathf.PI);
+                float aDiff = (float)(arcMove.angleDiff * 180 / Mathf.PI);
                 path.AddArc(x1, y1, r2, r2, aStart, aDiff);
                 if (!newL.ismachineCoordG53)
                     xyzSize.setDimensionCircle(arcMove.center.X, arcMove.center.Y, arcMove.radius, aStart, aDiff);        // calculate new dimensions
@@ -490,28 +491,28 @@ namespace Assets.Scripts.ImageProcessor
         }
         private static void calculateProcessTime(gcodeByLine newL, gcodeByLine oldL)
         {
-            int feed = Math.Min(feedXmax, feedYmax);         // feed in mm/min
+            int feed = Mathf.Min(feedXmax, feedYmax);         // feed in mm/min
             if (newL.z != null)
-                feed = Math.Min(feed, feedZmax);                // max feed defines final speed
+                feed = Mathf.Min(feed, feedZmax);                // max feed defines final speed
             if (newL.a != null)
-                feed = Math.Min(feed, feedAmax);                // max feed defines final speed
+                feed = Mathf.Min(feed, feedAmax);                // max feed defines final speed
             if (newL.b != null)
-                feed = Math.Min(feed, feedBmax);                // max feed defines final speed
+                feed = Mathf.Min(feed, feedBmax);                // max feed defines final speed
             if (newL.c != null)
-                feed = Math.Min(feed, feedCmax);                // max feed defines final speed
+                feed = Mathf.Min(feed, feedCmax);                // max feed defines final speed
 
-            int distanceX = Math.Abs(newL.actualPos.X - oldL.actualPos.X);
-            int distanceY = Math.Abs(newL.actualPos.Y - oldL.actualPos.Y);
-            int distanceXY = Math.Max(distanceX, distanceY);
-            int distanceZ = Math.Abs(newL.actualPos.Z - oldL.actualPos.Z);
+            float distanceX = Mathf.Abs(newL.actualPos.X - oldL.actualPos.X);
+            float distanceY = Mathf.Abs(newL.actualPos.Y - oldL.actualPos.Y);
+            float distanceXY = Mathf.Max(distanceX, distanceY);
+            float distanceZ = Mathf.Abs(newL.actualPos.Z - oldL.actualPos.Z);
 
             if (newL.motionMode > 1)
                 distanceXY = int.Parse(newL.distance.ToString());     // Arc is calc in createDrawingPathFromGCode
 
-            int distanceAll = Math.Max(distanceXY, distanceZ);
+            float distanceAll = Mathf.Max(distanceXY, distanceZ);
 
             if (newL.motionMode > 0)
-                feed = Math.Min(feed, newL.feedRate);           // if G1,2,3 use set feed
+                feed = Mathf.Min(feed, newL.feedRate);           // if G1,2,3 use set feed
 
             gcodeDistance += distanceAll;
             gcodeMinutes += distanceAll / feed;
