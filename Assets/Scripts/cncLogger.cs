@@ -36,7 +36,7 @@ public static class cncLogger
 
     public static void RealTimeLog(object text)
     {
-        throw new System.NullReferenceException();
+        Debug.Log(text);
     }
     public static void Warn(object text)
     {

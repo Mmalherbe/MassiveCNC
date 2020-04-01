@@ -108,6 +108,7 @@ namespace Assets.Scripts.ImageProcessor
                 points[2] = new Point((endpointX + dxe), (endpointY + dye));
                 points[3] = new Point(endpointX, endpointY);
                 var b = GetBezierApproximation(points, (int)CNC_Settings.importBezierLineSegmentsCnt);
+                if(b == null) { return; }
                 for (int k = 1; k < b.Points.Count; k++)
                     moveTo(b.Points[k], "arc"); //svgMoveTo(b.Points[k], "arc");
 
@@ -159,15 +160,23 @@ namespace Assets.Scripts.ImageProcessor
         private static Point[] points;
         public static PolyLineSegment GetBezierApproximation(Point[] controlPoints, int outputSegmentCount)
         {
-            Point[] points = new Point[outputSegmentCount + 1];
-            for (int i = 0; i <= outputSegmentCount; i++)
+            try
             {
-                double t = (double)i / outputSegmentCount;
-                points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
+                Point[] points = new Point[outputSegmentCount + 1];
+                for (int i = 0; i <= outputSegmentCount; i++)
+                {
+                    float t = (float)i / outputSegmentCount;
+                    points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
+                }
+                return new PolyLineSegment(points, true);
             }
-            return new PolyLineSegment(points, true);
+            catch(InvalidProgramException e) {
+                Console.WriteLine(e.ToString());
+                return null;
+            }
+        
         }
-        private static Point GetBezierPoint(double t, Point[] controlPoints, int index, int count)
+        private static Point GetBezierPoint(float t, Point[] controlPoints, int index, int count)
         {
             if (count == 1)
                 return controlPoints[index];

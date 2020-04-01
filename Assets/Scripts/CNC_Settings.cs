@@ -5,73 +5,74 @@ using static Assets.Scripts.Dimensions;
 
 public static class CNC_Settings 
 {
-    public static int importBezierLineSegmentsCnt; // Amount of linesegments per Bezier
-    public static bool importResizeSVG; // Resize the SVG ?
-    public static float importSVGMaxSize; // Max size SVG
-    public static bool importSVGPathClose; // Close the SVG path?
-    public static bool importSVGToMM;  // Import SVG To MM
-    public static bool importSVGNodesOnly; // Only import SVG nodes
-    public static bool importSVGGroups; // Import SVG groups
-    internal static double importGCTangentialTurn; // Amount of turns per tangetial in GC
-    internal static double machineLimitsHomeX; // Home pos X
-    internal static double machineLimitsRangeX; // Max pos X
-    internal static double machineLimitsHomeY; // Home Pos Y
-    internal static double machineLimitsRangeY; // Max pos Y
-    internal static float importGCLineSegmentLength;
-    internal static bool importGCLineSegmentEquidistant;
-    internal static string importGCHeader;
-    internal static bool importUnitGCode;
-    internal static bool importUnitmm;
-    internal static string importGCFooter;
-    internal static int importRepeatCnt;
-    internal static bool grblTranslateMessage;
-    internal static bool ctrl4thUse;
-    internal static string ctrl4thName;
-    internal static bool importLineDashPattern;
-    internal static bool importLineDashPatternG0;
-    internal static double importGCTangentialAngle;
-    internal static bool importRepeatEnable;
-    internal static string useCaseLastLoaded;
-    internal static string importGCTangentialAxis;
-    internal static bool importGCTangentialEnable;
-    internal static float importRemoveShortMovesLimit;
-    internal static bool importRemoveShortMovesEnable;
-    internal static bool importGroupSortInvert;
-    internal static bool importPauseBeforePenDown;
-    internal static bool importPauseBeforePath;
-    internal static int importGCDecPlaces;
-    internal static float importGCXYFeed;
-    internal static bool importGCZEnable; // IS Z-AXIS ENABLED ( UP DOWN)
-    internal static float importGCZUp;
-    internal static float importGCZDown;
-    internal static float importGCZFeed;
-    internal static bool importGCTTZAxis;
-    internal static float importGCZIncrement;
-    internal static bool importGCZIncStartZero;
-    internal static bool importGCSpindleToggle;
-    internal static bool importGCPWMEnable;
-    internal static float importGCPWMUp;
-    internal static float importGCPWMDlyUp;
-    internal static float importGCPWMDown;
-    internal static float importGCPWMDlyDown;
-    internal static bool importGCIndEnable;
-    internal static string importGCIndPenUp;
-    internal static string importGCIndPenDown;
-    internal static float importGCSegment;
-    internal static bool importGCSubEnable; // enable sub routines in g-code?
-    internal static bool importGCLineSegmentation;
-    internal static bool importGCSubFirst; // subroutines in g-code first before the rest?
-    internal static string importGCSubroutine;
-    internal static int feedYmax;
-    internal static int feedXmax;
-    internal static int feedZmax;
-    internal static int feedAmax;
-    internal static int feedBmax;
-    internal static int feedCmax;
+    public static int importBezierLineSegmentsCnt = 12; // Amount of linesegments per Bezier
+    public static bool importResizeSVG =false; // Resize the SVG ?
+    public static float importSVGMaxSize = 100; // Max size SVG
+    public static bool importSVGPathClose = false; // Close the SVG path?
+    public static bool importSVGToMM = false;  // Import SVG To MM
+    public static bool importSVGNodesOnly = false; // Only import SVG nodes
+    public static bool importSVGGroups = false; // Import SVG groups
+    internal static double importGCTangentialTurn = 360; // Amount of turns per tangetial in GC
+    internal static double machineLimitsHomeX = 0; // Home pos X
+    internal static double machineLimitsRangeX = 200; // Max pos X
+    internal static double machineLimitsHomeY = 0; // Home Pos Y
+    internal static double machineLimitsRangeY = 200; // Max pos Y
+    internal static float importGCLineSegmentLength = 10;
+    internal static bool importGCLineSegmentEquidistant = false;
+    internal static string importGCHeader = "G54; ";
+    internal static bool importUnitGCode = false;
+    internal static bool importUnitmm = true;
+    internal static string importGCFooter = "M30";
+    internal static int importRepeatCnt =2;
+    internal static bool grblTranslateMessage = false;
+    internal static bool ctrl4thUse = false;
+    internal static string ctrl4thName = "A";
+    internal static bool importLineDashPattern = false;
+    internal static bool importLineDashPatternG0 = false;
+    internal static double importGCTangentialAngle = 30;
+    internal static bool importRepeatEnable = false;
+    internal static string useCaseLastLoaded = "?";
+    internal static string importGCTangentialAxis = "A";
+    internal static bool importGCTangentialEnable= false;
+    internal static float importRemoveShortMovesLimit = 0.1f;
+    internal static bool importRemoveShortMovesEnable = true;
+    internal static bool importGroupSortInvert = false;
+    internal static bool importPauseBeforePenDown = true;
+    internal static bool importPauseBeforePath = true;
+    internal static int importGCDecPlaces =2000;
+    internal static bool importGCZEnable = true; // IS Z-AXIS ENABLED ( UP DOWN)
+    internal static float importGCZUp = 2;
+    internal static float importGCZDown = -2;
+    internal static float importGCZFeed = 1000;
+    internal static bool importGCTTZAxis = false;
+    internal static float importGCZIncrement =1;
+    internal static bool importGCZIncStartZero = false;
+    internal static bool importGCSpindleToggle = false;
+    internal static bool importGCPWMEnable = false;
+    internal static float importGCPWMUp = 200;
+    internal static float importGCPWMDlyUp = 0;
+    internal static float importGCPWMDown =800;
+    internal static float importGCPWMDlyDown = 0;
+    internal static bool importGCIndEnable = false;
+    internal static string importGCIndPenUp = "(Pen Up command);(Cmd2)";
+    internal static string importGCIndPenDown = "(Pen Down command);(Cmd2)";
+    internal static float importGCSegment = 1;
+    internal static bool importGCSubEnable = false; // enable sub routines in g-code?
+    internal static bool importGCLineSegmentation = false;
+    internal static bool importGCSubFirst = false; // subroutines in g-code first before the rest?
+    internal static string importGCSubroutine = "data\\scripts\\subroutine.nc";
+    internal static int feedYmax = 100;
+    internal static int feedXmax = 100;
+    internal static int feedZmax = 100;
+    internal static int feedAmax = 100;
+    internal static int feedBmax = 100;
+    internal static int feedCmax = 100;
+    internal static float importGCXYFeed = 2000;
     internal static xyzPoint homePos;
-    internal static float rotarySubstitutionDiameter;
-    internal static bool ctrl4thInvert;
-    internal static bool ctrl4thOverX;
+    internal static float rotarySubstitutionDiameter = 20;
+    internal static bool ctrl4thInvert = false;
+    internal static bool ctrl4thOverX = false;
+   
 
     public static class datapath
     {

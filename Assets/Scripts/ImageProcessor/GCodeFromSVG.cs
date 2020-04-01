@@ -70,31 +70,12 @@ public class GCodeFromSVG : MonoBehaviour
 
         if (file == "")
         { cncLogger.Log("Empty file name"); return ""; }
-        if (file.Substring(0, 4) == "http")
-        {
-            string content = "";
-            using (var wc = new System.Net.WebClient())
-            {
-                try { content = wc.DownloadString(file); }
-                catch { cncLogger.Log("Could not load content from " + file); return ""; }
-            }
-            if ((content != "") && (content.IndexOf("<?xml") == 0))
-            {
-                byte[] byteArray = Encoding.UTF8.GetBytes(content);
-                MemoryStream stream = new MemoryStream(byteArray);
-                svgCode = XElement.Load(stream, LoadOptions.None);
-                System.Windows.Clipboard.SetData("image/svg+xml", stream);
-                return convertSVG(svgCode, file);                   // startConvert(svgCode);
-            }
-            else
-                cncLogger.Log("This is probably not a SVG document.\r\nFirst line: " + content.Substring(0, 50));
-        }
-        else
-        {
+
             if (File.Exists(file))
             {
                 try
                 {
+                cncLogger.Log("File exists.");
                     svgCode = XElement.Load(file, LoadOptions.None);    // PreserveWhitespace);
                     return convertSVG(svgCode, file);                   // startConvert(svgCode);
                 }
@@ -105,8 +86,6 @@ public class GCodeFromSVG : MonoBehaviour
                 }
             }
             else { cncLogger.Log("File does not exist: " + file); return ""; }
-        }
-        return "";
     }
 
     private static string convertSVG(XElement svgCode, string txt)
