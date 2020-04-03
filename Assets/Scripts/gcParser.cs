@@ -25,7 +25,7 @@ public class gcParser : MonoBehaviour
     public LineRenderer ZAxis;
     [HideInInspector] public string GCode;
     public bool FileLoaded;
-    public List<gcLine> lineList;
+    public List<gcLine> lineList = new List<gcLine>();
     // Initializing start values
     void Start()
     {
@@ -59,18 +59,19 @@ public class gcParser : MonoBehaviour
     }
     public void Parse()
     {//This will split the string into seperate parts into an array
-        SplittedGCode = GCode.Split(new string[] { " ", "\n", "" }, StringSplitOptions.RemoveEmptyEntries);
+        SplittedGCode = GCode.Replace("\r","").Split(new string[] { " ", "\n", "" }, StringSplitOptions.RemoveEmptyEntries);
         Organize();
     }
     void Organize()
     {//Initializing arrays to fill
         GCodeTabel = new string[SplittedGCode.Length, 14];
-        lineList.Clear();
         for (int i = 0;i < SplittedGCode.Length;i++)
         {//This checks what kind of g-statement it is 
+            
             if (SplittedGCode[i].StartsWith("G"))
             {
                 b++;
+                lineList.Add(new gcLine());
                 //every g is placed in a new column of the array
                 GCodeTabel[b - 1, 0] = SplittedGCode[i];
                 //places the code in the riht position of the array

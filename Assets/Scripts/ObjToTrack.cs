@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using TMPro;
+
 public class ObjToTrack : MonoBehaviour
 {
     public gcParser gcParser;
     public ObjectTracker Tracker;
-    public GameObject objToTrack;
-    public Text current;
+    public TextMeshProUGUI current;
+    [SerializeField] private GameObject Parent;
     // Update is called once per frame
     void Update()
     {
@@ -14,9 +16,9 @@ public class ObjToTrack : MonoBehaviour
         if (gcParser.FileLoaded == true)
         {
             current.text =
-                "X:" + objToTrack.transform.position.x + "\n" +
-                "Y:" + objToTrack.transform.position.z + "\n" +
-                "Z:" + objToTrack.transform.position.y + "\n" +
+                "X:" + (transform.localPosition.x )+ "\n" +
+                "Y:" + ( transform.localPosition.z )+ "\n" +
+                "Z:" + ( transform.localPosition.y )+ "\n" +
                 "Speed: " + Tracker.Speed + " mm/s ";
         }
     }

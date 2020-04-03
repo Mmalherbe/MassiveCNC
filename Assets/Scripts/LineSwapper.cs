@@ -10,7 +10,7 @@ public class LineSwapper : MonoBehaviour
     // Use this for initialization
     void Start () {
         //initialisez the position of this specific line
-        Line.SetPosition (0, origin.position);
-        Line.SetPosition(1, destination.position);
+        Line.SetPosition (0, origin.localPosition);
+        Line.SetPosition(1, destination.localPosition);
            
     }}
