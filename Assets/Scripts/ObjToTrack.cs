@@ -9,6 +9,8 @@ public class ObjToTrack : MonoBehaviour
     public ObjectTracker Tracker;
     public TextMeshProUGUI current;
     [SerializeField] private GameObject Parent;
+    [SerializeField] internal bool DoneWithLine = true;
+    [SerializeField] private float speed = 1f;
     // Update is called once per frame
     void Update()
     {
@@ -22,4 +24,49 @@ public class ObjToTrack : MonoBehaviour
                 "Speed: " + Tracker.Speed + " mm/s ";
         }
     }
+    public void MoveStraight(Vector3 endPos)
+    {
+        if (DoneWithLine)
+        {
+            DoneWithLine = false;
+            StartCoroutine(StraightMove( endPos));
+        }
+        
+    }
+    public void MoveArc(Vector3 endPoint,Vector3 rotatePoint,bool cww)
+    {
+        if (DoneWithLine)
+        {
+            DoneWithLine = false;
+            StartCoroutine(ArcMove(endPoint,rotatePoint,cww));
+        }
+    }
+    IEnumerator ArcMove(Vector3 end,Vector3 rotatePoint,bool cww)
+    {
+
+        float distanceThreshold = 0.1f;
+        while (Vector3.Distance(transform.localPosition, end) > distanceThreshold)
+        {
+            transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * speed);
+            yield return null;
+        }
+        DoneWithLine = true;
+        yield return null;
+    }
+    IEnumerator StraightMove(Vector3 end)
+    {
+        float distanceThreshold = 0.1f;
+        while (Vector3.Distance(transform.localPosition,end) > distanceThreshold)
+        {
+            transform.localPosition = Vector3.Lerp(transform.localPosition, end, (Time.deltaTime * speed));
+            yield return null;
+        }
+        DoneWithLine = true;
+        yield return null;
+
+
+
+
+    }
+
 }
