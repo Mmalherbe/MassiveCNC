@@ -14,7 +14,7 @@ public class gcParser : MonoBehaviour
 {
     // calling upon different classes, objects and variables
     public TextMeshProUGUI GCodetext;
-    List<string> fileLinebyLine = new List<string>();
+   internal List<string> fileLinebyLine = new List<string>();
     string[,] GCodeTabel;
     int b;
     int count;
@@ -60,19 +60,29 @@ public class gcParser : MonoBehaviour
     public void Parse()
     {//This will split the string into seperate parts into an array
         fileLinebyLine.Clear();
-        foreach(string line in GCode.Split(new string[] { " ", "\n", "" }, StringSplitOptions.RemoveEmptyEntries))
+        foreach(string line in GCode.Split(new string[] { " ", "\r", "" }, StringSplitOptions.RemoveEmptyEntries))
         {
-            fileLinebyLine.Add(line.Replace("\r", ""));
+            string a = line.Replace("\r", "");
+            fileLinebyLine.Add(a);
         }
         
-        Organize();
+      //  Organize();
     }
+    /*
     void Organize()
     {//Initializing arrays to fill
+
+        foreach(string line in fileLinebyLine)
+        {
+            gcLine gcl = new gcLine();
+            
+
+
+        }
         for (int i = 0;i < fileLinebyLine.Count;i++)
         {//This checks what kind of g-statement it is 
             
-            if (SplittedGCode[i].StartsWith("G"))
+            if (fileLinebyLine[i].StartsWith("G"))
             {
                 b++;
                 lineList.Add(new gcLine());
@@ -232,4 +242,5 @@ public class gcParser : MonoBehaviour
             ZAxis.SetPosition(1, new Vector3(0, 0, (float)Zmax));
         }
     }
+    */
 }

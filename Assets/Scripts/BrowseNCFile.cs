@@ -18,6 +18,14 @@ public class BrowseNCFile : MonoBehaviour {
         //string path = EditorUtility.OpenFilePanel("Open GCode", "", "nc");
         string path = Application.dataPath + @"/examples/example.nc";
         // opens a filebrowser. The chosen files path will be stored as String
+        using (StreamReader sr = new StreamReader(path))
+        {
+            while (sr.Peek() >= 0)
+            {
+                gcParser.fileLinebyLine.Add(sr.ReadLine());
+            }
+        }
+       
         ReadText = File.ReadAllText (path); // Reads out the file on the specific path
         gcParser.GCode = ReadText; // Calls for two function of the gcParser Class
         gcParser.Parse();

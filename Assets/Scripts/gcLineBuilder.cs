@@ -22,18 +22,7 @@ public class gcLineBuilder : MonoBehaviour
     segment = 1;
     StepSize = 4000;
     }// Update is called once per frame
-    void Update () 
-    {// this code will interpret the pressing of the up or down key to change between segments of lines
-        if (Input.GetKeyDown (KeyCode.UpArrow) ) 
-        {
-            segment = segment + StepSize;
-            buildlines();
-        }
-        if (Input.GetKeyDown (KeyCode.DownArrow) ) {
-            segment = segment - StepSize;
-            buildlines();
-        }
-    }public void buildlines()
+    public void buildlines()
     {
     lines = GameObject.FindGameObjectsWithTag("gcLine");
     //this finds all the lines
