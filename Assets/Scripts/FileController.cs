@@ -3,7 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using UnityEditor;
-public class BrowseNCFile : MonoBehaviour {
+using System.Collections.Generic;
+using Assets.Scripts.classes;
+
+public class FileController : MonoBehaviour {
     // calling upon different classes, objects and variables
     public gcParser gcParser;
     public Text btn_text;
@@ -32,4 +35,25 @@ public class BrowseNCFile : MonoBehaviour {
 btn_text.text = "File Opened"; // Changes the buttontext again                      
 return;           
 }
+
+  public  void writeFile(List<gcLine> toWrite,string fileName)
+    {
+        if(Path.GetExtension(fileName) == "")
+        {
+            fileName += ".nc";
+        } 
+        string path = Path.Combine(Application.dataPath,"examples", fileName);
+        using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(path))
+        {
+            foreach (gcLine line in toWrite)
+            {
+                
+                file.WriteLine(line.ToEdingString());
+            }
+        }
+
+
+
+    }
 }

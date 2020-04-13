@@ -1,7 +1,6 @@
 ﻿// These are the libraries used in this code
-using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
+using UnityEngine;
 public class ObjectTracker : MonoBehaviour
 {// calling upon different classes, objects and variables
     public GameObject transformToTrack;
@@ -44,28 +43,46 @@ public class ObjectTracker : MonoBehaviour
             {
                 if (codeToTrack.DoneWithLine)
                 {
-                    if(gcParser.lineList[c].G == 1)
-                    if (RelativeMovement)
+                    float destx = gcParser.lineList[c].X.HasValue ? gcParser.lineList[c].X.Value : 0f;
+                    float desty = gcParser.lineList[c].Y.HasValue ? gcParser.lineList[c].Y.Value : 0f;
+                    float destz = gcParser.lineList[c].Z.HasValue ? gcParser.lineList[c].Z.Value : 0f;
+                    if (gcParser.lineList[c].G == 1)
                     {
-                        destination = new Vector3(transformToTrack.transform.localPosition.x + gcParser.lineList[c].X, transformToTrack.transform.localPosition.z + gcParser.lineList[c].Z, transformToTrack.transform.localPosition.y + gcParser.lineList[c].Y);
+                        if (RelativeMovement)
+                        {
+                            destination = new Vector3(transformToTrack.transform.localPosition.x + destx, transformToTrack.transform.localPosition.z + destz, transformToTrack.transform.localPosition.y + desty);
+                        }
+                        else
+                        {
+
+                            transformToTrack.transform.SetParent(HomePositionTransform.transform);
+                            destination = new Vector3(destx, destz, desty);
+                        }
+                        codeToTrack.MoveStraight(destination);
                     }
-                    else
+                    else if (gcParser.lineList[c].G == 2 || gcParser.lineList[c].G == 3)
                     {
-                        transformToTrack.transform.SetParent(HomePositionTransform.transform); 
-                        destination = new Vector3( gcParser.lineList[c].X,  gcParser.lineList[c].Z, gcParser.lineList[c].Y);
+                        float desti = gcParser.lineList[c].I.HasValue ? gcParser.lineList[c].I.Value : 0f;
+                        float destj = gcParser.lineList[c].J.HasValue ? gcParser.lineList[c].J.Value : 0f;
+                        if (RelativeMovement)
+                        {
+                            bool CW = gcParser.lineList[c].G == 2;
+                            Vector3 rotatePoint = new Vector3(transformToTrack.transform.localPosition.x +desti, transformToTrack.transform.localPosition.z + destj, transformToTrack.transform.localPosition.y);
+                            destination = new Vector3(transformToTrack.transform.localPosition.x + destx, transformToTrack.transform.localPosition.z + destz, transformToTrack.transform.localPosition.y + desty);
+                            codeToTrack.MoveArc(destination, rotatePoint, CW);
+                        }
+                        else
+                        {
+                            bool CW = gcParser.lineList[c].G == 2;
+                            Vector3 rotatePoint = new Vector3(transformToTrack.transform.localPosition.x + desti, transformToTrack.transform.localPosition.z + destj, transformToTrack.transform.localPosition.y);
+                            destination = new Vector3( destx,  destz,  desty);
+                            codeToTrack.MoveArc(destination, rotatePoint, CW);
+                        }
+
                     }
-                    else if(gcParser.lineList[c].G == 2 || gcParser.lineList[c].G == 3)
-                    {
-                        bool CW = gcParser.lineList[c].G == 2;
-                        Vector3 rotatePoint = new Vector3(transformToTrack.transform.localPosition.x + gcParser.lineList[c].I, transformToTrack.transform.localPosition.z + gcParser.lineList[c].J, transformToTrack.transform.localPosition.y);
-                        destination = new Vector3(gcParser.lineList[c].X, gcParser.lineList[c].Z, gcParser.lineList[c].Y);
-                        codeToTrack.MoveArc(destination,rotatePoint,CW);
 
 
-                    }
 
-
-                    codeToTrack.MoveStraight(destination);
                     yield return null;
                 }
                 yield return new WaitUntil(() => codeToTrack.DoneWithLine == true);
