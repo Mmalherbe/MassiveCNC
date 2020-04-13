@@ -13,6 +13,7 @@ public class gcLineBuilder : MonoBehaviour
     public GameObject LinePrefab;
     public GameObject LinePlaceHolder;
     public TextMeshProUGUI counter;
+    [SerializeField] private GameObject HomePositionObj;
     Transform origin;
     Transform destination;
     int i;
@@ -47,7 +48,7 @@ public class gcLineBuilder : MonoBehaviour
             if (gcParser.lineList[i].G == 0 || gcParser.lineList[i].G == 1)
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
-                line.transform.position = LinePlaceHolder.transform.position;
+                line.transform.localPosition = LinePlaceHolder.transform.localPosition;
                 line.transform.GetChild(0).localPosition = new Vector3((float)gcParser.lineList[i - 1].X, (float)gcParser.lineList[i - 1].Z, (float)gcParser.lineList[i - 1].Y);
                 line.transform.GetChild(1).localPosition = new Vector3((float)gcParser.lineList[i].X, (float)gcParser.lineList[i].Z, (float)gcParser.lineList[i].Y);
                 // if it is a rapidpositioning statement it will be made green
@@ -59,7 +60,7 @@ public class gcLineBuilder : MonoBehaviour
                 }
             }
         }//this updates the countertext
-        counter.text = "G-Code regel: " + segment + " - " + (segment + StepSize);
+        LinePlaceHolder.transform.localPosition = HomePositionObj.transform.localPosition;
     }
     public void showOutLinesFromPoints(List<Coords> coordList)
     {
@@ -90,7 +91,7 @@ public class gcLineBuilder : MonoBehaviour
                     linerenderer.endColor = (Color.green);
                 
             }
-           
+            LinePlaceHolder.transform.position = HomePositionObj.transform.position;
         }
 
     }
