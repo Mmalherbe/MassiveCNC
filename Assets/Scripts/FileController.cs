@@ -11,15 +11,11 @@ public class FileController : MonoBehaviour {
     public gcParser gcParser;
     public Text btn_text;
     string ReadText ;
-    public void Clicked () {
-        //This code will change the text of the button and call for the openfile function
+
+    public void openfile(){
         btn_text.text = "opening File";
-        openfile ();
-        return;
-    }
-    void openfile(){
-        //string path = EditorUtility.OpenFilePanel("Open GCode", "", "nc");
-        string path = Application.dataPath + @"/examples/example.nc";
+        string path = EditorUtility.OpenFilePanel("Open GCode", "", "nc");
+        //string path = Application.dataPath + @"/examples/example.nc";
         // opens a filebrowser. The chosen files path will be stored as String
         using (StreamReader sr = new StreamReader(path))
         {
@@ -31,7 +27,7 @@ public class FileController : MonoBehaviour {
        
         ReadText = File.ReadAllText (path); // Reads out the file on the specific path
         gcParser.GCode = ReadText; // Calls for two function of the gcParser Class
-        gcParser.Parse();
+        gcParser.ParseFromGcodeFile();
 btn_text.text = "File Opened"; // Changes the buttontext again                      
 return;           
 }

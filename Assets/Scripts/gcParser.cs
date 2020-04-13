@@ -15,57 +15,19 @@ using FontStyle = System.Drawing.FontStyle;
 
 public class gcParser : MonoBehaviour
 {
-    // calling upon different classes, objects and variables
-    public TextMeshProUGUI GCodetext;
+
     internal List<string> fileLinebyLine = new List<string>();
-    string[,] GCodeTabel;
-    int b;
-    int count;
-    public int c;
+    public int c = 1;
     public gcLineBuilder Linebuilder;
     public LineRenderer XAxis;
     public LineRenderer YAxis;
     public LineRenderer ZAxis;
     [HideInInspector] public string GCode;
-    public bool FileLoaded;
+    public bool FileLoaded = false;
     public List<gcLine> lineList = new List<gcLine>();
+    private int b = 0;
+    [SerializeField] private GameObject HomePositionObj;
 
-    // Initializing start values
-    void Start()
-    {
-        FileLoaded = false;
-        c = 1;
-        b = 0;
-        count = 0;
-    }
-    void Update()
-    {
-        //This will show the current g-code statement the X-Carve or tracker is working with
-        if (FileLoaded == true && 1==2)
-        {
-            GCodetext.text =
-            "G:" + lineList[c].G + "\n" +
-            "X:" + lineList[c].X + "\n" +
-            "Y:" + lineList[c].Y + "\n" +
-            "Z:" + lineList[c].Z + "\n" +
-            "F:" + lineList[c].F + "\n" +
-            "I:" + lineList[c].I + "\n" +
-            "J:" + lineList[c].J + "\n" +
-            "K:" + lineList[c].K + "\n" +
-            "L:" + lineList[c].L + "\n" +
-            "N:" + lineList[c].N + "\n" +
-            "P:" + lineList[c].P + "\n" +
-            "R:" + lineList[c].R + "\n" +
-            "S:" + lineList[c].S + "\n" +
-            "T:" + lineList[c].T + "\n" + count;
-
-        }
-    }
-    public void Parse()
-    {//This will split the string into seperate parts into an array
-
-        Organize();
-    }
 
 
     string getValue(string gCodeLine, string letter, string splitAt)
@@ -77,7 +39,7 @@ public class gcParser : MonoBehaviour
             return gCodeLine.Substring(index);
         return gCodeLine.Substring(index, length - index);
     }
-    void Organize()
+   internal void ParseFromGcodeFile()
     {//Initializing arrays to fill
         int c = -1; // counter for line number
         foreach (string line in fileLinebyLine)
@@ -101,23 +63,25 @@ public class gcParser : MonoBehaviour
             lineList.Add(gcl);
         }
          lineList = fill(lineList);
-        FileLoaded = true;
-        poep();
-     //   Linebuilder.buildlinesFromGcode();
+        FileLoaded = true;   
+        Linebuilder.buildlinesFromGcode();
     }
-    void poep()
+     public void ParseTextToGcode(string text)
     {
+        if (string.IsNullOrEmpty(text)) return;
         GraphicsPath path = new GraphicsPath();
 
         path.StartFigure();
 
-        path.AddString("Games-XL", new FontFamily("arial"),
-          1, 50, new Point(0, 0),
+        path.AddString(text, new FontFamily("arial"),
+          1, 50, new Point(Mathf.RoundToInt(HomePositionObj.transform.position.x), Mathf.RoundToInt(HomePositionObj.transform.position.y)),
           StringFormat.GenericTypographic);
 
         path.CloseFigure();
         PointF[] pt = path.PathPoints;
         List<Coords> coords = new List<Coords>();
+        float midX = pt.Max(x => x.X) - pt.Min(x=>x.X);
+        float midY = pt.Max(x => x.Y) - pt.Min(x => x.Y);
         foreach (PointF p in pt)
         {
             coords.Add(new Coords() { X = p.X, Y = p.Y, Z = 0 });
@@ -128,13 +92,24 @@ public class gcParser : MonoBehaviour
 
     void GenerateGcodeFromPath(List<Coords> coords)
     {
+        
         List<gcLine> gcodeFromPath = new List<gcLine>();
+        float lowestX = coords.Min(i => i.X);
+        float highestX = coords.Max(i => i.X);
+        float lowestY = coords.Min(i => i.Y);
+        float highestY = coords.Max(i => i.Y);
+        float lowestZ = coords.Min(i => i.Z);
+        float highestZ = coords.Max(i => i.Z);
+        float midX = highestX - lowestX;
+        float midY = highestY - lowestY;
+        float midZ = highestZ - lowestZ;
         foreach(Coords coord in coords)
         {
             gcLine gcl = new gcLine();
+            gcl.X = (coord.X - midX);
+            gcl.Y = coord.Y - midY;
+            gcl.Z = coord.Z - midZ;
             gcl.G = 1;
-            gcl.X = coord.X;
-            gcl.Z = coord.Y;
             gcodeFromPath.Add(gcl);
         }
         gcodeFromPath = fill(gcodeFromPath);
@@ -144,11 +119,23 @@ public class gcParser : MonoBehaviour
     List<gcLine> fill(List<gcLine> lines)
     {
         // Make sure every line has coordinates, if they don't give them the coordinates from the previous line. Where -999999 is a value given to a missing value.
-        for (int i = 0; i < lines.Count; i++)
+        for (int i = 0; i < lines.Count -1; i++)
         {
+            if(i == 0)
+            {
+                if (lines[i].X == -9999999) lines[i].X = HomePositionObj.transform.position.x;
+                if (lines[i].Y == -9999999) lines[i].Y = HomePositionObj.transform.position.z;
+                if (lines[i].Z == -9999999) lines[i].Z = HomePositionObj.transform.position.y;
+            }
             if (lines[i].X == -9999999) lines[i].X = lines[i - 1].X;
-            if (lines[i].Y == -9999999) lines[i].Y = lines[i - 1].Y;
+            if (lines[i].Y == -9999999) lines[i].Y = lines[i - 1].Y == -9999999? 0 : lines[i - 1].Y;
             if (lines[i].Z == -9999999) lines[i].Z = lines[i - 1].Z;
+        }
+        foreach(gcLine gcl in lines)
+        {
+            if (gcl.Y == -9999999) gcl.Y = 0;
+            if (gcl.Z == -9999999) gcl.Z = 0;
+            if (gcl.X == -9999999) gcl.X = 0;
         }
         return lines;
     }
