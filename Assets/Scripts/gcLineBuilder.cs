@@ -48,7 +48,7 @@ public class gcLineBuilder : MonoBehaviour
             if (gcParser.lineList[i].G == 0 || gcParser.lineList[i].G == 1)
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
-                line.transform.localPosition = LinePlaceHolder.transform.localPosition;
+                //line.transform.localPosition = LinePlaceHolder.transform.localPosition;
                 line.transform.GetChild(0).localPosition = new Vector3((float)gcParser.lineList[i - 1].X, (float)gcParser.lineList[i - 1].Z, (float)gcParser.lineList[i - 1].Y);
                 line.transform.GetChild(1).localPosition = new Vector3((float)gcParser.lineList[i].X, (float)gcParser.lineList[i].Z, (float)gcParser.lineList[i].Y);
                 // if it is a rapidpositioning statement it will be made green
@@ -70,9 +70,9 @@ public class gcLineBuilder : MonoBehaviour
             if (i == 0)
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
-                line.transform.position = LinePlaceHolder.transform.position;
-                line.transform.GetChild(0).localPosition = new Vector3((float)coordList[i].X, (float)coordList[i].Z, -(float)coordList[i].Y);
-                line.transform.GetChild(1).localPosition = new Vector3((float)coordList[i+1].X, (float)coordList[i+1].Z, -(float)coordList[i+1].Y);
+                //line.transform.position = LinePlaceHolder.transform.position;
+                line.transform.GetChild(0).position = new Vector3( (float)coordList[i].X, (float)coordList[i].Z, -(float)coordList[i].Y);
+                line.transform.GetChild(1).position = new Vector3((float)coordList[i+1].X, (float)coordList[i+1].Z, -(float)coordList[i+1].Y);
                     LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
@@ -82,8 +82,8 @@ public class gcLineBuilder : MonoBehaviour
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
                 line.transform.position = LinePlaceHolder.transform.position;
-                line.transform.GetChild(0).localPosition = new Vector3((float)coordList[i - 1].X, (float)coordList[i - 1].Z, -(float)coordList[i - 1].Y);
-                line.transform.GetChild(1).localPosition = new Vector3((float)coordList[i].X, (float)coordList[i].Z, -(float)coordList[i].Y);
+                  line.transform.GetChild(0).position = new Vector3( (float)coordList[i - 1].X, (float)coordList[i - 1].Z, -(float)coordList[i - 1].Y);
+                  line.transform.GetChild(1).position = new Vector3((float)coordList[i].X, (float)coordList[i].Z, -(float)coordList[i].Y);
                 // if it is a rapidpositioning statement it will be made green
                 
                     LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();

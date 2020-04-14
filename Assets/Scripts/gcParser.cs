@@ -16,17 +16,16 @@ using FontStyle = System.Drawing.FontStyle;
 public class gcParser : MonoBehaviour
 {
 
-    internal List<string> fileLinebyLine = new List<string>();
-    public int c = 1;
-    public gcLineBuilder Linebuilder;
-    public LineRenderer XAxis;
-    public LineRenderer YAxis;
-    public LineRenderer ZAxis;
-    [HideInInspector] public string GCode;
-    public bool FileLoaded = false;
-    public List<gcLine> lineList = new List<gcLine>();
-    private int b = 0;
+    [SerializeField] private int c = 1;
+    [SerializeField] private gcLineBuilder Linebuilder;
+    [SerializeField] private LineRenderer XAxis;
+    [SerializeField] private LineRenderer YAxis;
+    [SerializeField] private LineRenderer ZAxis;
+    [SerializeField] internal bool FileLoaded = false;
     [SerializeField] private GameObject HomePositionObj;
+    internal List<gcLine> lineList = new List<gcLine>();
+    internal List<string> fileLinebyLine = new List<string>();
+    [HideInInspector] public string GCode;
 
 
 
@@ -70,21 +69,22 @@ public class gcParser : MonoBehaviour
     {
         if (string.IsNullOrEmpty(text)) return;
         GraphicsPath path = new GraphicsPath();
-
+        List<Coords> coords = new List<Coords>();
         path.StartFigure();
 
         path.AddString(text, new FontFamily("arial"),
-          1, 50, new Point(Mathf.RoundToInt(HomePositionObj.transform.position.x), Mathf.RoundToInt(HomePositionObj.transform.position.y)),
+          1, 50, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
           StringFormat.GenericTypographic);
-
-        path.CloseFigure();
         PointF[] pt = path.PathPoints;
-        List<Coords> coords = new List<Coords>();
-        float midX = pt.Max(x => x.X) - pt.Min(x=>x.X);
-        float midY = pt.Max(x => x.Y) - pt.Min(x => x.Y);
+        float minX = pt.Min(x => x.X);
+        float minY = pt.Min(y => y.Y);
+        float maxX = pt.Max(y => y.Y);
+        float maxY = pt.Max(y => y.Y);
+        float midX = maxX - minX;
+        float midY = maxY - minY;
         foreach (PointF p in pt)
         {
-            coords.Add(new Coords() { X = p.X, Y = p.Y, Z = 0 });
+            coords.Add(new Coords() { X =  p.X -(midX/2)-(midY/2), Y =  p.Y - (midX / 2) - (midY / 2), Z = 0 });
         }
         Linebuilder.showOutLinesFromPoints(coords);
         GenerateGcodeFromPath(coords);
