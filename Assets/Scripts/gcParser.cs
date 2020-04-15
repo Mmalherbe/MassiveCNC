@@ -67,24 +67,31 @@ public class gcParser : MonoBehaviour
     }
      public void ParseTextToGcode(string text)
     {
+        int fontSize = 50;
+        int fontStyle = 1;
         if (string.IsNullOrEmpty(text)) return;
-        GraphicsPath path = new GraphicsPath();
         List<Coords> coords = new List<Coords>();
-        path.StartFigure();
-
-        path.AddString(text, new FontFamily("arial"),
-          1, 50, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
-          StringFormat.GenericTypographic);
-        PointF[] pt = path.PathPoints;
-        float minX = pt.Min(x => x.X);
-        float minY = pt.Min(y => y.Y);
-        float maxX = pt.Max(y => y.Y);
-        float maxY = pt.Max(y => y.Y);
-        float midX = maxX - minX;
-        float midY = maxY - minY;
-        foreach (PointF p in pt)
+        using (GraphicsPath path = new GraphicsPath())
         {
-            coords.Add(new Coords() { X =  p.X -(midX/2)-(midY/2), Y =  p.Y - (midX / 2) - (midY / 2), Z = 0 });
+            
+            path.StartFigure();
+            path.AddString(text + Environment.NewLine + text, new FontFamily("arial"),
+              fontStyle, fontSize, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
+              StringFormat.GenericTypographic);
+            PointF[] pt = path.PathPoints;
+            float minX = pt.Min(x => x.X);
+            float minY = pt.Min(y => y.Y);
+            float maxX = pt.Max(x => x.X);
+            float maxY = pt.Max(y => y.Y);
+            float midX = minX + ((maxX - minX) / 2);
+            float midY = minY + ((maxY - minY) / 2);
+
+            Debug.Log("Min X : " + minX + " ,Max X : " + maxX + " , Mid X : " + midX);
+            Debug.Log("Min Y : " + minY + " ,Max Y : " + maxY + " , Mid Y : " + midY);
+            foreach (PointF p in pt)
+            {
+                coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0 });
+            }
         }
         Linebuilder.showOutLinesFromPoints(coords);
         GenerateGcodeFromPath(coords);
