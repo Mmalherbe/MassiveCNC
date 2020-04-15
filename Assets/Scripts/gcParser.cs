@@ -22,6 +22,7 @@ public class gcParser : MonoBehaviour
     [SerializeField] private LineRenderer YAxis;
     [SerializeField] private LineRenderer ZAxis;
     [SerializeField] internal bool FileLoaded = false;
+    [SerializeField] internal bool StartFromHome = true;
     [SerializeField] private GameObject HomePositionObj;
     internal List<gcLine> lineList = new List<gcLine>();
     internal List<string> fileLinebyLine = new List<string>();
@@ -80,8 +81,19 @@ public class gcParser : MonoBehaviour
         float midX = highestX - lowestX;
         float midY = highestY - lowestY;
         float midZ = highestZ - lowestZ;
+        if (StartFromHome)
+        {
+            gcLine gcl = new gcLine();
+            gcl.X = HomePositionObj.transform.position.x;
+            gcl.Y = HomePositionObj.transform.position.y;
+            gcl.Z = HomePositionObj.transform.position.z;
+        }
         foreach(Coords coord in coords)
         {
+            midX = 0;
+            midY = 0;
+            midZ = 0;
+
             gcLine gcl = new gcLine();
             gcl.X = (coord.X - midX);
             gcl.Y = coord.Y - midY;

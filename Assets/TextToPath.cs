@@ -13,21 +13,21 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private gcParser Gcparser;
     [SerializeField] private int fontSize = 50;
     [SerializeField] private int fontStyle = 1;
-
+    private char[] trims = { char.Parse("\n"),char.Parse("\r") };
     public void ParseTextToGcode(string _text)
     {
 
         List<string> TextLines = _text.Split(char.Parse("\n")).ToList();
-        Dictionary<int, List<Coords>> DictLineCoords = new Dictionary<int, List<Coords>>();
+       List<TextLinePath> ListPaths = new List<TextLinePath>();
 
         for (int i = 0; i < TextLines.Count; i++)
         {
-            if(TextLines[i].Trim().Length < 1) { return; }
+            bool empty = TextLines[i] == string.Empty;
+            if (empty) { return; }
             List<Coords> coords = new List<Coords>();
             TextLinePath txtLinPath = new TextLinePath();
             using (GraphicsPath path = new GraphicsPath())
             {
-
                 path.StartFigure();
                 path.AddString(TextLines[i].Trim(char.Parse("\n")), new FontFamily("arial"),
                   fontStyle, fontSize, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
@@ -54,17 +54,33 @@ public class TextToPath : MonoBehaviour
                 txtLinPath.maxY = maxY;
 
 
-            DictLineCoords.Add(i, coords);
+            ListPaths.Add(txtLinPath);
             }
         }
 
+        float allPathsMinX = ListPaths.Min(x => x.minX);
+        float allPathsMaxX = ListPaths.Max(x => x.maxX);
+        float allPathsMinY = ListPaths.Min(x => x.minY);
+        float allPathsMaxY = ListPaths.Max(x => x.maxY);
+        float Yaap = 10f;
+
+         for(int i =1; i< ListPaths.Count; i++)
+        {
+            foreach(Coords coord in ListPaths[i].coordList)
+            {
+                coord.Y = coord.Y + ListPaths[i - 1].minY + Yaap;
+            }
+            ListPaths[i].minY = ListPaths[i].coordList.Min(x => x.Y);
+            ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
+        }
 
 
-        
+        for (int i = 0; i < ListPaths.Count; i++)
+        {
+            Linebuilder.showOutLinesFromPoints(ListPaths[i].coordList);
+            Gcparser.GenerateGcodeFromPath(ListPaths[i].coordList);
 
-        Debug.Log("displaying path for : " + DictLineCoords[0]);
-        Linebuilder.showOutLinesFromPoints(DictLineCoords[0]);
-        Gcparser.GenerateGcodeFromPath(DictLineCoords[0]);
+        }
     }
 
 }

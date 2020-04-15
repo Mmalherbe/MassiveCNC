@@ -5,6 +5,7 @@ using System.IO;
 using UnityEditor;
 using System.Collections.Generic;
 using Assets.Scripts.classes;
+using System;
 
 public class FileController : MonoBehaviour {
     // calling upon different classes, objects and variables
@@ -14,7 +15,7 @@ public class FileController : MonoBehaviour {
 
     public void openfile(){
         btn_text.text = "opening File";
-        string path = EditorUtility.OpenFilePanel("Open GCode", "", "nc");
+        string path = EditorUtility.OpenFilePanel("Open GCode", "", "cnc");
         //string path = Application.dataPath + @"/examples/example.nc";
         // opens a filebrowser. The chosen files path will be stored as String
         using (StreamReader sr = new StreamReader(path))
@@ -36,12 +37,14 @@ return;
     {
         if(Path.GetExtension(fileName) == "")
         {
-            fileName += ".nc";
+            fileName += ".cnc";
         } 
         string path = Path.Combine(Application.dataPath,"examples", fileName);
         using (System.IO.StreamWriter file =
             new System.IO.StreamWriter(path))
         {
+            file.WriteLine(";"+DateTime.Now);
+            file.WriteLine("G28");
             foreach (gcLine line in toWrite)
             {
                 

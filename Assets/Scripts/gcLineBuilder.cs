@@ -64,7 +64,7 @@ public class gcLineBuilder : MonoBehaviour
     }
     public void showOutLinesFromPoints(List<Coords> coordList)
     {
-        ClearLines();
+        //ClearLines();
         for (int i = 0; i < coordList.Count; i++)
         {
             if (i == 0)

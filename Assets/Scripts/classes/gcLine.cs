@@ -48,8 +48,8 @@ namespace Assets.Scripts.classes
             return "" + linenr +
     " " + (G != null ? "G" + G : "") +
     " " + (X != null ? "X" + X : "") +
-    " " + (Z != null ? "Y" + -Z : "") +
-    " " + (Y != null ? "Z" + Y : "") +
+    " " + (Z != null ? "Y" + -Y : "") +
+    " " + (Y != null ? "Z" + Z : "") +
     " " + (F != null ? "F" + F : "") +
     " " + (I != null ? "I" + I : "") +
     " " + (J != null ? "J" + J : "") +

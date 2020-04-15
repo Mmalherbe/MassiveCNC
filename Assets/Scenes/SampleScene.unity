@@ -1454,6 +1454,7 @@ MonoBehaviour:
   YAxis: {fileID: 20084857}
   ZAxis: {fileID: 1020634638}
   FileLoaded: 0
+  StartFromHome: 1
   HomePositionObj: {fileID: 1379538131}
   GCode: 
 --- !u!114 &566648310
@@ -1504,6 +1505,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Linebuilder: {fileID: 566648308}
   Gcparser: {fileID: 566648309}
+  fontSize: 50
+  fontStyle: 1
 --- !u!1 &600879729
 GameObject:
   m_ObjectHideFlags: 0
@@ -1607,7 +1610,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
@@ -2153,7 +2156,7 @@ MonoBehaviour:
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
-  m_isRichText: 1
+  m_isRichText: 0
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -3208,7 +3211,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_RichText: 1
+  m_RichText: 0
   m_GlobalFontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_OnFocusSelectAll: 1
   m_ResetOnDeActivation: 1
