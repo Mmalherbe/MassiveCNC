@@ -9,10 +9,11 @@ public class interactionController : MonoBehaviour
     [SerializeField] TextMeshProUGUI inputText;
     [SerializeField] gcParser gcParser;
     [SerializeField] FileController fileController;
+    [SerializeField] TextToPath TextToPath;
 
     public void ParseTextToGcode_Click()
     {
-        gcParser.ParseTextToGcode(inputText.text);
+        TextToPath.ParseTextToGcode(inputText.text);
     }
     public void ShowPathFromGcodeFile_Click()
     {

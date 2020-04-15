@@ -415,6 +415,7 @@ MonoBehaviour:
   inputText: {fileID: 911717430}
   gcParser: {fileID: 566648309}
   fileController: {fileID: 566648311}
+  TextToPath: {fileID: 566648312}
 --- !u!1 &203590882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1395,6 +1396,7 @@ GameObject:
   - component: {fileID: 566648308}
   - component: {fileID: 566648310}
   - component: {fileID: 566648311}
+  - component: {fileID: 566648312}
   m_Layer: 0
   m_Name: gcParser_controller
   m_TagString: Untagged
@@ -1488,6 +1490,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gcParser: {fileID: 566648309}
   btn_text: {fileID: 1939674543}
+--- !u!114 &566648312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566648306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e9b63c85d5e8dc478175beb36285766, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Linebuilder: {fileID: 566648308}
+  Gcparser: {fileID: 566648309}
 --- !u!1 &600879729
 GameObject:
   m_ObjectHideFlags: 0
@@ -1591,7 +1607,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
@@ -2120,7 +2136,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_textAlignment: 257
+  m_textAlignment: 258
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -3102,7 +3118,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -255, y: 156}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 160, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1679587723
 MonoBehaviour:
