@@ -17,7 +17,16 @@ public class TextToPath : MonoBehaviour
     public void ParseTextToGcode(string _text)
     {
 
-        List<string> TextLines = _text.Split(char.Parse("\n")).ToList();
+        List<string> _TextLines = _text.Split(char.Parse("\n")).ToList();
+        List<string> TextLines = new List<string>();
+        foreach(string txt in _TextLines)
+        {
+            if (txt.Length > 0)
+            {
+                TextLines.Add(txt);
+            }
+        }
+
        List<TextLinePath> ListPaths = new List<TextLinePath>();
 
         for (int i = 0; i < TextLines.Count; i++)
