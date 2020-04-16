@@ -13,13 +13,13 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private gcParser Gcparser;
     [SerializeField] private int fontSize = 50;
     [SerializeField] private int fontStyle = 1;
-    private char[] trims = { char.Parse("\n"),char.Parse("\r") };
+    private char[] trims = { char.Parse("\n"), char.Parse("\r") };
     public void ParseTextToGcode(string _text)
     {
 
         List<string> _TextLines = _text.Split(char.Parse("\n")).ToList();
         List<string> TextLines = new List<string>();
-        foreach(string txt in _TextLines)
+        foreach (string txt in _TextLines)
         {
             if (txt.Length > 0)
             {
@@ -27,7 +27,7 @@ public class TextToPath : MonoBehaviour
             }
         }
 
-       List<TextLinePath> ListPaths = new List<TextLinePath>();
+        List<TextLinePath> ListPaths = new List<TextLinePath>();
 
         for (int i = 0; i < TextLines.Count; i++)
         {
@@ -41,6 +41,7 @@ public class TextToPath : MonoBehaviour
                 path.AddString(TextLines[i].Trim(char.Parse("\n")), new FontFamily("arial"),
                   fontStyle, fontSize, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
                   StringFormat.GenericTypographic);
+                path.CloseFigure();
                 PointF[] pt = path.PathPoints;
                 float minX = pt.Min(x => x.X);
                 float minY = pt.Min(y => y.Y);
@@ -49,8 +50,7 @@ public class TextToPath : MonoBehaviour
                 float midX = minX + ((maxX - minX) / 2);
                 float midY = minY + ((maxY - minY) / 2);
 
-                Debug.Log("Min X : " + minX + " ,Max X : " + maxX + " , Mid X : " + midX);
-                Debug.Log("Min Y : " + minY + " ,Max Y : " + maxY + " , Mid Y : " + midY);
+
                 foreach (PointF p in pt)
                 {
                     coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0 });
@@ -63,7 +63,7 @@ public class TextToPath : MonoBehaviour
                 txtLinPath.maxY = maxY;
 
 
-            ListPaths.Add(txtLinPath);
+                ListPaths.Add(txtLinPath);
             }
         }
 
@@ -73,14 +73,24 @@ public class TextToPath : MonoBehaviour
         float allPathsMaxY = ListPaths.Max(x => x.maxY);
         float Yaap = 10f;
 
-         for(int i =1; i< ListPaths.Count; i++)
+        Debug.Log(0);
+        Debug.Log(0 + " Min X : " + ListPaths[0].minX + " ,Max X : " + ListPaths[0].maxX);
+        Debug.Log(0 + " Min Y : " + ListPaths[0].minY + " ,Max Y : " + ListPaths[0].maxY);
+        float allSize = 0f;
+        for (int i = 1; i < ListPaths.Count; i++)
         {
-            foreach(Coords coord in ListPaths[i].coordList)
+            Debug.Log(i);
+            Debug.Log(i + " Min X : " + ListPaths[i].minX + " ,Max X : " + ListPaths[i].maxX);
+            Debug.Log(i + " Min Y : " + ListPaths[i].minY + " ,Max Y : " + ListPaths[i].maxY);
+            allSize += (ListPaths[i - 1].maxY - ListPaths[i - 1].minY);
+            for (int j = 0; j < ListPaths[i].coordList.Count; j++)
             {
-                coord.Y = coord.Y + ListPaths[i - 1].minY + Yaap;
+                ListPaths[i].coordList[j].Y = ListPaths[i].coordList[j].Y + allSize + Yaap;
+
             }
+            ListPaths[i].maxY = ListPaths[i].coordList.Max(x => x.Y);
             ListPaths[i].minY = ListPaths[i].coordList.Min(x => x.Y);
-            ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
+            //ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
         }
 
 

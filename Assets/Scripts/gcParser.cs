@@ -72,15 +72,15 @@ public class gcParser : MonoBehaviour
     {
         
         List<gcLine> gcodeFromPath = new List<gcLine>();
-        float lowestX = coords.Min(i => i.X);
-        float highestX = coords.Max(i => i.X);
-        float lowestY = coords.Min(i => i.Y);
-        float highestY = coords.Max(i => i.Y);
-        float lowestZ = coords.Min(i => i.Z);
-        float highestZ = coords.Max(i => i.Z);
-        float midX = highestX - lowestX;
-        float midY = highestY - lowestY;
-        float midZ = highestZ - lowestZ;
+        float minX = coords.Min(i => i.X);
+        float maxX = coords.Max(i => i.X);
+        float minY = coords.Min(i => i.Y);
+        float maxY = coords.Max(i => i.Y);
+        float minZ = coords.Min(i => i.Z);
+        float maxZ = coords.Max(i => i.Z);
+        float midX = maxX - minX;
+        float midY = maxY - minY;
+        float midZ = maxZ - minZ;
         if (StartFromHome)
         {
             gcLine gcl = new gcLine();
@@ -102,6 +102,21 @@ public class gcParser : MonoBehaviour
             gcodeFromPath.Add(gcl);
         }
         gcodeFromPath = fill(gcodeFromPath);
+
+        if (CNC_Settings.ScaleToMax)
+        {
+            float scaleX = CNC_Settings.WidthInMM / (maxX / minX) - CNC_Settings.HorizontalPadding;
+            float scaleY = CNC_Settings.HeightInMM / (maxY / minY) - CNC_Settings.VerticalPadding;
+
+            foreach (gcLine gcl in gcodeFromPath)
+            {
+
+                gcl.X *= scaleX;
+                gcl.Y *= scaleY;
+
+            }
+        }
+
         gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
     }
 
