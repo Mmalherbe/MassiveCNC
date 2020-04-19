@@ -15,7 +15,7 @@ using FontStyle = System.Drawing.FontStyle;
 
 public class gcParser : MonoBehaviour
 {
-
+    [SerializeField] private CNC_Settings Cnc_Settings;
     [SerializeField] private int c = 1;
     [SerializeField] private gcLineBuilder Linebuilder;
     [SerializeField] private LineRenderer XAxis;
@@ -66,11 +66,11 @@ public class gcParser : MonoBehaviour
         FileLoaded = true;   
         Linebuilder.buildlinesFromGcode();
     }
-  
 
-   internal void GenerateGcodeFromPath(List<Coords> coords)
+
+    internal void GenerateGcodeFromPath(List<Coords> coords,bool multilineText = false)
     {
-        
+        bool notsafe = false;
         List<gcLine> gcodeFromPath = new List<gcLine>();
         float minX = coords.Min(i => i.X);
         float maxX = coords.Max(i => i.X);
@@ -87,8 +87,9 @@ public class gcParser : MonoBehaviour
             gcl.X = HomePositionObj.transform.position.x;
             gcl.Y = HomePositionObj.transform.position.y;
             gcl.Z = HomePositionObj.transform.position.z;
+            gcodeFromPath.Add(gcl);
         }
-        foreach(Coords coord in coords)
+        foreach (Coords coord in coords)
         {
             midX = 0;
             midY = 0;
@@ -103,21 +104,41 @@ public class gcParser : MonoBehaviour
         }
         gcodeFromPath = fill(gcodeFromPath);
 
-        if (CNC_Settings.ScaleToMax)
+        if (Cnc_Settings.ScaleToMax)
         {
-            float scaleX = CNC_Settings.WidthInMM / (maxX / minX) - CNC_Settings.HorizontalPadding;
-            float scaleY = CNC_Settings.HeightInMM / (maxY / minY) - CNC_Settings.VerticalPadding;
+            float scaleMinX = (Cnc_Settings.WidthInMM/2 - Cnc_Settings.HorizontalPaddingInMM) / (minX);
+            float scaleMaxX = (Cnc_Settings.WidthInMM/2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX);
+            float scaleMinY = (Cnc_Settings.HeightInMM/2 - Cnc_Settings.VerticalPaddingInMM) / minY;
+            float scaleMaxY = (Cnc_Settings.HeightInMM/2 - Cnc_Settings.VerticalPaddingInMM) / maxY;
+
+            float[] allscales = { scaleMinX, scaleMaxX, scaleMinY, scaleMaxY };
+            float safeToScale = Mathf.Floor(allscales.Min(x => Mathf.Abs(x)));
+            Cnc_Settings.ScaleFactorForMax = safeToScale;
 
             foreach (gcLine gcl in gcodeFromPath)
             {
 
-                gcl.X *= scaleX;
-                gcl.Y *= scaleY;
+                gcl.X *= safeToScale;
+                gcl.Y *= safeToScale;
 
+                if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
+                {
+                    notsafe = true;
+                }
             }
         }
 
-        gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
+
+        if (notsafe)
+        {
+            Debug.LogError("Code was not safe. Either reached the X or Y limit");
+        }
+        else
+        {
+            Debug.Log("show");
+            Linebuilder.showOutLinesFromPoints(gcodeFromPath, multilineText);
+            gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
+        }
     }
 
     List<gcLine> fill(List<gcLine> lines)

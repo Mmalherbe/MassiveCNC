@@ -5,21 +5,24 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using Assets.Scripts.classes;
+using System.Linq;
 
 public class gcLineBuilder : MonoBehaviour
 {
     // calling upondifferent classes, objects and variables
+    [SerializeField] private CNC_Settings Cnc_Settings;
     public gcParser gcParser;
     public GameObject LinePrefab;
     public GameObject LinePlaceHolder;
-    public TextMeshProUGUI counter;
     [SerializeField] private GameObject HomePositionObj;
+    [SerializeField] private GameObject FloorPlaneObj;
     Transform origin;
     Transform destination;
     int i;
     int segment;
     int StepSize;
     GameObject[] lines;
+    float LowestYValue;
     // initialization of startvalues
     void Start()
     {
@@ -51,48 +54,51 @@ public class gcLineBuilder : MonoBehaviour
                 //line.transform.localPosition = LinePlaceHolder.transform.localPosition;
                 line.transform.GetChild(0).localPosition = new Vector3((float)gcParser.lineList[i - 1].X, (float)gcParser.lineList[i - 1].Z, (float)gcParser.lineList[i - 1].Y);
                 line.transform.GetChild(1).localPosition = new Vector3((float)gcParser.lineList[i].X, (float)gcParser.lineList[i].Z, (float)gcParser.lineList[i].Y);
-                // if it is a rapidpositioning statement it will be made green
-                if (gcParser.lineList[i].G == 0)
+                if (gcParser.lineList[i].G <= 3)
                 {
                     LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
+                    linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity;
                 }
             }
         }//this updates the countertext
         LinePlaceHolder.transform.localPosition = HomePositionObj.transform.localPosition;
     }
-    public void showOutLinesFromPoints(List<Coords> coordList)
+    public void showOutLinesFromPoints(List<gcLine> gCodeLines,bool multiple = false)
     {
-        //ClearLines();
-        for (int i = 0; i < coordList.Count; i++)
+        if (!multiple)ClearLines();
+        
+        for (int i = 0; i < gCodeLines.Count; i++)
         {
             if (i == 0)
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
                 //line.transform.position = LinePlaceHolder.transform.position;
-                line.transform.GetChild(0).position = new Vector3( (float)coordList[i].X, (float)coordList[i].Z, -(float)coordList[i].Y);
-                line.transform.GetChild(1).position = new Vector3((float)coordList[i+1].X, (float)coordList[i+1].Z, -(float)coordList[i+1].Y);
-                    LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
+                line.transform.GetChild(0).position = new Vector3( (float)gCodeLines[i].X, (float)gCodeLines[i].Z, -(float)gCodeLines[i].Y);
+                line.transform.GetChild(1).position = new Vector3((float)gCodeLines[i+1].X, (float)gCodeLines[i+1].Z, -(float)gCodeLines[i+1].Y);
+                LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
+                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity;
                 
             }
             else
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
                 line.transform.position = LinePlaceHolder.transform.position;
-                  line.transform.GetChild(0).position = new Vector3( (float)coordList[i - 1].X, (float)coordList[i - 1].Z, -(float)coordList[i - 1].Y);
-                  line.transform.GetChild(1).position = new Vector3((float)coordList[i].X, (float)coordList[i].Z, -(float)coordList[i].Y);
+                  line.transform.GetChild(0).position = new Vector3( (float)gCodeLines[i - 1].X, (float)gCodeLines[i - 1].Z, -(float)gCodeLines[i - 1].Y);
+                  line.transform.GetChild(1).position = new Vector3((float)gCodeLines[i].X, (float)gCodeLines[i].Z, -(float)gCodeLines[i].Y);
                 // if it is a rapidpositioning statement it will be made green
                 
                     LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
-                
+                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity;
             }
-            LinePlaceHolder.transform.position = HomePositionObj.transform.position;
-        }
 
+        }
+      
     }
+
 }

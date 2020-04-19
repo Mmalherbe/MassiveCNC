@@ -29,7 +29,7 @@ public class FileController : MonoBehaviour {
         ReadText = File.ReadAllText (path); // Reads out the file on the specific path
         gcParser.GCode = ReadText; // Calls for two function of the gcParser Class
         gcParser.ParseFromGcodeFile();
-btn_text.text = "File Opened"; // Changes the buttontext again                      
+        btn_text.text = "File Opened"; // Changes the buttontext again                      
 return;           
 }
 
@@ -44,10 +44,8 @@ return;
             new System.IO.StreamWriter(path))
         {
             file.WriteLine(";"+DateTime.Now);
-            file.WriteLine("G28");
             foreach (gcLine line in toWrite)
             {
-                
                 file.WriteLine(line.ToEdingString());
             }
         }

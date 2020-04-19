@@ -49,7 +49,7 @@ namespace Assets.Scripts.classes
     " " + (G != null ? "G" + G : "") +
     " " + (X != null ? "X" + X : "") +
     " " + (Z != null ? "Y" + -Y : "") +
-    " " + (Y != null ? "Z" + Z : "") +
+    " " + (Y != null ? "Z" + (Z == 0.00001f?0 :Z): "") +
     " " + (F != null ? "F" + F : "") +
     " " + (I != null ? "I" + I : "") +
     " " + (J != null ? "J" + J : "") +

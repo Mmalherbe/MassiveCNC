@@ -13,6 +13,7 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private gcParser Gcparser;
     [SerializeField] private int fontSize = 50;
     [SerializeField] private int fontStyle = 1;
+    [SerializeField] private CNC_Settings Cnc_Settings;
     private char[] trims = { char.Parse("\n"), char.Parse("\r") };
     public void ParseTextToGcode(string _text)
     {
@@ -53,7 +54,7 @@ public class TextToPath : MonoBehaviour
 
                 foreach (PointF p in pt)
                 {
-                    coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0 });
+                    coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
                 }
                 txtLinPath.id = i;
                 txtLinPath.coordList = coords;
@@ -73,15 +74,10 @@ public class TextToPath : MonoBehaviour
         float allPathsMaxY = ListPaths.Max(x => x.maxY);
         float Yaap = 10f;
 
-        Debug.Log(0);
-        Debug.Log(0 + " Min X : " + ListPaths[0].minX + " ,Max X : " + ListPaths[0].maxX);
-        Debug.Log(0 + " Min Y : " + ListPaths[0].minY + " ,Max Y : " + ListPaths[0].maxY);
+
         float allSize = 0f;
         for (int i = 1; i < ListPaths.Count; i++)
         {
-            Debug.Log(i);
-            Debug.Log(i + " Min X : " + ListPaths[i].minX + " ,Max X : " + ListPaths[i].maxX);
-            Debug.Log(i + " Min Y : " + ListPaths[i].minY + " ,Max Y : " + ListPaths[i].maxY);
             allSize += (ListPaths[i - 1].maxY - ListPaths[i - 1].minY);
             for (int j = 0; j < ListPaths[i].coordList.Count; j++)
             {
@@ -96,10 +92,11 @@ public class TextToPath : MonoBehaviour
 
         for (int i = 0; i < ListPaths.Count; i++)
         {
-            Linebuilder.showOutLinesFromPoints(ListPaths[i].coordList);
-            Gcparser.GenerateGcodeFromPath(ListPaths[i].coordList);
+           
+            Gcparser.GenerateGcodeFromPath(ListPaths[i].coordList,ListPaths.Count>1);
 
         }
     }
+
 
 }
