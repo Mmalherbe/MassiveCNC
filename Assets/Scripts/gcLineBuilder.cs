@@ -59,7 +59,7 @@ public class gcLineBuilder : MonoBehaviour
                     LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
-                    linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity;
+                    linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity/10;
                 }
             }
         }//this updates the countertext
@@ -80,7 +80,7 @@ public class gcLineBuilder : MonoBehaviour
                 LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
-                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity;
+                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
                 
             }
             else
@@ -94,7 +94,7 @@ public class gcLineBuilder : MonoBehaviour
                     LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
-                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity;
+                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
             }
 
         }
