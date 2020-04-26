@@ -6,14 +6,14 @@ using UnityEngine;
 public class interactionController : MonoBehaviour
 {
 
-    [SerializeField] TextMeshProUGUI inputText;
+
     [SerializeField] gcParser gcParser;
     [SerializeField] FileController fileController;
     [SerializeField] TextToPath TextToPath;
 
     public void ParseTextToGcode_Click()
     {
-        TextToPath.ParseTextToGcode(inputText.text);
+        TextToPath.ClickParseTextToGcode();
     }
     public void ShowPathFromGcodeFile_Click()
     {

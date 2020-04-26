@@ -16,14 +16,20 @@ public class FileController : MonoBehaviour {
 
     public void openfile(){
         btn_text.text = "opening File";
-        string path = EditorUtility.OpenFilePanel("Open GCode", "", "cnc");
+        string path = EditorUtility.OpenFilePanel("Open GCode", "", "cnc,nc");
         //string path = Application.dataPath + @"/examples/example.nc";
         // opens a filebrowser. The chosen files path will be stored as String
         using (StreamReader sr = new StreamReader(path))
         {
             while (sr.Peek() >= 0)
             {
-                gcParser.fileLinebyLine.Add(sr.ReadLine());
+                string line = sr.ReadLine();
+                if (line.StartsWith(";") || string.IsNullOrEmpty(line))
+                {
+                    break;
+                }
+                    gcParser.fileLinebyLine.Add(line.Trim());
+
             }
         }
        

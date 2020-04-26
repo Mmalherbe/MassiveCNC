@@ -5,23 +5,40 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class TextToPath : MonoBehaviour
 {
+    [SerializeField] private TMP_InputField inputTextForTextToGCode;
     [SerializeField] private gcLineBuilder Linebuilder;
     [SerializeField] private gcParser Gcparser;
-    [SerializeField] private int fontSize = 50;
-    [SerializeField] private int fontStyle = 0;
+    [SerializeField] internal int fontSize = 10;
+    private int fontStyle = 0;
     [SerializeField] private CNC_Settings Cnc_Settings;
+    internal string fontstyleString = "Regular";
+    internal string fontFamilyString = "Arial";
     private char[] trims = { char.Parse("\n"), char.Parse("\r") };
+
+    public void ClickParseTextToGcode()
+    {
+       ParseTextToGcode(inputTextForTextToGCode.text);
+    }
     public void ParseTextToGcode(string _text)
     {
-
         List<string> _TextLines = _text.Split(char.Parse("\n")).ToList();
         List<string> TextLines = _TextLines.ToList<string>();
-        
+        switch (fontstyleString)
+        {
+            default: fontStyle = 0; break;
+            case "Bold": fontStyle = 1; break;
+            case "Italic": fontStyle = 2; break;
+            case "Regular": fontStyle = 0; break;
+            case "Strikeout": fontStyle = 8; break;
+            case "Underline": fontStyle = 4; break;
 
+
+        }
         List<TextLinePath> ListPaths = new List<TextLinePath>();
 
         for (int i = 0; i < TextLines.Count; i++)
@@ -35,7 +52,7 @@ public class TextToPath : MonoBehaviour
                 using (GraphicsPath path = new GraphicsPath())
                 {
                     path.StartFigure();
-                    path.AddString(TextLines[i].Trim(char.Parse("\n")), new FontFamily("arial"),
+                    path.AddString(TextLines[i].Trim(char.Parse("\n")), new FontFamily(fontFamilyString),
                       fontStyle, fontSize, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
                       StringFormat.GenericDefault);
                     path.CloseAllFigures();
