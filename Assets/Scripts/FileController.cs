@@ -6,6 +6,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using Assets.Scripts.classes;
 using System;
+using Path = System.IO.Path;
 
 public class FileController : MonoBehaviour {
     // calling upon different classes, objects and variables
@@ -39,7 +40,7 @@ return;
         {
             fileName += ".cnc";
         } 
-        string path = Path.Combine(Application.dataPath,"examples", fileName);
+        string path =  Path.Combine(Application.dataPath,"examples", fileName);
         using (System.IO.StreamWriter file =
             new System.IO.StreamWriter(path))
         {

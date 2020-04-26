@@ -16,7 +16,8 @@ public class SVGToPath : MonoBehaviour
     [SerializeField] private SVGMesh Mesh;
 
     private SVGData SVG;
-
+    [SerializeField] private List<SvgClass> svgClasses = new List<SvgClass>();
+    [SerializeField] private Dictionary<string, List<Coords>> svgPaths = new Dictionary<string, List<Coords>>();
     public void Start()
     {
         ParseSVGToPath(Application.dataPath + "/SVGTJE.svg");
@@ -25,13 +26,30 @@ public class SVGToPath : MonoBehaviour
     internal void ParseSVGToPath(string urlToFile)
     {
         svgParser parser = new svgParser();
-        parser.Parse(urlToFile);
+        SvgClass svg = parser.Parse(urlToFile);
+        //string SVG_PATH = doc.
+        
+        foreach (SvgPath svgPath in svg.SvgPath)
+        {
 
-    /* string SVG_PATH = doc.
-        SVG = new SVGData();
-        SVG.Path(SVG_PATH);
-        Debug.Log(SVG.Dump());
-   */
+            SVG = new SVGData();
+            SVG.Path(svgPath.D);
+
+            Debug.Log(SVG.Dump());
+            Mesh.Fill(SVG);
+            List<Coords> coordsForId = new List<Coords>();
+           foreach(Vector3 coords in Mesh.MeshData.Vertices)
+            {
+                Coords coord = new Coords { X = coords.x, Y = coords.y, Z = coords.z };
+                coordsForId.Add(coord);
+            
+            }
+            svgPaths.Add(svgPath.Class, coordsForId);
+            Debug.Log(Mesh.MeshData.Vertices);
+        }
+
+        Debug.Log(svgPaths);
+
     }
     
 
