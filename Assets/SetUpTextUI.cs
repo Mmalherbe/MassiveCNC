@@ -12,7 +12,6 @@ public class SetUpTextUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown FontDropDown;
     [SerializeField] private TMP_Dropdown FontStyleDropDown;
     [SerializeField] private TextToPath textToPath;
-    [SerializeField] private TMP_InputField fontSizeInput;
     
     void Start()
     {
