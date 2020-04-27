@@ -16,6 +16,7 @@ using FontStyle = System.Drawing.FontStyle;
 public class gcParser : MonoBehaviour
 {
     [SerializeField] private CNC_Settings Cnc_Settings;
+    [SerializeField] private interactionController Interaction_Controller;
     [SerializeField] private int c = 1;
     [SerializeField] private gcLineBuilder Linebuilder;
     [SerializeField] private LineRenderer XAxis;
@@ -27,8 +28,14 @@ public class gcParser : MonoBehaviour
     internal List<gcLine> lineList = new List<gcLine>();
     internal List<string> fileLinebyLine = new List<string>();
     [HideInInspector] public string GCode;
-
-
+    internal float minScaleHorizontal;
+    internal float maxScaleHorizontal;
+    internal float minScaleVertical;
+    internal float maxScaleVertical;
+    internal float scaleToUseHorizontal;
+    internal float scaleToUseVertical;
+    private bool previousMultiLine;
+    internal List<Coords> previouslyUsedCoords = new List<Coords>();
 
     string getValue(string gCodeLine, string letter, string splitAt)
     {
@@ -39,7 +46,7 @@ public class gcParser : MonoBehaviour
             return gCodeLine.Substring(index);
         return gCodeLine.Substring(index, length - index);
     }
-   internal void ParseFromGcodeFile()
+    internal void ParseFromGcodeFile()
     {//Initializing arrays to fill
         int c = -1; // counter for line number
         foreach (string line in fileLinebyLine)
@@ -62,14 +69,22 @@ public class gcParser : MonoBehaviour
             gcl.T = float.Parse(getValue(line, "T", " "));
             lineList.Add(gcl);
         }
-         lineList = fill(lineList);
-        FileLoaded = true;   
+        lineList = fill(lineList);
+        FileLoaded = true;
         Linebuilder.buildlinesFromGcode();
     }
-
-
-    internal void GenerateGcodeFromPath(List<Coords> coords,bool multilineText = false)
+    internal void RedrawWithUpdatedScale()
     {
+        GenerateGcodeFromPath(previouslyUsedCoords, previousMultiLine);
+    }
+
+    internal void GenerateGcodeFromPath(List<Coords> coords, bool multilineText = false)
+    {
+        previousMultiLine = multilineText;
+        previouslyUsedCoords = coords;
+
+
+
         bool notsafe = false;
         List<gcLine> gcodeFromPath = new List<gcLine>();
         float minX = coords.Min(i => i.X);
@@ -81,6 +96,15 @@ public class gcParser : MonoBehaviour
         float midX = maxX - minX;
         float midY = maxY - minY;
         float midZ = maxZ - minZ;
+
+        minScaleHorizontal = (Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (minX);
+        maxScaleHorizontal = (Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX);
+        minScaleVertical = (Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / minY;
+        maxScaleVertical = (Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / maxY;
+        float[] allscales = { minScaleHorizontal, maxScaleHorizontal, minScaleVertical, maxScaleVertical };
+        float safeToScale = Mathf.Floor(allscales.Min(x => Mathf.Abs(x)));
+        Cnc_Settings.ScaleFactorForMax = safeToScale;
+        Interaction_Controller.updateScaleSliders(minScaleHorizontal, maxScaleHorizontal, minScaleVertical, maxScaleVertical,scaleToUseHorizontal,scaleToUseVertical);
         if (StartFromHome)
         {
             gcLine gcl = new gcLine();
@@ -106,27 +130,22 @@ public class gcParser : MonoBehaviour
 
         if (Cnc_Settings.ScaleToMax)
         {
-            float scaleMinX = (Cnc_Settings.WidthInMM/2 - Cnc_Settings.HorizontalPaddingInMM) / (minX);
-            float scaleMaxX = (Cnc_Settings.WidthInMM/2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX);
-            float scaleMinY = (Cnc_Settings.HeightInMM/2 - Cnc_Settings.VerticalPaddingInMM) / minY;
-            float scaleMaxY = (Cnc_Settings.HeightInMM/2 - Cnc_Settings.VerticalPaddingInMM) / maxY;
+            scaleToUseHorizontal = Cnc_Settings.ScaleFactorForMax;
+            scaleToUseVertical = Cnc_Settings.ScaleFactorForMax;
+        }
 
-            float[] allscales = { scaleMinX, scaleMaxX, scaleMinY, scaleMaxY };
-            float safeToScale = Mathf.Floor(allscales.Min(x => Mathf.Abs(x)));
-            Cnc_Settings.ScaleFactorForMax = safeToScale;
+        foreach (gcLine gcl in gcodeFromPath)
+        {
 
-            foreach (gcLine gcl in gcodeFromPath)
+            gcl.X *= scaleToUseHorizontal;
+            gcl.Y *= scaleToUseVertical;
+
+            if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
-
-                gcl.X *= safeToScale;
-                gcl.Y *= safeToScale;
-
-                if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
-                {
-                    notsafe = true;
-                }
+                notsafe = true;
             }
         }
+
 
 
         if (notsafe)
@@ -135,7 +154,6 @@ public class gcParser : MonoBehaviour
         }
         else
         {
-            Debug.Log("show");
             Linebuilder.showOutLinesFromPoints(gcodeFromPath, multilineText);
             gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
         }
@@ -144,19 +162,19 @@ public class gcParser : MonoBehaviour
     List<gcLine> fill(List<gcLine> lines)
     {
         // Make sure every line has coordinates, if they don't give them the coordinates from the previous line. Where -999999 is a value given to a missing value.
-        for (int i = 0; i < lines.Count -1; i++)
+        for (int i = 0; i < lines.Count - 1; i++)
         {
-            if(i == 0)
+            if (i == 0)
             {
                 if (lines[i].X == -9999999) lines[i].X = HomePositionObj.transform.position.x;
                 if (lines[i].Y == -9999999) lines[i].Y = HomePositionObj.transform.position.z;
                 if (lines[i].Z == -9999999) lines[i].Z = HomePositionObj.transform.position.y;
             }
             if (lines[i].X == -9999999) lines[i].X = lines[i - 1].X;
-            if (lines[i].Y == -9999999) lines[i].Y = lines[i - 1].Y == -9999999? 0 : lines[i - 1].Y;
+            if (lines[i].Y == -9999999) lines[i].Y = lines[i - 1].Y == -9999999 ? 0 : lines[i - 1].Y;
             if (lines[i].Z == -9999999) lines[i].Z = lines[i - 1].Z;
         }
-        foreach(gcLine gcl in lines)
+        foreach (gcLine gcl in lines)
         {
             if (gcl.Y == -9999999) gcl.Y = 0;
             if (gcl.Z == -9999999) gcl.Z = 0;

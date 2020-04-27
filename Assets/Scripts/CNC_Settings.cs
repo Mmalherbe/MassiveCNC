@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public  class CNC_Settings : MonoBehaviour
+public class CNC_Settings : MonoBehaviour
 {
 
     public bool ScaleToMax;
