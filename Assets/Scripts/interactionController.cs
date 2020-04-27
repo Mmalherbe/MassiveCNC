@@ -25,13 +25,22 @@ public class interactionController : MonoBehaviour
     [SerializeField] Slider HorizontalScaleSlider;
     [SerializeField] Slider VerticalScaleSlider;
 
-    public void updateScaleSliders(float minHorizontal,float maxHorizontal, float minVertical,float maxVertical,float currentScaleHorizontal,float currentScaleVertical)
+    [SerializeField] TextMeshProUGUI MinXValueHolder;
+    [SerializeField] TextMeshProUGUI MaxXValueHolder;
+    [SerializeField] TextMeshProUGUI MinYValueHolder;
+    [SerializeField] TextMeshProUGUI MaxYValueHolder;
+    internal bool scaleSet = false;
+    public void updateScaleSliders(float minHorizontal, float maxHorizontal, float minVertical, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
     {
-        HorizontalScaleSlider.minValue = minHorizontal;
+        HorizontalScaleSlider.minValue = 0.01f;
         HorizontalScaleSlider.maxValue = maxHorizontal;
-        VerticalScaleSlider.minValue = minVertical;
+        VerticalScaleSlider.minValue = 0.01f;
         VerticalScaleSlider.maxValue = maxVertical;
-        RatioScaleSlider.minValue = 0f;
+        RatioScaleSlider.minValue = 0.01f;
+        if (Cnc_Settings.ScaleToMax)
+        {
+            RatioScaleSlider.value = Cnc_Settings.ScaleFactorForMax;
+        }
         RatioScaleSlider.maxValue = Cnc_Settings.ScaleFactorForMax;
         HorizontalScaleSlider.value = currentScaleHorizontal;
         VerticalScaleSlider.value = currentScaleVertical;
@@ -55,24 +64,30 @@ public class interactionController : MonoBehaviour
     }
     public void WidthCNCChanged()
     {
+        if (WidthInputField.text.Length == 0) return;
         Cnc_Settings.WidthInMM = float.Parse(WidthInputField.text);
         setupEnviroment.ResetCamera();
 
     }
     public void WidthMarginCNCChanged()
     {
+        if (WidthMarginInputField.text.Length == 0) return;
         Cnc_Settings.HorizontalPaddingInMM = float.Parse(WidthMarginInputField.text);
         setupEnviroment.ResetCamera();
 
     }
     public void HeightMarginCNCChanged()
     {
+        if (HeightMarginInputField.text.Length == 0) return;
+
         Cnc_Settings.VerticalPaddingInMM = float.Parse(HeightMarginInputField.text);
         setupEnviroment.ResetCamera();
 
     }
     public void HeightCNCChanged()
     {
+        if (HeightInputField.text.Length == 0) return;
+
         Cnc_Settings.HeightInMM = float.Parse(HeightInputField.text);
         setupEnviroment.ResetCamera();
     }
@@ -81,18 +96,31 @@ public class interactionController : MonoBehaviour
     {
         Cnc_Settings.ScaleToMax = false;
         ScaleToMaxToggle.isOn = false;
+        if (scaleSet)
+        {
+            gcParser.scaleToUseHorizontal = gcParser.scaleToUseVertical = RatioScaleSlider.value;
+            gcParser.RedrawWithUpdatedScale();
+        }
     }
     public void HorizontalScaleChanged()
     {
         Cnc_Settings.ScaleToMax = false;
         ScaleToMaxToggle.isOn = false;
-        gcParser.scaleToUseHorizontal = HorizontalScaleSlider.value;
+        if (scaleSet)
+        {
+            gcParser.scaleToUseHorizontal = HorizontalScaleSlider.value;
+            gcParser.RedrawWithUpdatedScale();
+        }
     }
     public void VerticalScaleChanged()
     {
         Cnc_Settings.ScaleToMax = false;
         ScaleToMaxToggle.isOn = false;
-        gcParser.scaleToUseVertical = VerticalScaleSlider.value;
+        if (scaleSet)
+        {
+            gcParser.scaleToUseVertical = VerticalScaleSlider.value;
+            gcParser.RedrawWithUpdatedScale();
+        }
     }
     public void ResetScale_Click()
     {
@@ -100,10 +128,23 @@ public class interactionController : MonoBehaviour
         ScaleToMaxToggle.isOn = false;
         gcParser.scaleToUseHorizontal = 1;
         gcParser.scaleToUseVertical = 1;
-
+        gcParser.RedrawWithUpdatedScale();
     }
     public void ScaleToMax_Toggled()
     {
         Cnc_Settings.ScaleToMax = ScaleToMaxToggle.isOn;
     }
+
+    public void UpdateMinMaxValues()
+    {
+       
+        float[] MinMaxValues = gcParser.getMinMaxValues();
+        MinXValueHolder.text = MinMaxValues[0].ToString();
+        MaxXValueHolder.text = MinMaxValues[1].ToString();
+        MinYValueHolder.text = MinMaxValues[2].ToString();
+        MaxYValueHolder.text = MinMaxValues[3].ToString();
+        scaleSet = true;
+
+    }
+
 }

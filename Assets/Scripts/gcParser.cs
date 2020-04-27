@@ -28,14 +28,19 @@ public class gcParser : MonoBehaviour
     internal List<gcLine> lineList = new List<gcLine>();
     internal List<string> fileLinebyLine = new List<string>();
     [HideInInspector] public string GCode;
-    internal float minScaleHorizontal;
-    internal float maxScaleHorizontal;
-    internal float minScaleVertical;
-    internal float maxScaleVertical;
-    internal float scaleToUseHorizontal;
-    internal float scaleToUseVertical;
-    private bool previousMultiLine;
+    internal float minScaleHorizontal = 0.01f;
+    internal float maxScaleHorizontal = 1.001f;
+    internal float minScaleVertical= 0.01f;
+    internal float maxScaleVertical = 1.001f;
+    internal float scaleToUseHorizontal = 1f;
+    internal float scaleToUseVertical = 1f;
+    private bool previousMultiLine = false;
     internal List<Coords> previouslyUsedCoords = new List<Coords>();
+    private float minX;
+    private float maxX;
+    private float minY;
+    private float maxY;
+
 
     string getValue(string gCodeLine, string letter, string splitAt)
     {
@@ -75,36 +80,51 @@ public class gcParser : MonoBehaviour
     }
     internal void RedrawWithUpdatedScale()
     {
+        if(previouslyUsedCoords.Count != 0 )
         GenerateGcodeFromPath(previouslyUsedCoords, previousMultiLine);
     }
-
+    internal float[] getMinMaxValues()
+    {
+        if (previouslyUsedCoords.Count == 0) return new float[] { 0, 1, 0, 1 };
+        return new float[] { previouslyUsedCoords.Min(x=> x.X), previouslyUsedCoords.Max(x => x.X), previouslyUsedCoords.Min(x => x.Y), previouslyUsedCoords.Max(x => x.Y)};
+    }
     internal void GenerateGcodeFromPath(List<Coords> coords, bool multilineText = false)
     {
-        previousMultiLine = multilineText;
-        previouslyUsedCoords = coords;
+        if (coords.Count == 0)
+        {
+            coords = previouslyUsedCoords;
+            multilineText = previousMultiLine;
+        }
+        else
+        {
+            previouslyUsedCoords = coords;
+            previousMultiLine = multilineText;
+        }
 
 
 
         bool notsafe = false;
         List<gcLine> gcodeFromPath = new List<gcLine>();
-        float minX = coords.Min(i => i.X);
-        float maxX = coords.Max(i => i.X);
-        float minY = coords.Min(i => i.Y);
-        float maxY = coords.Max(i => i.Y);
+         minX = coords.Min(i => i.X);
+         maxX = coords.Max(i => i.X);
+         minY = coords.Min(i => i.Y);
+         maxY = coords.Max(i => i.Y);
         float minZ = coords.Min(i => i.Z);
         float maxZ = coords.Max(i => i.Z);
         float midX = maxX - minX;
         float midY = maxY - minY;
         float midZ = maxZ - minZ;
 
-        minScaleHorizontal = (Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (minX);
-        maxScaleHorizontal = (Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX);
-        minScaleVertical = (Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / minY;
-        maxScaleVertical = (Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / maxY;
+        minScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (minX));
+        maxScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX));
+        minScaleVertical = Mathf.Floor((Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / minY);
+        maxScaleVertical = Mathf.Floor((Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / maxY);
         float[] allscales = { minScaleHorizontal, maxScaleHorizontal, minScaleVertical, maxScaleVertical };
         float safeToScale = Mathf.Floor(allscales.Min(x => Mathf.Abs(x)));
         Cnc_Settings.ScaleFactorForMax = safeToScale;
-        Interaction_Controller.updateScaleSliders(minScaleHorizontal, maxScaleHorizontal, minScaleVertical, maxScaleVertical,scaleToUseHorizontal,scaleToUseVertical);
+        if(!Interaction_Controller.scaleSet)
+            Interaction_Controller.updateScaleSliders(minScaleHorizontal, maxScaleHorizontal, minScaleVertical, maxScaleVertical, scaleToUseHorizontal, scaleToUseVertical);
+
         if (StartFromHome)
         {
             gcLine gcl = new gcLine();
@@ -134,26 +154,30 @@ public class gcParser : MonoBehaviour
             scaleToUseVertical = Cnc_Settings.ScaleFactorForMax;
         }
 
+        previouslyUsedCoords.Clear();
         foreach (gcLine gcl in gcodeFromPath)
         {
 
             gcl.X *= scaleToUseHorizontal;
             gcl.Y *= scaleToUseVertical;
+            previouslyUsedCoords.Add(new Coords { X = (float)gcl.X, Y = (float)gcl.Y, Z = (float)gcl.Z });
 
             if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
                 notsafe = true;
             }
         }
-
-
+       
 
         if (notsafe)
         {
             Debug.LogError("Code was not safe. Either reached the X or Y limit");
+
         }
         else
         {
+            previouslyUsedCoords = coords;
+            Interaction_Controller.UpdateMinMaxValues();
             Linebuilder.showOutLinesFromPoints(gcodeFromPath, multilineText);
             gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
         }
