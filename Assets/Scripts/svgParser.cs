@@ -15,7 +15,7 @@ namespace Assets.Scripts
         public SvgClass Parse(string urlToFile)
         {
 
-            Debug.Log(urlToFile);
+           
             if (System.IO.Path.GetExtension(urlToFile).ToUpper() != ".SVG")
             {
                 return null;
@@ -37,19 +37,3 @@ namespace Assets.Scripts
 
     }
 }
-/*
- * public class SVGClass
-    {
-        public string id;
-        public string viewBox;
-        public List<SVGPath> path;
-
-    }
-
-    public class SVGPath
-    {
-        public string pathClass;
-        public string d;
-        public string transform;
-    }
- */

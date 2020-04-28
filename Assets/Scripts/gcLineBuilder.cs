@@ -31,7 +31,7 @@ public class gcLineBuilder : MonoBehaviour
     }// Update is called once per frame
 
 
-    void ClearLines()
+   internal void ClearLines()
     {
         lines = GameObject.FindGameObjectsWithTag("gcLine");
         //this finds all the lines
@@ -62,8 +62,7 @@ public class gcLineBuilder : MonoBehaviour
                     linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity/10;
                 }
             }
-        }//this updates the countertext
-        LinePlaceHolder.transform.localPosition = HomePositionObj.transform.localPosition;
+        }
     }
     public void showOutLinesFromPoints(List<gcLine> gCodeLines,bool multiple = false)
     {

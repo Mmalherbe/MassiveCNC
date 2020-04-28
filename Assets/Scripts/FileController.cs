@@ -7,34 +7,49 @@ using System.Collections.Generic;
 using Assets.Scripts.classes;
 using System;
 using Path = System.IO.Path;
+using TMPro;
 
 public class FileController : MonoBehaviour {
     // calling upon different classes, objects and variables
-    public gcParser gcParser;
-    public Text btn_text;
-    string ReadText ;
+    [SerializeField] private  gcParser gcParser;
+    [SerializeField] private TextMeshProUGUI CNCbtn_text;
+    [SerializeField] private TextMeshProUGUI SVGbtn_text;
+    [SerializeField] private SVGToPath svgToPath;
 
-    public void openfile(){
-        btn_text.text = "opening File";
-        string path = EditorUtility.OpenFilePanel("Open GCode", "", "cnc");
+    public void openCNCfile(){
+
+
+        CNCbtn_text.text = "opening File";
+        string path = EditorUtility.OpenFilePanel("Open GCode", "", "cnc,nc");
         //string path = Application.dataPath + @"/examples/example.nc";
         // opens a filebrowser. The chosen files path will be stored as String
         using (StreamReader sr = new StreamReader(path))
         {
             while (sr.Peek() >= 0)
             {
-                gcParser.fileLinebyLine.Add(sr.ReadLine());
+                string line = sr.ReadLine();
+                if (line.StartsWith(";") || string.IsNullOrEmpty(line))
+                {
+                    break;
+                }
+                    gcParser.fileLinebyLine.Add(line.Trim());
+
             }
         }
        
-        ReadText = File.ReadAllText (path); // Reads out the file on the specific path
-        gcParser.GCode = ReadText; // Calls for two function of the gcParser Class
         gcParser.ParseFromGcodeFile();
-        btn_text.text = "File Opened"; // Changes the buttontext again                      
+        CNCbtn_text.text = "File Opened"; // Changes the buttontext again                      
 return;           
 }
-
-  public  void writeFile(List<gcLine> toWrite,string fileName)
+    public void openSVGfile()
+    {
+        SVGbtn_text.text = "opening File";
+        string path = EditorUtility.OpenFilePanel("Open SVG", "", "svg");
+        svgToPath.ParseSVGToPath(path);
+        SVGbtn_text.text = "File Opened"; // Changes the buttontext again                      
+        return;
+    }
+    public  void writeFile(List<gcLine> toWrite,string fileName)
     {
         if(Path.GetExtension(fileName) == "")
         {
