@@ -12,4 +12,5 @@ public class CNC_Settings : MonoBehaviour
     public float HorizontalPaddingInMM;
     public float VerticalPaddingInMM;
     public float ScaleFactorInUnity;
+    public float defaultScalePercentage;
 }

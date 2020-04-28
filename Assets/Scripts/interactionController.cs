@@ -13,7 +13,7 @@ public class interactionController : MonoBehaviour
     [SerializeField] TextToPath TextToPath;
     [SerializeField] SVGToPath SvgToPath;
     [SerializeField] CNC_Settings Cnc_Settings;
-
+    [SerializeField] SetUpEnviroment setUpEnviroment;
 
     [SerializeField] TMP_InputField HeightInputField;
     [SerializeField] TMP_InputField WidthInputField;
@@ -30,12 +30,27 @@ public class interactionController : MonoBehaviour
     [SerializeField] TextMeshProUGUI MinYValueHolder;
     [SerializeField] TextMeshProUGUI MaxYValueHolder;
     internal bool scaleSet = false;
-    public void updateScaleSliders(float minHorizontal, float maxHorizontal, float minVertical, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
+
+
+    private void Start()
+    {
+        if (string.IsNullOrEmpty(WidthInputField.text)) WidthInputField.text = Cnc_Settings.WidthInMM.ToString();
+        if (string.IsNullOrEmpty(HeightInputField.text)) HeightInputField.text = Cnc_Settings.HeightInMM.ToString();
+
+        if (string.IsNullOrEmpty(WidthMarginInputField.text)) WidthMarginInputField.text = Cnc_Settings.HorizontalPaddingInMM.ToString();
+        if (string.IsNullOrEmpty(HeightMarginInputField.text)) HeightMarginInputField.text = Cnc_Settings.VerticalPaddingInMM.ToString();
+
+        setupEnviroment.camSet = true;
+        setUpEnviroment.ResetCamera();
+
+
+    }
+    public void updateScaleSliders( float maxHorizontal, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
     {
         HorizontalScaleSlider.minValue = 0.01f;
-        HorizontalScaleSlider.maxValue = maxHorizontal;
+        HorizontalScaleSlider.maxValue = Mathf.Floor(maxHorizontal);
         VerticalScaleSlider.minValue = 0.01f;
-        VerticalScaleSlider.maxValue = maxVertical;
+        VerticalScaleSlider.maxValue = Mathf.Floor(maxVertical);
         RatioScaleSlider.minValue = 0.01f;
         if (Cnc_Settings.ScaleToMax)
         {
@@ -60,6 +75,7 @@ public class interactionController : MonoBehaviour
     }
     public void SVGClassToggle_Changed(Toggle _toggle)
     {
+        Cnc_Settings.ScaleToMax = _toggle.isOn;
         SvgToPath.ToggleToggled(_toggle);
     }
     public void WidthCNCChanged()
@@ -98,6 +114,7 @@ public class interactionController : MonoBehaviour
         ScaleToMaxToggle.isOn = false;
         if (scaleSet)
         {
+            HorizontalScaleSlider.value = VerticalScaleSlider.value = RatioScaleSlider.value;
             gcParser.scaleToUseHorizontal = gcParser.scaleToUseVertical = RatioScaleSlider.value;
             gcParser.RedrawWithUpdatedScale();
         }
@@ -144,6 +161,12 @@ public class interactionController : MonoBehaviour
         MinYValueHolder.text = MinMaxValues[2].ToString();
         MaxYValueHolder.text = MinMaxValues[3].ToString();
         scaleSet = true;
+
+    }
+
+    public void SVGToPathParse_Click()
+    {
+        SvgToPath.PathToGCode();
 
     }
 

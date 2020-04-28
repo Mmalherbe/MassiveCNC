@@ -87,7 +87,7 @@ public class TextToPath : MonoBehaviour
         float allPathsMaxY = ListPaths.Max(x => x.maxY);
         float Yaap = 10f;
 
-
+        /// Setting the multiline text 
         float allSize = 0f;
         for (int i = 1; i < ListPaths.Count; i++)
         {
@@ -113,13 +113,13 @@ public class TextToPath : MonoBehaviour
 
                 }
             }
-            Gcparser.GenerateGcodeFromPath(allCoords);
+            Gcparser.SetCoordsAndMultiLine(allCoords, true);
         }
         else
         {
-            Gcparser.GenerateGcodeFromPath(ListPaths[0].coordList);
+            Gcparser.SetCoordsAndMultiLine(ListPaths[0].coordList);
         }
-
+        Gcparser.GenerateGcodeFromPath();
     }
 
 

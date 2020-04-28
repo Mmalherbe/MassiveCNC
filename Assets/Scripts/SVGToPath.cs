@@ -16,18 +16,23 @@ using UnityEngine.UI;
 public class SVGToPath : MonoBehaviour
 {
     [SerializeField] private SVGMesh Mesh;
+    [SerializeField] private gcParser gcParser;
 
     private SVGData SVG;
     [SerializeField] private List<string> svgClassesToShow = new List<string>();
     [SerializeField] private Dictionary<string, List<Coords>> svgPaths = new Dictionary<string, List<Coords>>();
     [SerializeField] private GameObject SVGClassHolder;
     [SerializeField] private GameObject SVGClassPrefab;
+    private List<Coords> coordsToParse = new List<Coords>();
         internal void ParseSVGToPath(string urlToFile)
     {
         svgParser parser = new svgParser();
         SvgClass svg = parser.Parse(urlToFile);
         //string SVG_PATH = doc.
         
+
+
+
         foreach (SvgPath svgPath in svg.SvgPath)
         {
 
@@ -37,9 +42,16 @@ public class SVGToPath : MonoBehaviour
             Debug.Log(SVG.Dump());
             Mesh.Fill(SVG);
             List<Coords> coordsForId = new List<Coords>();
-           foreach(Vector3 coords in Mesh.MeshData.Vertices)
+
+            float minX = Mesh.MeshData.Vertices.Min(x => x.x);
+            float minY = Mesh.MeshData.Vertices.Min(y => y.y);
+            float maxX = Mesh.MeshData.Vertices.Max(x => x.x);
+            float maxY = Mesh.MeshData.Vertices.Max(y => y.y);
+            float midX = minX + ((maxX - minX) / 2);
+            float midY = minY + ((maxY - minY) / 2);
+            foreach (Vector3 coords in Mesh.MeshData.Vertices)
             {
-                Coords coord = new Coords { X = coords.x, Y = coords.y, Z = coords.z };
+                Coords coord = new Coords { X = coords.x - midX, Y = coords.y - midY, Z = coords.z };
                 coordsForId.Add(coord);
             
             }
@@ -48,14 +60,18 @@ public class SVGToPath : MonoBehaviour
             svgClassesToShow.Add(svgPath.Class);
         }
         
-        Debug.Log(svgPaths);
+
 
     }
     
     private void ShowPathsFromSVG()
     {
-
+        coordsToParse.Clear();
         List<Coords> toShow = new List<Coords>();
+
+        
+
+
         foreach(KeyValuePair<string,List<Coords>> kvp in svgPaths)
         {
             if (svgClassesToShow.Contains(kvp.Key))
@@ -67,8 +83,14 @@ public class SVGToPath : MonoBehaviour
                 }
             }
         }
+        coordsToParse = toShow;
+        gcParser.SetCoordsAndMultiLine(coordsToParse);
+    }
 
-
+    internal void PathToGCode()
+    {
+        ShowPathsFromSVG();
+        gcParser.GenerateGcodeFromPath();
 
     }
 
@@ -100,6 +122,6 @@ public class SVGToPath : MonoBehaviour
             svgClassesToShow.Add(_toggle.name);
         }
 
-
+        ShowPathsFromSVG();
     }
 }
