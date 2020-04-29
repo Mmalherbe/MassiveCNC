@@ -152,10 +152,6 @@ public class gcParser : MonoBehaviour
           midX = 0;
             midY = 0;
             midZ = 0;
-            
-
-
-
             gcLine gcl = new gcLine();
             gcl.X = (coord.X - midX);
             gcl.Y = coord.Y - midY;

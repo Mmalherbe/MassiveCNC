@@ -64,6 +64,19 @@ public class gcLineBuilder : MonoBehaviour
             }
         }
     }
+
+    public void GetLinesFromInDrag(Rect drawnRect)
+    {
+        Debug.Log(drawnRect);
+        var x = 0;
+        foreach(GameObject line in lines)
+        {
+            if (drawnRect.Contains(line.transform.position, true))
+            {
+                Debug.Log(x++);
+            }
+        }
+    }
     public void showOutLinesFromPoints(List<gcLine> gCodeLines,bool multiple = false)
     {
         if (!multiple)ClearLines();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using UnityEngine;
 namespace Assets.Scripts.classes
 {
     public class gcLine
@@ -23,6 +23,8 @@ namespace Assets.Scripts.classes
         public float? R;
         public float? S;
         public float? T;
+        public int? M;
+        public Color color;
 
         public override string ToString()
         {
@@ -40,7 +42,8 @@ namespace Assets.Scripts.classes
                 " " + (P != null ? "P" + P : "") +
                 " " + (R != null ? "R" + R : "") +
                 " " + (S != null ? "S" + S : "") +
-                " " + (T != null ? "T" + T : "");
+                " " + (T != null ? "T" + T : "") +
+                " " + (color != null? "M" + color : "");
 
         }
         public string ToEdingString()
@@ -55,6 +58,7 @@ namespace Assets.Scripts.classes
     " " + (J != null ? "J" + J : "") +
     " " + (K != null ? "K" + K : "") +
     " " + (L != null ? "L" + L : "") +
+    " " + (M != null ? "M" + M : "") +
     " " + (N != null ? "N" + N : "") +
     " " + (P != null ? "P" + P : "") +
     " " + (R != null ? "R" + R : "") +

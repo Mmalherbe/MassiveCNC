@@ -1078,6 +1078,7 @@ GameObject:
   - component: {fileID: 87643477}
   - component: {fileID: 87643478}
   - component: {fileID: 87643479}
+  - component: {fileID: 87643480}
   m_Layer: 5
   m_Name: UI_Controllers
   m_TagString: Untagged
@@ -1157,6 +1158,32 @@ MonoBehaviour:
   SVGToGCodePanel: {fileID: 2062430336}
   PredefinedGCodePanel: {fileID: 353297246}
   MenuDropDown: {fileID: 639063481}
+--- !u!114 &87643480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87643476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22a99f92c272491b99592032feb9e4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Cnc_Settings: {fileID: 381301760}
+  GcLineBuilder: {fileID: 566648308}
+  cnc_Screen: {fileID: 1010716630}
+  cnc_Image_Size: {x: 0, y: 0}
+  scaleX: 0
+  scaleY: 0
+  MouseDownPos: {x: 0, y: 0, z: 0}
+  MouseUpPos: {x: 0, y: 0, z: 0}
+  draggedRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!1 &90228965
 GameObject:
   m_ObjectHideFlags: 0
@@ -14098,7 +14125,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Mesh: {fileID: 1643331420}
   gcParser: {fileID: 566648309}
-  svgClassesToShow: []
+  svgClassesToShow:
+  - ScaleToMax_Toggle
   SVGClassHolder: {fileID: 1041931617}
   SVGClassPrefab: {fileID: 1228510351682811951, guid: 3b5e59f88e6d2334dbbb0a74473ecdd8,
     type: 3}
