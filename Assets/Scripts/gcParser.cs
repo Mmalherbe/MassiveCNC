@@ -24,8 +24,9 @@ public class gcParser : MonoBehaviour
     [SerializeField] private LineRenderer ZAxis;
     [SerializeField] internal bool FileLoaded = false;
     [SerializeField] internal bool StartFromHome = true;
-    [SerializeField] private GameObject HomePositionObj;
-    [SerializeField] private GameObject MiddlePointGcode;
+    [SerializeField] internal GameObject HomePositionObj;
+    [SerializeField] internal GameObject MiddlePointGcode;
+    [SerializeField] internal GameObject StartPositionGcode;
     internal List<gcLine> lineList = new List<gcLine>();
     internal List<string> fileLinebyLine = new List<string>();
     [HideInInspector] public string GCode;

@@ -29,6 +29,17 @@ public class interactionController : MonoBehaviour
     [SerializeField] TextMeshProUGUI MaxXValueHolder;
     [SerializeField] TextMeshProUGUI MinYValueHolder;
     [SerializeField] TextMeshProUGUI MaxYValueHolder;
+
+    [SerializeField] TMP_InputField StartLocX;
+    [SerializeField] TMP_InputField StartLocY;
+    [SerializeField] TMP_InputField StartLocZ;
+
+    [SerializeField] TMP_InputField MidPointLocX;
+    [SerializeField] TMP_InputField MidPointLocY;
+    [SerializeField] TMP_InputField MidPointLocZ;
+
+
+
     internal bool scaleSet = false;
 
 
@@ -39,6 +50,15 @@ public class interactionController : MonoBehaviour
 
         if (string.IsNullOrEmpty(WidthMarginInputField.text)) WidthMarginInputField.text = Cnc_Settings.HorizontalPaddingInMM.ToString();
         if (string.IsNullOrEmpty(HeightMarginInputField.text)) HeightMarginInputField.text = Cnc_Settings.VerticalPaddingInMM.ToString();
+
+        if (string.IsNullOrEmpty(StartLocX.text)) StartLocX.text = Cnc_Settings.DefaultHomeX.ToString();
+        if (string.IsNullOrEmpty(StartLocY.text)) StartLocY.text = Cnc_Settings.DefaultHomeY.ToString();
+        if (string.IsNullOrEmpty(StartLocZ.text)) StartLocZ.text = Cnc_Settings.DefaultHomeZ.ToString();
+
+        if (string.IsNullOrEmpty(MidPointLocX.text)) MidPointLocX.text = Cnc_Settings.DefaultHomeX.ToString();
+        if (string.IsNullOrEmpty(MidPointLocY.text)) MidPointLocY.text = Cnc_Settings.DefaultHomeY.ToString();
+        if (string.IsNullOrEmpty(MidPointLocZ.text)) MidPointLocZ.text = Cnc_Settings.DefaultHomeZ.ToString();
+
 
         setupEnviroment.camSet = true;
         setUpEnviroment.ResetCamera();
@@ -170,4 +190,51 @@ public class interactionController : MonoBehaviour
 
     }
 
+    public void StartLocationInputChanged()
+    {
+        if (StartLocX.text.Length == 0) StartLocX.text = gcParser.HomePositionObj.transform.position.x.ToString();
+        if (StartLocY.text.Length == 0) StartLocY.text = gcParser.HomePositionObj.transform.position.y.ToString();
+        if (StartLocZ.text.Length == 0) StartLocZ.text = gcParser.HomePositionObj.transform.position.z.ToString();
+
+        float startX = float.Parse(StartLocX.text);
+        float startY = float.Parse(StartLocY.text);
+        float startZ = float.Parse(StartLocZ.text);
+
+        if (Mathf.Abs(startX) < Mathf.Abs(Cnc_Settings.WidthInMM / 2) &&
+            Mathf.Abs(startY) < Mathf.Abs(Cnc_Settings.HeightInMM / 2) &&
+            Mathf.Abs(startZ) < Mathf.Abs(Cnc_Settings.MinimumZinMM) &&
+            Mathf.Abs(startZ) < Mathf.Abs(Cnc_Settings.MaximumZinMM)
+            )
+        {
+            Vector3 newStartLoc = new Vector3(startX, startY, startZ);
+            gcParser.StartPositionGcode.transform.position = newStartLoc;
+        }
+
+    }
+
+    public void MidPointLocationInputChanged()
+    {
+        if (MidPointLocX.text.Length == 0) MidPointLocX.text = gcParser.HomePositionObj.transform.position.x.ToString();
+        if (MidPointLocY.text.Length == 0) MidPointLocY.text = gcParser.HomePositionObj.transform.position.y.ToString();
+        if (MidPointLocZ.text.Length == 0) MidPointLocZ.text = gcParser.HomePositionObj.transform.position.z.ToString();
+
+        float MidPointX = float.Parse(MidPointLocX.text);
+        float MidPointY = float.Parse(MidPointLocY.text);
+        float MidPointZ = float.Parse(MidPointLocZ.text);
+
+        if (Mathf.Abs(MidPointX) > Mathf.Abs(Cnc_Settings.WidthInMM / 2) ||
+            Mathf.Abs(MidPointY) > Mathf.Abs(Cnc_Settings.HeightInMM / 2) ||
+            Mathf.Abs(MidPointZ) > Mathf.Abs(Cnc_Settings.MinimumZinMM) ||
+            Mathf.Abs(MidPointZ) > Mathf.Abs(Cnc_Settings.MaximumZinMM)
+            )
+        {
+            MidPointX = 0f;
+            MidPointY = 0f;
+            MidPointZ = 0f;
+        }
+            Vector3 newMidPointLoc = new Vector3(MidPointX, MidPointY, MidPointZ);
+            gcParser.MiddlePointGcode.transform.position = newMidPointLoc;
+        
+
+    }
 }
