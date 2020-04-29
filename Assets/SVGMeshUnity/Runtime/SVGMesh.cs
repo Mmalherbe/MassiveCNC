@@ -17,7 +17,7 @@ namespace SVGMeshUnity
         
         private static WorkBufferPool WorkBufferPool = new WorkBufferPool();
         
-        private MeshData MeshData = new MeshData();
+        public MeshData MeshData = new MeshData();
         private Mesh Mesh;
 
         private BezierToVertex BezierToVertex;

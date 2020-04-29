@@ -43,10 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0768b1167b64542449542140e7a1569b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ScaleToMax: 1
+  ScaleToMax: 0
   ScaleFactorForMax: 0
   WidthInMM: 8000
   HeightInMM: 3520
   HorizontalPaddingInMM: 0
   VerticalPaddingInMM: 0
   ScaleFactorInUnity: 0
+  defaultScalePercentage: 50
