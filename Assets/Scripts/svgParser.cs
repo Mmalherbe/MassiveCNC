@@ -27,7 +27,6 @@ namespace Assets.Scripts
             XmlReader reader = XmlReader.Create(urlToFile, settings);
             XmlDocument doc = new XmlDocument();
             doc.Load(reader);
-            Debug.Log(doc);
             SvgClass svg = new SvgClass();
 
             svg = XmlOperation.Deserialize<SvgClass>(urlToFile);

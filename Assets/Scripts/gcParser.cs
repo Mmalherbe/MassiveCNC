@@ -24,6 +24,10 @@ public class gcParser : MonoBehaviour
     [SerializeField] private LineRenderer ZAxis;
     [SerializeField] internal bool FileLoaded = false;
     [SerializeField] internal bool StartFromHome = true;
+    [SerializeField] internal bool ReturnToHome = true;
+    [SerializeField] internal bool AUXOnInFigures = true;
+    [SerializeField] internal bool AUXOnInTravels = true;
+
     [SerializeField] internal GameObject HomePositionObj;
     [SerializeField] internal GameObject MiddlePointGcode;
     [SerializeField] internal GameObject StartPositionGcode;
@@ -36,7 +40,7 @@ public class gcParser : MonoBehaviour
     internal float maxScaleVertical = 1.001f;
     internal float scaleToUseHorizontal = 1f;
     internal float scaleToUseVertical = 1f;
-    private bool multiLine = false;
+
     internal List<Coords> OriginalCoords = new List<Coords>();
     private float minX;
     private float maxX;
@@ -96,7 +100,6 @@ public class gcParser : MonoBehaviour
         ResetScales();
         Linebuilder.ClearLines();
         OriginalCoords = coords;
-        multiLine = multiline;
 
     }
 
@@ -145,20 +148,38 @@ public class gcParser : MonoBehaviour
             gcl.X = HomePositionObj.transform.position.x;
             gcl.Y = HomePositionObj.transform.position.y;
             gcl.Z = HomePositionObj.transform.position.z;
+            gcl.AUX1 = AUXOnInTravels;
             gcodeFromPath.Add(gcl);
         }
-        foreach (Coords coord in coords)
+        for(int i = 0; i < coords.Count;i++)
         {
           midX = 0;
             midY = 0;
             midZ = 0;
             gcLine gcl = new gcLine();
-            gcl.X = (coord.X - midX);
-            gcl.Y = coord.Y - midY;
-            gcl.Z = coord.Z - midZ;
+            gcl.X = float.Parse((coords[i].X - midX).ToString("F4"));
+            gcl.Y = float.Parse((coords[i].Y - midY).ToString("F4"));
+            gcl.Z = float.Parse((coords[i].Z - midZ).ToString("F4"));
+            gcl.F = 20000f;
             gcl.G = 1;
+            gcl.AUX1 = AUXOnInFigures;
+            if (coords.IndexOf(coords.First(x => x.X == coords[i].X && x.Y == coords[i].Y && x.Z == coords[i].Z)) != i)
+            {
+                gcl.AUX1 = AUXOnInTravels;
+            }
+            gcodeFromPath.Add(gcl);
+
+        }
+        if (ReturnToHome)
+        {
+            gcLine gcl = new gcLine();
+            gcl.X = HomePositionObj.transform.position.x;
+            gcl.Y = HomePositionObj.transform.position.y;
+            gcl.Z = HomePositionObj.transform.position.z;
+            gcl.AUX1 = AUXOnInTravels;
             gcodeFromPath.Add(gcl);
         }
+
         gcodeFromPath = fill(gcodeFromPath);
 
         if (Cnc_Settings.ScaleToMax)
@@ -194,7 +215,7 @@ public class gcParser : MonoBehaviour
         {
 
             Interaction_Controller.UpdateMinMaxValues();
-            Linebuilder.showOutLinesFromPoints(gcodeFromPath, multiLine);
+            Linebuilder.showOutLinesFromPoints(gcodeFromPath);
             gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
         }
     }

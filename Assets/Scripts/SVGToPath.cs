@@ -49,11 +49,15 @@ public class SVGToPath : MonoBehaviour
             float maxY = Mesh.MeshData.Vertices.Max(y => y.y);
             float midX = minX + ((maxX - minX) / 2);
             float midY = minY + ((maxY - minY) / 2);
-            foreach (Vector3 coords in Mesh.MeshData.Vertices)
+            foreach (Vector3 coords in (Mesh.MeshData.Vertices))
             {
                 Coords coord = new Coords { X = coords.x - midX, Y = coords.y - midY, Z = coords.z };
                 coordsForId.Add(coord);
             
+            }
+            if(svgPath.Class.Length == 0)
+            {
+                svgPath.Class = svgPath.Id;
             }
             CreateSVGClassObject(svgPath.Class);
             svgPaths.Add(svgPath.Class, coordsForId);

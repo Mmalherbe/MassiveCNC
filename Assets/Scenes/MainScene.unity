@@ -14125,8 +14125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Mesh: {fileID: 1643331420}
   gcParser: {fileID: 566648309}
-  svgClassesToShow:
-  - ScaleToMax_Toggle
+  svgClassesToShow: []
   SVGClassHolder: {fileID: 1041931617}
   SVGClassPrefab: {fileID: 1228510351682811951, guid: 3b5e59f88e6d2334dbbb0a74473ecdd8,
     type: 3}
@@ -28070,6 +28069,21 @@ PrefabInstance:
       propertyPath: MiddlePointGcode
       value: 
       objectReference: {fileID: 667468545}
+    - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
+        type: 3}
+      propertyPath: StartPositionGcode
+      value: 
+      objectReference: {fileID: 667468545}
+    - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
+        type: 3}
+      propertyPath: AUXOnInTravels
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
+        type: 3}
+      propertyPath: AUXOnInFigures
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 191050538871939147, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}
       propertyPath: Cnc_Settings

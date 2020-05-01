@@ -15,7 +15,23 @@ public class FileController : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI CNCbtn_text;
     [SerializeField] private TextMeshProUGUI SVGbtn_text;
     [SerializeField] private SVGToPath svgToPath;
+    public void Start()
+    {
+        string fileName = "spindleTest.cnc";
+        string path = Path.Combine(Application.dataPath, "examples", fileName);
 
+        using (System.IO.StreamWriter file =
+               new System.IO.StreamWriter(path))
+        {
+            file.WriteLine(";" + DateTime.Now);
+            for (int i = 0; i < 1023; i++)
+            {
+                file.WriteLine("M3 S"+i);
+
+            }
+        }
+
+    }
     public void openCNCfile(){
 
 

@@ -93,7 +93,7 @@ public class gcLineBuilder : MonoBehaviour
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
                 linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
-                
+                linerenderer.enabled = (bool)gCodeLines[i].AUX1;
             }
             else
             {
@@ -107,6 +107,7 @@ public class gcLineBuilder : MonoBehaviour
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);
                 linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
+                linerenderer.enabled = (bool)gCodeLines[i].AUX1;
             }
 
         }

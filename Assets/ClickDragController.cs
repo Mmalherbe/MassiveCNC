@@ -47,7 +47,6 @@ public class ClickDragController : MonoBehaviour
         Vector2 localMousePosition = cnc_Screen.InverseTransformPoint(Input.mousePosition);
         if (cnc_Screen.rect.Contains(localMousePosition))
         {
-            Debug.Log("IN");
             if (Input.GetMouseButtonDown(0))
             {
                 MouseDownPos = Input.mousePosition;

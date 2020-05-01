@@ -24,7 +24,8 @@ namespace Assets.Scripts.classes
         public float? S;
         public float? T;
         public int? M;
-        public Color color;
+        public int? volt;
+        public bool? AUX1;
 
         public override string ToString()
         {
@@ -43,7 +44,8 @@ namespace Assets.Scripts.classes
                 " " + (R != null ? "R" + R : "") +
                 " " + (S != null ? "S" + S : "") +
                 " " + (T != null ? "T" + T : "") +
-                " " + (color != null? "M" + color : "");
+                " " + (AUX1 != null? ((bool)AUX1 ? "M54 P1" : "M54 P0") : "") +
+                " " + (volt != null? "M3 S" + volt : "");
 
         }
         public string ToEdingString()
@@ -51,8 +53,8 @@ namespace Assets.Scripts.classes
             return "" + linenr +
     " " + (G != null ? "G" + G : "") +
     " " + (X != null ? "X" + X : "") +
-    " " + (Z != null ? "Y" + -Y : "") +
-    " " + (Y != null ? "Z" + (Z == 0.00001f?0 :Z): "") +
+    " " + (Z != null ? "Y" + -Y: "") +
+    " " + (Y != null ? "Z" + (Z == 0.00001f ? 0 : Z) : "") +
     " " + (F != null ? "F" + F : "") +
     " " + (I != null ? "I" + I : "") +
     " " + (J != null ? "J" + J : "") +
@@ -63,7 +65,11 @@ namespace Assets.Scripts.classes
     " " + (P != null ? "P" + P : "") +
     " " + (R != null ? "R" + R : "") +
     " " + (S != null ? "S" + S : "") +
-    " " + (T != null ? "T" + T : "");
+    " " + (T != null ? "T" + T : "") +
+    " " + (AUX1 != null ? ((bool)AUX1 ? "M54 P1" : "M54 P0") : "") +
+    " " + (volt != null ? "M3 S" + volt : "");
+
+    ;
 
         }
     }
