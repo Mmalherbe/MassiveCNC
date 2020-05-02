@@ -7518,7 +7518,7 @@ MonoBehaviour:
   m_MinValue: 0.01
   m_MaxValue: 0
   m_WholeNumbers: 0
-  m_Value: 0.01
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -14125,7 +14125,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Mesh: {fileID: 1643331420}
   gcParser: {fileID: 566648309}
-  svgClassesToShow: []
+  svgClassesToShow:
+  - ScaleToMax_Toggle
   SVGClassHolder: {fileID: 1041931617}
   SVGClassPrefab: {fileID: 1228510351682811951, guid: 3b5e59f88e6d2334dbbb0a74473ecdd8,
     type: 3}

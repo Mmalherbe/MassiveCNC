@@ -14,6 +14,7 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private gcLineBuilder Linebuilder;
     [SerializeField] private gcParser Gcparser;
     [SerializeField] internal int fontSize = 10;
+    [SerializeField] internal Dictionary<string, string> SVGLetters;
     private int fontStyle = 0;
     [SerializeField] private CNC_Settings Cnc_Settings;
     internal string fontstyleString = "Regular";
