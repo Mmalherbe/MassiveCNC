@@ -17,7 +17,346 @@
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    sodipodi:docname="Origram.svg">
   <defs
-     id="defs4460" />
+     id="defs4460">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6882"
+       x="-0.01221118"
+       width="1.0244224"
+       y="-0.011796"
+       height="1.023592">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.026008541"
+         id="feGaussianBlur6884" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6886"
+       x="-0.015581297"
+       width="1.0311626"
+       y="-0.00975732"
+       height="1.0195146">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.03085041"
+         id="feGaussianBlur6888" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6890"
+       x="-0.011376344"
+       width="1.0227527"
+       y="-0.012696"
+       height="1.025392">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.027992916"
+         id="feGaussianBlur6892" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6894"
+       x="-0.010024"
+       width="1.020048"
+       y="-0.014946321"
+       height="1.0298926">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.033152289"
+         id="feGaussianBlur6896" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6898"
+       x="-0.012734966"
+       width="1.0254699"
+       y="-0.011345239"
+       height="1.0226905">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.025214792"
+         id="feGaussianBlur6900" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6902"
+       x="-0.012788418"
+       width="1.0255768"
+       y="-0.01130315"
+       height="1.0226063">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.025320626"
+         id="feGaussianBlur6904" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6906"
+       x="-0.015589284"
+       width="1.0311786"
+       y="-0.0097541906"
+       height="1.0195084">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.030797501"
+         id="feGaussianBlur6908" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6910"
+       x="-0.012928407"
+       width="1.0258568"
+       y="-0.011196"
+       height="1.022392">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.024685624"
+         id="feGaussianBlur6912" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6914"
+       x="-0.016026579"
+       width="1.0320532"
+       y="-0.009590457"
+       height="1.0191809">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.021272499"
+         id="feGaussianBlur6916" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6918"
+       x="-0.014555999"
+       width="1.029112"
+       y="-0.010207574"
+       height="1.0204151">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032093959"
+         id="feGaussianBlur6920" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6922"
+       x="-0.014555999"
+       width="1.029112"
+       y="-0.010207574"
+       height="1.0204151">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032093958"
+         id="feGaussianBlur6924" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6926"
+       x="-0.012000001"
+       width="1.024"
+       y="-0.011999999"
+       height="1.024">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.026458331"
+         id="feGaussianBlur6928" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6930"
+       x="-0.012788419"
+       width="1.0255768"
+       y="-0.011303149"
+       height="1.0226063">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.025320623"
+         id="feGaussianBlur6932" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6934"
+       x="-0.010056"
+       width="1.020112"
+       y="-0.01487574"
+       height="1.0297515">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.033258125"
+         id="feGaussianBlur6936" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6938"
+       x="-0.035224489"
+       width="1.070449"
+       y="-0.0072318436"
+       height="1.0144637">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.022833541"
+         id="feGaussianBlur6940" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6942"
+       x="-0.014485207"
+       width="1.0289704"
+       y="-0.010242678"
+       height="1.0204854">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032385"
+         id="feGaussianBlur6944" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6946"
+       x="-0.02496246"
+       width="1.0499249"
+       y="-0.0078984878"
+       height="1.015797">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032252705"
+         id="feGaussianBlur6948" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6950"
+       x="-0.03542465"
+       width="1.0708493"
+       y="-0.007223464"
+       height="1.0144469">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.022807083"
+         id="feGaussianBlur6952" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6954"
+       x="-0.015602679"
+       width="1.0312054"
+       y="-0.0097489538"
+       height="1.0194979">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.030823957"
+         id="feGaussianBlur6956" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6958"
+       x="-0.014555999"
+       width="1.029112"
+       y="-0.010207574"
+       height="1.0204151">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032093958"
+         id="feGaussianBlur6960" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6962"
+       x="-0.0206007"
+       width="1.0412014"
+       y="-0.0084656353"
+       height="1.0169313">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.026617074"
+         id="feGaussianBlur6964" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6966"
+       x="-0.01210998"
+       width="1.02422"
+       y="-0.011891999"
+       height="1.023784">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.026220206"
+         id="feGaussianBlur6968" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6970"
+       x="-0.014609219"
+       width="1.0292184"
+       y="-0.010181564"
+       height="1.0203631">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032146874"
+         id="feGaussianBlur6972" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6974"
+       x="-0.012410256"
+       width="1.0248205"
+       y="-0.011616"
+       height="1.023232">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.025611666"
+         id="feGaussianBlur6976" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6978"
+       x="-0.014592"
+       width="1.029184"
+       y="-0.010189944"
+       height="1.0203799">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.032173332"
+         id="feGaussianBlur6980" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6982"
+       x="-0.012048"
+       width="1.024096"
+       y="-0.011952381"
+       height="1.0239048">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.026564166"
+         id="feGaussianBlur6984" />
+    </filter>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -26,8 +365,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8582699"
-     inkscape:cx="214.28041"
-     inkscape:cy="1033.3663"
+     inkscape:cx="37.376404"
+     inkscape:cy="62.218661"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -54,253 +393,266 @@
      id="layer1">
     <g
        aria-label="a"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="flowRoot4468">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6982)"
+       id="text2725"
+       transform="translate(-5.2388425,285.8465)">
       <path
-         d="m 35.885713,53.097303 5.68,5.72 h 2.48 l 5.56,-5.56 h -7.88 v -8.88 h 8.28 v 8.88 l 5.88,5.72 v -14.44 l -5.72,-5.72 h -8.6 l -5.68,5.72 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4630" />
+         d="M 6.6415784,7.2872654 8.1444116,8.8006821 H 8.8005783 L 10.271662,7.3295988 H 8.186745 v -2.3495 h 2.19075 v 2.3495 l 1.55575,1.5134166 V 5.0224322 L 10.419828,3.5090156 H 8.1444116 L 6.6415784,5.0224322 Z"
+         id="path2888"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="b"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4484">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6978)"
+       id="text2737"
+       transform="translate(-8.0390155,286.97891)">
       <path
-         d="m 52.309045,30.297303 h -5.84 v 22.8 l 5.84,5.84 v -14.56 z m 8.44,8.52 h -2.88 l -5.56,5.56 h 8.28 v 8.88 h -7.88 l 5.56,5.56 h 2.48 l 5.72,-5.72 v -8.56 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4633" />
+         d="M 10.986918,1.2547656 H 9.4417516 V 7.2872654 L 10.986918,8.8324321 V 4.9800988 Z m 2.233084,2.25425 h -0.762 l -1.471084,1.4710832 h 2.19075 v 2.3495 h -2.084916 l 1.471083,1.4710833 h 0.656167 L 14.733418,7.2872654 V 5.0224322 Z"
+         id="path2891"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="c"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4488">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6974)"
+       id="text2741"
+       transform="translate(-10.669855,285.86766)">
       <path
-         d="m 57.052381,44.537303 v 8.56 l 5.68,5.72 h 7.04 l 5.56,-5.56 h -12.44 v -8.88 h 12.88 l -5.6,-5.56 h -7.44 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4636" />
+         d="m 12.241925,5.0224322 v 2.2648332 l 1.502834,1.5134167 h 1.862666 l 1.471084,-1.4710833 h -3.291417 v -2.3495 h 3.407833 L 15.713259,3.5090156 h -1.9685 z"
+         id="path2894"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="d"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4492">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6970)"
+       id="text2745"
+       transform="translate(-13.634071,286.97891)">
       <path
-         d="m 73.355713,38.817303 h 2.84 l 5.56,5.56 h -8.28 v 8.88 h 7.88 l -5.56,5.56 h -2.44 l -5.72,-5.72 v -8.56 z m 8.4,14.44 5.84,5.68 v -28.64 h -5.84 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4639" />
+         d="m 16.555516,3.5090156 h 0.751416 l 1.471084,1.4710832 h -2.19075 v 2.3495 h 2.084916 L 17.201099,8.8006821 H 16.555516 L 15.042099,7.2872654 V 5.0224322 Z m 2.2225,3.8205832 1.545166,1.5028333 V 1.2547656 h -1.545166 z"
+         id="path2897"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="e"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4496">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6966)"
+       id="text2749"
+       transform="translate(-16.391911,285.86766)">
       <path
-         d="m 92.019049,48.817303 h -4.44 l 5.16,5.16 5.12,-5.16 v -4.28 l -5.68,-5.72 h -8.28 l -5.68,5.72 v 8.56 l 5.68,5.72 h 9.56 l -5.56,-5.56 h -3.84 v -8.88 h 7.96 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4642" />
+         d="m 21.493523,6.1548488 h -1.17475 l 1.36525,1.36525 1.354666,-1.36525 V 5.0224322 L 21.535856,3.5090156 h -2.19075 l -1.502833,1.5134166 v 2.2648332 l 1.502833,1.5134167 h 2.529417 L 20.40344,7.3295988 h -1.016 v -2.3495 h 2.106083 z"
+         id="path2900"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="f"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4500">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6962)"
+       id="text2753"
+       transform="translate(-18.144333,286.99479)">
       <path
-         d="m 94.682377,30.297303 -5.88,5.84 v 22.68 h 5.88 v -14.44 h 0.28 l 5.560003,-5.56 h -5.840003 v -8.52 l 5.840003,5.84 v -5.84 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4645" />
+         d="m 22.198196,1.2547656 -1.55575,1.5451666 v 6.0007499 h 1.55575 V 4.9800988 h 0.07408 l 1.471083,-1.4710832 h -1.545166 v -2.25425 l 1.545166,1.5451666 V 1.2547656 Z"
+         id="path2903"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="g"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4504">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6958)"
+       id="text2757"
+       transform="translate(-22.039884,284.74054)">
       <path
-         d="m 99.385713,44.537303 v 8.56 l 5.719997,5.72 h 2.44 l 5.56,-5.56 h -7.88 v -8.88 h 8.28 v 17.12 h -5.84 l 5.84,5.84 5.88,-5.84 v -16.96 l -5.72,-5.72 h -8.56 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4648" />
+         d="m 23.44262,5.0224322 v 2.2648332 l 1.513417,1.5134167 h 0.645583 l 1.471084,-1.4710833 h -2.084917 v -2.3495 h 2.19075 V 9.5097654 H 25.63337 l 1.545167,1.5451666 1.55575,-1.5451666 V 5.0224322 L 27.22087,3.5090156 h -2.264833 z"
+         id="path2906"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="h"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4508">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6954)"
+       id="text2761"
+       transform="translate(-24.56489,286.97362)">
       <path
-         d="m 122.20905,38.817303 5.68,5.72 v 14.28 h -5.84 v -14.44 h -6.2 l 5.56,-5.56 z m -6.36,20.16 v -28.68 h -5.88 v 22.8 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4651" />
+         d="m 29.481293,3.5090156 1.502833,1.5134166 V 8.8006821 H 29.43896 V 4.9800988 h -1.640417 l 1.471083,-1.4710832 z m -1.68275,5.3339998 V 1.2547656 h -1.55575 v 6.0324998 z"
+         id="path2909"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="i"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4512">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6950)"
+       id="text2765"
+       transform="translate(-25.766982,286.96833)">
       <path
-         d="m 120.55238,30.337303 5.84,5.84 v -5.84 z m 5.84,28.64 v -20.12 h -5.84 v 14.28 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4654" />
+         d="m 29.042968,1.265349 1.545167,1.5451666 V 1.265349 Z m 1.545167,7.5776664 V 3.5195989 h -1.545167 v 3.7782499 z"
+         id="path2912"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="j"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4516">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6946)"
+       id="text2769"
+       transform="translate(-29.345029,285.85708)">
       <path
-         d="m 136.97571,30.337303 5.88,5.88 v -5.88 z m 0,8.52 c 0,7.56 0,15.12 0,22.68 h -5.84 l 5.84,5.84 5.84,-5.84 c 0,-7.56 0.04,-15.12 0.04,-22.68 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4657" />
+         d="m 33.388307,1.265349 1.55575,1.5557499 V 1.265349 Z m 0,2.2542499 c 0,2.0002499 0,4.0004999 0,6.0007498 h -1.545166 l 1.545166,1.5451663 1.545167,-1.5451663 c 0,-2.0002499 0.01058,-4.0004999 0.01058,-6.0007498 z"
+         id="path2915"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="k"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4520">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6942)"
+       id="text2773"
+       transform="translate(-33.27762,286.97362)">
       <path
-         d="m 147.59905,52.257303 6.56,6.56 h 7.84 l -14.4,-14.44 5.56,-5.56 h -5.56 v -8.52 h -5.88 v 22.8 l 5.88,5.88 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4660" />
+         d="m 36.199065,7.0650155 1.735667,1.7356666 h 2.074333 l -3.81,-3.8205833 1.471084,-1.4710832 h -1.471084 v -2.25425 h -1.55575 v 6.0324998 l 1.55575,1.55575 z"
+         id="path2918"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="l"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4524">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6938)"
+       id="text2777"
+       transform="translate(-34.172791,286.96833)">
       <path
-         d="m 158.18238,58.977303 v -28.64 h -5.88 v 22.8 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4663" />
+         d="M 38.999236,8.8430154 V 1.265349 h -1.55575 v 6.0324998 z"
+         id="path2921"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="m"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4528">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6934)"
+       id="text2781"
+       transform="translate(-40.163841,285.87295)">
       <path
-         d="m 168.72571,58.817303 v -14.44 l -5.84,-5.72 v 20.16 z m 18.44,-20 5.72,5.72 v 14.4 l -5.84,-5.68 v -8.88 h -6.24 l 5.56,-5.56 z m -12.08,0 5.72,5.56 v 14.44 h -5.84 v -14.44 h -6.24 l 5.6,-5.56 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4666" />
+         d="M 41.788828,8.8006821 V 4.9800988 L 40.243661,3.4666822 v 5.3339999 z m 4.878916,-5.2916665 1.513417,1.5134166 V 8.8324321 L 46.635994,7.3295988 v -2.3495 h -1.651 l 1.471084,-1.4710832 z m -3.196166,0 1.513416,1.4710832 V 8.8006821 H 43.439828 V 4.9800988 h -1.651 l 1.481666,-1.4710832 z"
+         id="path2924"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="n"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4532">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6930)"
+       id="text2785"
+       transform="translate(-41.371224,285.86766)">
       <path
-         d="m 173.46905,58.817303 h 5.88 v -14.44 l -5.88,-5.72 z m 12.08,-5.56 5.88,5.72 v -14.44 l -5.72,-5.72 h -0.8 l -5.56,5.56 h 6.2 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4669" />
+         d="m 43.043836,8.8006821 h 1.55575 V 4.9800988 l -1.55575,-1.5134166 z m 3.196166,-1.4710833 1.55575,1.5134166 V 5.0224322 L 46.282336,3.5090156 h -0.211667 l -1.471083,1.4710832 h 1.640416 z"
+         id="path2927"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="o"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4536">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6926)"
+       id="text2789"
+       transform="translate(-44.441274,285.86766)">
       <path
-         d="m 184.05238,53.097303 5.68,5.72 h 8.44 l 5.88,-5.72 v -8.56 l -5.72,-5.72 h -8.6 l -5.68,5.72 z m 5.84,0.16 v -8.88 h 8.28 v 8.88 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4672" />
+         d="m 45.844011,7.2872654 1.502833,1.5134167 h 2.233083 l 1.55575,-1.5134167 V 5.0224322 L 49.62226,3.5090156 h -2.275416 l -1.502833,1.5134166 z m 1.545166,0.042333 v -2.3495 h 2.19075 v 2.3495 z"
+         id="path2930"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="p"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4540">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6922)"
+       id="text2793"
+       transform="translate(-47.241445,284.74054)">
       <path
-         d="m 208.91571,38.817303 h -2.88 l -5.56,5.56 h 8.28 v 8.88 h -7.88 l 5.56,5.56 h 2.48 l 5.72,-5.72 v -8.56 z m -8.44,28.52 -5.84,-5.56 v -22.96 h 5.84 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4675" />
+         d="m 52.422431,3.5090156 h -0.762 l -1.471083,1.4710832 h 2.19075 v 2.3495 h -2.084917 l 1.471084,1.4710833 h 0.656166 L 53.935848,7.2872654 V 5.0224322 Z M 50.189348,11.054932 48.644181,9.5838487 V 3.5090156 h 1.545167 z"
+         id="path2933"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="q"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4544">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6918)"
+       id="text2797"
+       transform="translate(-50.04162,284.74054)">
       <path
-         d="m 219.33905,61.777303 5.88,5.56 -0.04,-28.52 h -5.84 v 5.56 l -5.56,-5.56 h -2.88 l -5.68,5.72 v 8.6 l 5.68,5.68 h 2.48 l 5.56,-5.56 h -7.88 v -8.88 h 8.28 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4678" />
+         d="m 55.180273,9.5838487 1.55575,1.4710833 -0.01058,-7.5459164 h -1.54517 V 4.9800988 L 53.709189,3.5090156 h -0.762 l -1.502833,1.5134166 v 2.2754166 l 1.502833,1.5028333 h 0.656167 l 1.471083,-1.4710833 h -2.084916 v -2.3495 h 2.19075 z"
+         id="path2936"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="r"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4548">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6914)"
+       id="text2801"
+       transform="translate(-51.788753,285.8412)">
       <path
-         d="m 227.84238,38.857303 h -0.64 l -5.56,5.56 h 6.2 z m -6.2,20.12 v -20.12 h -5.84 v 14.28 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4681" />
+         d="m 57.430114,3.5195989 h -0.169333 l -1.471084,1.4710833 h 1.640417 z M 55.789697,8.8430154 V 3.5195989 h -1.545166 v 3.7782499 z"
+         id="path2939"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="s"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4552">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6910)"
+       id="text2805"
+       transform="translate(-55.075757,285.86766)">
       <path
-         d="m 237.02571,44.377303 v 8.88 h -2.88 l -5.56,5.56 h 8.6 l 5.72,-5.68 v -8.6 l -5.72,-5.72 h -2.64 l -8.96,8.96 v 8.04 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4684" />
+         d="m 59.859868,4.9800988 v 2.3495 h -0.762 l -1.471083,1.4710833 h 2.275417 L 61.415618,7.2978488 V 5.0224322 L 59.902202,3.5090156 h -0.6985 l -2.370667,2.3706666 v 2.1272499 z"
+         id="path2942"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       aria-label="t"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6906)"
+       id="text2809"
+       transform="translate(-57.531973,286.96833)">
+      <path
+         d="m 60.818543,1.265349 v 2.2542499 h -1.608667 l 1.471084,1.4710833 h 0.116416 0.02117 V 7.2978488 L 62.36371,8.8430154 V 4.9906822 h 1.5875 L 62.480126,3.5195989 H 62.36371 V 1.265349 Z"
+         id="path2945"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="u"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4556">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6902)"
+       id="text2813"
+       transform="translate(-60.97244,285.86766)">
       <path
-         d="m 249.04905,38.657303 v 14.6 l 5.88,5.72 v -14.44 z m -12.08,14.44 5.72,5.72 h 0.8 l 5.56,-5.56 h -6.2 v -14.44 h -5.88 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4687" />
+         d="m 65.841218,3.4666822 v 3.8629166 l 1.55575,1.5134166 V 5.0224322 Z m -3.196167,3.8205832 1.513417,1.5134167 h 0.211666 L 65.841218,7.3295988 H 64.200801 V 3.5090156 h -1.55575 z"
+         id="path2948"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="v"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4560">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6898)"
+       id="text2817"
+       transform="translate(-63.772611,285.88883)">
       <path
-         d="m 256.07238,58.817303 h 0.8 l 8.64,-8.52 v -11.48 h -5.88 v 14.44 h -6.2 v -14.6 l -5.88,5.72 v 5.96 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4690" />
+         d="m 67.699472,8.8006821 h 0.211667 l 2.286,-2.25425 V 3.5090156 h -1.55575 V 7.3295988 H 67.000972 V 3.4666822 l -1.55575,1.5134166 v 1.5769167 z"
+         id="path2951"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="w"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4564">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6894)"
+       id="text2821"
+       transform="translate(-68.165581,285.88354)">
       <path
-         d="m 273.17571,53.257303 5.64,5.56 h 0.8 l 8.52,-8.48 v -5.8 l -5.88,-5.84 v 14.56 h -6.2 v -8.88 l -5.84,-5.68 v 14.56 h -6.2 v -14.44 h -5.88 v 11.52 l 8.64,8.48 h 0.8 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4693" />
+         d="m 72.224734,7.3295988 1.49225,1.4710833 H 73.92865 L 76.1829,6.5570155 V 5.0224322 L 74.62715,3.4772656 v 3.8523332 h -1.640416 v -2.3495 L 71.441567,3.4772656 V 7.3295988 H 69.801151 V 3.5090156 h -1.55575 v 3.0479999 l 2.286,2.2436666 h 0.211666 z"
+         id="path2954"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="x"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4568">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6890)"
+       id="text2825"
+       transform="translate(-69.949751,285.86766)">
       <path
-         d="m 272.71905,57.137303 4.32,-4.28 5.96,5.96 h 8.04 l -10,-10 10,-10 h -8.04 l -5.96,6 -4.32,-4.32 -4,4.04 4.28,4.28 -4.28,4.28 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4696" />
+         d="m 72.103905,8.3561821 1.143,-1.1324167 1.576916,1.5769167 h 2.12725 L 74.305238,6.1548488 76.951071,3.5090156 h -2.12725 l -1.576916,1.5874999 -1.143,-1.143 -1.058334,1.0689167 1.132417,1.1324166 -1.132417,1.1324166 z"
+         id="path2957"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="y"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4572">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6886)"
+       id="text2829"
+       transform="translate(-72.173133,284.77229)">
       <path
-         d="m 285.02239,58.777303 h 0.8 l 5.56,-5.56 h -6.2 l -0.04,-14.6 -5.84,5.88 v 8.56 z m 6.36,-20 v 22.64 h -5.84 l 5.84,5.88 5.88,-5.88 c 0,-7.52 0,-15.08 0,-22.64 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4699" />
+         d="m 75.359159,8.7900987 h 0.211667 l 1.471083,-1.4710833 h -1.640417 l -0.01058,-3.8629165 -1.545167,1.5557499 v 2.2648333 z m 1.68275,-5.2916665 v 5.9901665 h -1.545167 l 1.545167,1.5557503 1.55575,-1.5557503 c 0,-1.9896666 0,-3.9899165 0,-5.9901665 z"
+         id="path2960"
+         inkscape:connector-curvature="0" />
     </g>
     <g
        aria-label="z"
-       transform="scale(0.26458333)"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       id="text4576">
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter6882)"
+       id="text2833"
+       transform="translate(-75.153227,285.85708)">
       <path
-         d="m 303.84571,38.857303 h -8.6 l -5.36,5.36 h 10.52 l -9.88,9.88 4.72,4.76 h 8.6 l 5.36,-5.36 h -10.4 l 9.84,-9.84 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-         id="path4702" />
+         d="m 80.339504,3.5195989 h -2.275416 l -1.418167,1.4181666 h 2.783416 l -2.614083,2.6140833 1.248834,1.2594166 h 2.275416 l 1.418167,-1.4181666 h -2.751667 l 2.6035,-2.6034999 z"
+         id="path2963"
+         inkscape:connector-curvature="0" />
     </g>
+    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Origram;-inkscape-font-specification:'Origram, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       id="text6988" />
   </g>
 </svg>

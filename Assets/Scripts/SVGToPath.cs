@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts;
 using Assets.Scripts.classes;
+using Assets.Scripts.classes.Font;
 using SVGMeshUnity;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ public class SVGToPath : MonoBehaviour
     [SerializeField] private GameObject SVGClassPrefab;
     private List<Coords> coordsToParse = new List<Coords>();
         internal void ParseSVGToPath(string urlToFile)
-    {
+        {
         svgParser parser = new svgParser();
         SvgClass svg = parser.Parse(urlToFile);
         //string SVG_PATH = doc.
@@ -33,7 +34,7 @@ public class SVGToPath : MonoBehaviour
 
 
 
-        foreach (SvgPath svgPath in svg.SvgPath)
+        foreach (SvgPath svgPath in svg.SvgPath.Where(x=>x.D.Length> 10))
         {
 
             SVG = new SVGData();
@@ -42,19 +43,21 @@ public class SVGToPath : MonoBehaviour
             Debug.Log(SVG.Dump());
             Mesh.Fill(SVG);
             List<Coords> coordsForId = new List<Coords>();
-
             float minX = Mesh.MeshData.Vertices.Min(x => x.x);
             float minY = Mesh.MeshData.Vertices.Min(y => y.y);
             float maxX = Mesh.MeshData.Vertices.Max(x => x.x);
             float maxY = Mesh.MeshData.Vertices.Max(y => y.y);
             float midX = minX + ((maxX - minX) / 2);
             float midY = minY + ((maxY - minY) / 2);
-            foreach (Vector3 coords in (Mesh.MeshData.Vertices))
+            midX = 0;
+            midY = 0;
+            for(int i =0; i < Mesh.MeshData.Vertices.Count;i++)
             {
-                Coords coord = new Coords { X = coords.x - midX, Y = coords.y - midY, Z = coords.z };
+                Coords coord = new Coords { X = Mesh.MeshData.Vertices[i].x - midX, Y = Mesh.MeshData.Vertices[i].y - midY, Z = Mesh.MeshData.Vertices[i].z };
                 coordsForId.Add(coord);
-            
             }
+
+
             if(svgPath.Class.Length == 0)
             {
                 svgPath.Class = svgPath.Id;
@@ -67,7 +70,8 @@ public class SVGToPath : MonoBehaviour
 
 
     }
-    
+
+
     private void ShowPathsFromSVG()
     {
         coordsToParse.Clear();

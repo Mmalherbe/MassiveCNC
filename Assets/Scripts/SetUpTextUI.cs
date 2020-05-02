@@ -29,7 +29,7 @@ public class SetUpTextUI : MonoBehaviour
             {
                 if (svgFile.ToUpper().EndsWith("SVG"))
                 {
-                    SVGFontClass font = XmlOperation.Deserialize<SVGFontClass>(svgFile);
+                    Assets.Scripts.classes.Font.Svg font = XmlOperation.Deserialize<Assets.Scripts.classes.Font.Svg>(svgFile);
 
                 }
             }

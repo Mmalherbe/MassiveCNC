@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.classes;
+using Assets.Scripts.classes.Font;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,6 +33,9 @@ namespace Assets.Scripts
             svg = XmlOperation.Deserialize<SvgClass>(urlToFile);
             return svg;
         }
+
+
+      
 
 
     }

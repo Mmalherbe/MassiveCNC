@@ -61,7 +61,9 @@ return;
     {
         SVGbtn_text.text = "opening File";
         string path = EditorUtility.OpenFilePanel("Open SVG", "", "svg");
-        svgToPath.ParseSVGToPath(path);
+
+            svgToPath.ParseSVGToPath(path);
+
         SVGbtn_text.text = "File Opened"; // Changes the buttontext again                      
         return;
     }
