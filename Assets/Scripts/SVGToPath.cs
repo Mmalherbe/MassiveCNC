@@ -25,6 +25,14 @@ public class SVGToPath : MonoBehaviour
     [SerializeField] private GameObject SVGClassHolder;
     [SerializeField] private GameObject SVGClassPrefab;
     private List<Coords> coordsToParse = new List<Coords>();
+
+    internal ParseSVGLinesToPath(string urlToFile)
+	{
+        svgParser parser = new svgParser();
+        SvgClass svg = parser.Parse(urlToFile);
+
+
+    }
         internal void ParseSVGToPath(string urlToFile)
         {
         svgParser parser = new svgParser();
