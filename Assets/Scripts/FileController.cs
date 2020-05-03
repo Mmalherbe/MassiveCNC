@@ -61,9 +61,14 @@ return;
     {
         SVGbtn_text.text = "opening File";
         string path = EditorUtility.OpenFilePanel("Open SVG", "", "svg");
+        if (path.ToUpper().Contains("LINE")) {
+            svgToPath.ParseSVGLinesToPath(path);
+        } else
+        {
 
+        
             svgToPath.ParseSVGToPath(path);
-
+        }
         SVGbtn_text.text = "File Opened"; // Changes the buttontext again                      
         return;
     }

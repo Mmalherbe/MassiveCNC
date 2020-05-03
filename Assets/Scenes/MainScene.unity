@@ -3907,6 +3907,7 @@ MonoBehaviour:
   inputTextForTextToGCode: {fileID: 1679587723}
   Linebuilder: {fileID: 566648308}
   Gcparser: {fileID: 566648309}
+  svgParser: {fileID: 996447603}
   fontSize: 50
   Cnc_Settings: {fileID: 381301760}
 --- !u!114 &274609900
@@ -3921,9 +3922,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0eb4c36d6cd95447b9e9af085651092, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SvgToPath: {fileID: 996447603}
   FontDropDown: {fileID: 581444699}
   FontStyleDropDown: {fileID: 132488277}
   textToPath: {fileID: 274609899}
+  UseSVGFonts: 1
 --- !u!1 &280936295
 GameObject:
   m_ObjectHideFlags: 0
@@ -7518,7 +7521,7 @@ MonoBehaviour:
   m_MinValue: 0.01
   m_MaxValue: 0
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.01
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -14125,8 +14128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Mesh: {fileID: 1643331420}
   gcParser: {fileID: 566648309}
-  svgClassesToShow:
-  - ScaleToMax_Toggle
+  svgClassesToShow: []
   SVGClassHolder: {fileID: 1041931617}
   SVGClassPrefab: {fileID: 1228510351682811951, guid: 3b5e59f88e6d2334dbbb0a74473ecdd8,
     type: 3}
@@ -25241,6 +25243,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 274609900}
+        m_MethodName: OnFontChange
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 274609900}
+        m_MethodName: OnFontStyleChange
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
       - m_Target: {fileID: 87643478}
         m_MethodName: ParseTextToGcode_Click
         m_Mode: 1
@@ -28078,7 +28102,7 @@ PrefabInstance:
     - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}
       propertyPath: AUXOnInTravels
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}

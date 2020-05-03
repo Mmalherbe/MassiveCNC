@@ -21,17 +21,36 @@ public class SVGToPath : MonoBehaviour
 
     private SVGData SVG;
     [SerializeField] private List<string> svgClassesToShow = new List<string>();
-    [SerializeField] private Dictionary<string, List<Coords>> svgPaths = new Dictionary<string, List<Coords>>();
+    [SerializeField] internal Dictionary<string, List<Coords>> svgPaths = new Dictionary<string, List<Coords>>();
     [SerializeField] private GameObject SVGClassHolder;
     [SerializeField] private GameObject SVGClassPrefab;
     private List<Coords> coordsToParse = new List<Coords>();
-
-    internal ParseSVGLinesToPath(string urlToFile)
+    [SerializeField] internal Dictionary<string, Dictionary<string, List<Coords>>> svgFont = new Dictionary<string, Dictionary<string, List<Coords>>>();
+    internal void ParseSVGLinesToPath(string urlToFile)
 	{
         svgParser parser = new svgParser();
-        SvgClass svg = parser.Parse(urlToFile);
+        Assets.Scripts.classes.SvgLineFile.Svg svg = parser.ParseSVGLine(urlToFile);
+        List<Coords> coordsForId = new List<Coords>();
+        Coords coord = new Coords();
+        foreach (Assets.Scripts.classes.SvgLineFile.G letter in svg.G)
+        {
 
 
+            foreach (Assets.Scripts.classes.SvgLineFile.Line line in letter.Line)
+            {
+                coord = new Coords();
+                coord.X = float.Parse(line.X1 == null ? "0" : line.X1);
+                coord.Y = float.Parse(line.Y1 == null ? "0" : line.Y1);
+                coordsForId.Add(coord);
+                coord = new Coords();
+                coord.X = float.Parse(line.X2 == null ? "0" : line.X2);
+                coord.Y = float.Parse(line.Y2 == null ? "0" : line.Y2);
+                coordsForId.Add(coord);
+            }
+            CreateSVGClassObject(letter.Id);
+            svgPaths.Add(letter.Id, coordsForId);
+            svgClassesToShow.Add(letter.Id);
+        }
     }
         internal void ParseSVGToPath(string urlToFile)
         {

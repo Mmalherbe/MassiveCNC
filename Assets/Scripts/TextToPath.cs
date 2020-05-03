@@ -13,72 +13,123 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private TMP_InputField inputTextForTextToGCode;
     [SerializeField] private gcLineBuilder Linebuilder;
     [SerializeField] private gcParser Gcparser;
+    [SerializeField] private SVGToPath svgParser;
     [SerializeField] internal int fontSize = 10;
-    [SerializeField] internal Dictionary<string, string> SVGLetters;
+
     private int fontStyle = 0;
     [SerializeField] private CNC_Settings Cnc_Settings;
     internal string fontstyleString = "Regular";
     internal string fontFamilyString = "Arial";
     private char[] trims = { char.Parse("\n"), char.Parse("\r") };
+    internal bool svgFont;
 
     public void ClickParseTextToGcode()
     {
-       ParseTextToGcode(inputTextForTextToGCode.text);
+        ParseTextToGcode(inputTextForTextToGCode.text);
     }
     public void ParseTextToGcode(string _text)
     {
         List<string> _TextLines = _text.Split(char.Parse("\n")).ToList();
         List<string> TextLines = _TextLines.ToList<string>();
-        switch (fontstyleString)
-        {
-            default: fontStyle = 0; break;
-            case "Bold": fontStyle = 1; break;
-            case "Italic": fontStyle = 2; break;
-            case "Regular": fontStyle = 0; break;
-            case "Strikeout": fontStyle = 8; break;
-            case "Underline": fontStyle = 4; break;
-
-
-        }
         List<TextLinePath> ListPaths = new List<TextLinePath>();
-
-        for (int i = 0; i < TextLines.Count; i++)
+        List<Coords> svgLines = new List<Coords>();
+        if (svgFont)
         {
-            bool empty = TextLines[i] == string.Empty;
-            if (!empty) empty = TextLines[i].Trim().Length == 0;
-            if (!empty)
+            for (int i = 0; i < TextLines.Count; i++)
             {
-                List<Coords> coords = new List<Coords>();
-                TextLinePath txtLinPath = new TextLinePath();
-                using (GraphicsPath path = new GraphicsPath())
+                bool empty = TextLines[i] == string.Empty;
+                if (!empty) empty = TextLines[i].Trim().Length == 0;
+                if (!empty)
                 {
-                    path.StartFigure();
-                    path.AddString(TextLines[i].Trim(char.Parse("\n")), new FontFamily(fontFamilyString),
-                      fontStyle, fontSize, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
-                      StringFormat.GenericDefault);
-                    path.CloseAllFigures();
-                    PointF[] pt = path.PathPoints;
-                    float minX = pt.Min(x => x.X);
-                    float minY = pt.Min(y => y.Y);
-                    float maxX = pt.Max(x => x.X);
-                    float maxY = pt.Max(y => y.Y);
-                    float midX = minX + ((maxX - minX) / 2);
-                    float midY = minY + ((maxY - minY) / 2);
-
-
-                    foreach (PointF p in pt)
+                    List<Coords> coords = new List<Coords>();
+                    TextLinePath txtLinPath = new TextLinePath();
+                    List<Coords> svgFullLine = new List<Coords>();
+                    List<Coords> oneCharacter = new List<Coords>();
+                    foreach (char character in TextLines[i])
                     {
-                        coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
+                        oneCharacter.Clear();
+                        // svgParser.svgFont[fontFamilyString].TryGetValue(character.ToString(), out oneCharacter);
+                        Dictionary<string, List<Coords>> fontDict = svgParser.svgFont.First(x => x.Key == fontFamilyString).Value;
+                        fontDict.TryGetValue(character.ToString(), out oneCharacter);
+
+                        foreach (Coords coord in oneCharacter)
+                        {
+                            svgFullLine.Add(coord);
+                        }
                     }
-                    txtLinPath.id = i;
-                    txtLinPath.coordList = coords;
-                    txtLinPath.minX = minX;
-                    txtLinPath.maxX = maxX;
-                    txtLinPath.minY = minY;
-                    txtLinPath.maxY = maxY;
+
+                    if (svgFullLine.Count > 0)
+                    {
+                        float minX = svgFullLine.Min(x => x.X);
+                        float minY = svgFullLine.Min(y => y.Y);
+                        float maxX = svgFullLine.Max(x => x.X);
+                        float maxY = svgFullLine.Max(y => y.Y);
+                        float midX = minX + ((maxX - minX) / 2);
+                        float midY = minY + ((maxY - minY) / 2);
+                        txtLinPath.id = i;
+                        txtLinPath.coordList = svgFullLine;
+                        txtLinPath.minX = minX;
+                        txtLinPath.maxX = maxX;
+                        txtLinPath.minY = minY;
+                        txtLinPath.maxY = maxY;
+                        ListPaths.Add(txtLinPath);
+                    }
 
 
-                    ListPaths.Add(txtLinPath);
+                }
+            }
+        }
+        else
+        {
+            switch (fontstyleString)
+            {
+                default: fontStyle = 0; break;
+                case "Bold": fontStyle = 1; break;
+                case "Italic": fontStyle = 2; break;
+                case "Regular": fontStyle = 0; break;
+                case "Strikeout": fontStyle = 8; break;
+                case "Underline": fontStyle = 4; break;
+
+
+            }
+            for (int i = 0; i < TextLines.Count; i++)
+            {
+                bool empty = TextLines[i] == string.Empty;
+                if (!empty) empty = TextLines[i].Trim().Length == 0;
+                if (!empty)
+                {
+                    List<Coords> coords = new List<Coords>();
+                    TextLinePath txtLinPath = new TextLinePath();
+                    using (GraphicsPath path = new GraphicsPath())
+                    {
+                        path.StartFigure();
+                        path.AddString(TextLines[i].Trim(char.Parse("\n")), new FontFamily(fontFamilyString),
+                          fontStyle, fontSize, new Point(Mathf.RoundToInt(0), Mathf.RoundToInt(0)),
+                          StringFormat.GenericDefault);
+                        path.CloseAllFigures();
+                        PointF[] pt = path.PathPoints;
+                        float minX = pt.Min(x => x.X);
+                        float minY = pt.Min(y => y.Y);
+                        float maxX = pt.Max(x => x.X);
+                        float maxY = pt.Max(y => y.Y);
+                        float midX = minX + ((maxX - minX) / 2);
+                        float midY = minY + ((maxY - minY) / 2);
+
+
+                        foreach (PointF p in pt)
+                        {
+                            coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
+                        }
+                        txtLinPath.id = i;
+                        txtLinPath.coordList = coords;
+                        txtLinPath.minX = minX;
+                        txtLinPath.maxX = maxX;
+                        txtLinPath.minY = minY;
+                        txtLinPath.maxY = maxY;
+
+
+                        ListPaths.Add(txtLinPath);
+                    }
                 }
             }
         }
