@@ -15,6 +15,8 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private gcParser Gcparser;
     [SerializeField] private SVGToPath svgParser;
     [SerializeField] internal int fontSize = 10;
+    [SerializeField] internal float XoffSetCharacters = 10;
+    [SerializeField] internal float YoffSetLines = 10;
 
     private int fontStyle = 0;
     [SerializeField] private CNC_Settings Cnc_Settings;
@@ -32,50 +34,57 @@ public class TextToPath : MonoBehaviour
         List<string> _TextLines = _text.Split(char.Parse("\n")).ToList();
         List<string> TextLines = _TextLines.ToList<string>();
         List<TextLinePath> ListPaths = new List<TextLinePath>();
+        List<TextLinePath> ListPathsOneLine = new List<TextLinePath>();
         List<Coords> svgLines = new List<Coords>();
+        List<List<Coords>> LineOfCharacterCoords = new List<List<Coords>>();
+        List<Coords> CoordsOneCharacter = new List<Coords>();
         if (svgFont)
         {
-            for (int i = 0; i < TextLines.Count; i++)
+            LineOfCharacterCoords.Clear();
+            Dictionary<string, List<Coords>> fontDict = new Dictionary<string, List<Coords>>(svgParser.svgFont.First(x => x.Key == fontFamilyString).Value);
+            for (int i = 0; i < TextLines.Count; i++)// line of characters
             {
-                bool empty = TextLines[i] == string.Empty;
-                if (!empty) empty = TextLines[i].Trim().Length == 0;
-                if (!empty)
+                TextLinePath txtLinPath = new TextLinePath();
+                for (int j = 0; j < TextLines[i].Length; j++) // character
                 {
                     List<Coords> coords = new List<Coords>();
-                    TextLinePath txtLinPath = new TextLinePath();
-                    List<Coords> svgFullLine = new List<Coords>();
-                    List<Coords> oneCharacter = new List<Coords>();
-                    foreach (char character in TextLines[i])
+                    CoordsOneCharacter.Clear();
+                    CoordsOneCharacter = new List<Coords>(fontDict.First(x => x.Key == TextLines[i][j].ToString()).Value); // list of coords for character
+                    float minX = CoordsOneCharacter.Min(x => x.X);
+                    float minY = CoordsOneCharacter.Min(y => y.Y);
+                    float maxX = CoordsOneCharacter.Max(x => x.X);
+                    float maxY = CoordsOneCharacter.Max(y => y.Y);
+                    float midX = minX + ((maxX - minX) / 2);
+                    float midY = minY + ((maxY - minY) / 2);
+
+
+                    foreach (Coords p in CoordsOneCharacter)
                     {
-                        oneCharacter.Clear();
-                        // svgParser.svgFont[fontFamilyString].TryGetValue(character.ToString(), out oneCharacter);
-                        Dictionary<string, List<Coords>> fontDict = svgParser.svgFont.First(x => x.Key == fontFamilyString).Value;
-                        fontDict.TryGetValue(character.ToString(), out oneCharacter);
-
-                        foreach (Coords coord in oneCharacter)
-                        {
-                            svgFullLine.Add(coord);
-                        }
+                        coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
                     }
+                    LineOfCharacterCoords.Add(coords);
+                    TextLinePath PathOneCharacter = new TextLinePath();
+                    PathOneCharacter.id = j;
+                    PathOneCharacter.coordList = coords;
+                    PathOneCharacter.minX = minX;
+                    PathOneCharacter.maxX = maxX;
+                    PathOneCharacter.minY = minY;
+                    PathOneCharacter.maxY = maxY;
 
-                    if (svgFullLine.Count > 0)
+
+                }
+                float allSizeX = 0f;
+                for (int l = 1; l < ListPathsOneLine.Count; l++)
+                {
+                    allSizeX += (ListPathsOneLine[l - 1].maxX - ListPathsOneLine[l - 1].minX);
+                    for (int k = 0; k < ListPathsOneLine[l].coordList.Count; k++)
                     {
-                        float minX = svgFullLine.Min(x => x.X);
-                        float minY = svgFullLine.Min(y => y.Y);
-                        float maxX = svgFullLine.Max(x => x.X);
-                        float maxY = svgFullLine.Max(y => y.Y);
-                        float midX = minX + ((maxX - minX) / 2);
-                        float midY = minY + ((maxY - minY) / 2);
-                        txtLinPath.id = i;
-                        txtLinPath.coordList = svgFullLine;
-                        txtLinPath.minX = minX;
-                        txtLinPath.maxX = maxX;
-                        txtLinPath.minY = minY;
-                        txtLinPath.maxY = maxY;
-                        ListPaths.Add(txtLinPath);
+                        ListPathsOneLine[l].coordList[k].Z = ListPathsOneLine[l].coordList[k].Y + allSizeX + XoffSetCharacters;
+
                     }
-
-
+                    ListPathsOneLine[l].maxY = ListPathsOneLine[l].coordList.Max(x => x.Y);
+                    ListPathsOneLine[l].minY = ListPathsOneLine[l].coordList.Min(x => x.Y);
+                    //ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
                 }
             }
         }
@@ -137,7 +146,6 @@ public class TextToPath : MonoBehaviour
         float allPathsMaxX = ListPaths.Max(x => x.maxX);
         float allPathsMinY = ListPaths.Min(x => x.minY);
         float allPathsMaxY = ListPaths.Max(x => x.maxY);
-        float Yaap = 10f;
 
         /// Setting the multiline text 
         float allSize = 0f;
@@ -146,7 +154,7 @@ public class TextToPath : MonoBehaviour
             allSize += (ListPaths[i - 1].maxY - ListPaths[i - 1].minY);
             for (int j = 0; j < ListPaths[i].coordList.Count; j++)
             {
-                ListPaths[i].coordList[j].Y = ListPaths[i].coordList[j].Y + allSize + Yaap;
+                ListPaths[i].coordList[j].Y = ListPaths[i].coordList[j].Y + allSize + YoffSetLines;
 
             }
             ListPaths[i].maxY = ListPaths[i].coordList.Max(x => x.Y);
