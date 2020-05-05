@@ -44,11 +44,11 @@ public class FileController : MonoBehaviour {
             while (sr.Peek() >= 0)
             {
                 string line = sr.ReadLine();
-                if (line.StartsWith(";") || string.IsNullOrEmpty(line))
+                if (!line.StartsWith(";") && !string.IsNullOrEmpty(line))
                 {
-                    break;
+                    gcParser.fileLinebyLine.Add(line.Trim()); 
                 }
-                    gcParser.fileLinebyLine.Add(line.Trim());
+                    
 
             }
         }

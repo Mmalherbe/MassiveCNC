@@ -7301,7 +7301,7 @@ MonoBehaviour:
   m_MinValue: 0.01
   m_MaxValue: 0
   m_WholeNumbers: 0
-  m_Value: 0.01
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -13441,7 +13441,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 974998968}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 87643478}
+        m_MethodName: ShowPathFromGcodeFile_Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!114 &974998968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27678,6 +27689,10 @@ PrefabInstance:
       propertyPath: FontStyleDropDown
       value: 
       objectReference: {fileID: 132488277}
+    - target: {fileID: 274609900, guid: fce3941a750e0204db099f6e065a4d43, type: 3}
+      propertyPath: UseSVGFonts
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 996447603, guid: fce3941a750e0204db099f6e065a4d43, type: 3}
       propertyPath: SVGClassHolder
       value: 

@@ -12,6 +12,7 @@ using TMPro;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using FontStyle = System.Drawing.FontStyle;
+using Random = UnityEngine.Random;
 
 public class gcParser : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class gcParser : MonoBehaviour
     [SerializeField] internal bool ReturnToHome = true;
     [SerializeField] internal bool AUXOnInFigures = true;
     [SerializeField] internal bool AUXOnInTravels = true;
+    [SerializeField] internal bool StretchLines = true;
 
     [SerializeField] internal GameObject HomePositionObj;
     [SerializeField] internal GameObject MiddlePointGcode;
@@ -190,6 +192,43 @@ public class gcParser : MonoBehaviour
         float midPointX = MiddlePointGcode.transform.position.x;
         float midPointY = MiddlePointGcode.transform.position.y;
         float midPointZ = MiddlePointGcode.transform.position.z;
+
+        if (StretchLines)
+        {
+            Dictionary<int, gcLine> StretchLineToAdd = new Dictionary<int, gcLine>();
+            for(int i =1; i < gcodeFromPath.Count; i++)
+            {
+                float xStart = (float)gcodeFromPath[i - 1].X;
+                float xEnd = (float)gcodeFromPath[i].X;
+                float yStart = (float)gcodeFromPath[i - 1].Y;
+                float yEnd = (float)gcodeFromPath[i].Y;
+                // y = a*x+b
+                // a = deltax/deltay
+                // b = (insert 1 coordinate)..
+
+                float deltaX = xEnd - xStart;
+                float deltaY = yEnd - yStart;
+                float a = deltaX / deltaY;
+                float b = (yStart) / (a * xStart);
+
+                float newStartX = Random.Range((Cnc_Settings.WidthInMM / 2) * (xStart < xEnd ? -1 : 1), xStart);
+                float newStartY = a * newStartX + b;
+                StretchLineToAdd.Add(i - 1, new gcLine
+                {
+                    G = 1,
+                    X = newStartX,
+                    Y = newStartY,
+                    Z = gcodeFromPath[i - 1].Z,
+                    AUX1 = AUXOnInTravels
+                });
+
+            }
+            foreach(KeyValuePair<int,gcLine> kvp in StretchLineToAdd)
+            {
+                gcodeFromPath.Insert(kvp.Key, kvp.Value);
+            }
+        }
+
         foreach (gcLine gcl in gcodeFromPath)
         {
 

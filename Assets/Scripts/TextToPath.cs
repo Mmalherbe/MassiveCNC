@@ -15,7 +15,7 @@ public class TextToPath : MonoBehaviour
     [SerializeField] private gcParser Gcparser;
     [SerializeField] private SVGToPath svgParser;
     [SerializeField] internal int fontSize = 10;
-    [SerializeField] internal float XoffSetCharacters = 10;
+    [SerializeField] internal float XoffSetCharacters = 0;
     [SerializeField] internal float YoffSetLines = 10;
 
     private int fontStyle = 0;
@@ -38,11 +38,12 @@ public class TextToPath : MonoBehaviour
         List<Coords> svgLines = new List<Coords>();
         List<List<Coords>> LineOfCharacterCoords = new List<List<Coords>>();
         List<Coords> CoordsOneCharacter = new List<Coords>();
+        float allSizeX = 0f;
         if (svgFont)
         {
             LineOfCharacterCoords.Clear();
             Dictionary<string, List<Coords>> fontDict = new Dictionary<string, List<Coords>>(svgParser.svgFont.First(x => x.Key == fontFamilyString).Value);
-            for (int i = 0; i < TextLines.Count; i++)// line of characters
+            for (int i = 0; i < TextLines.Count; i++)// lines of characters
             {
                 TextLinePath txtLinPath = new TextLinePath();
                 for (int j = 0; j < TextLines[i].Length; j++) // character
@@ -54,8 +55,8 @@ public class TextToPath : MonoBehaviour
                     float minY = CoordsOneCharacter.Min(y => y.Y);
                     float maxX = CoordsOneCharacter.Max(x => x.X);
                     float maxY = CoordsOneCharacter.Max(y => y.Y);
-                    float midX = minX + ((maxX - minX) / 2);
-                    float midY = minY + ((maxY - minY) / 2);
+                    float midX = ((maxX - minX) / 2);
+                    float midY = ((maxY - minY) / 2);
 
 
                     foreach (Coords p in CoordsOneCharacter)
@@ -63,28 +64,58 @@ public class TextToPath : MonoBehaviour
                         coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
                     }
                     LineOfCharacterCoords.Add(coords);
-                    TextLinePath PathOneCharacter = new TextLinePath();
-                    PathOneCharacter.id = j;
-                    PathOneCharacter.coordList = coords;
-                    PathOneCharacter.minX = minX;
-                    PathOneCharacter.maxX = maxX;
-                    PathOneCharacter.minY = minY;
-                    PathOneCharacter.maxY = maxY;
+                    TextLinePath PathOneCharacter = new TextLinePath
+                    {
+                        id = j,
+                        coordList = coords,
+                        minX = minX,
+                        maxX = maxX,
+                        minY = minY,
+                        maxY = maxY
+                    };
 
-
+                    ListPathsOneLine.Add(PathOneCharacter);
                 }
-                float allSizeX = 0f;
+                allSizeX = 0f;
                 for (int l = 1; l < ListPathsOneLine.Count; l++)
                 {
-                    allSizeX += (ListPathsOneLine[l - 1].maxX - ListPathsOneLine[l - 1].minX);
+                    ListPathsOneLine[l - 1].maxX = ListPathsOneLine[l - 1].coordList.Max(x => x.X);
+                    ListPathsOneLine[l - 1].minX = ListPathsOneLine[l - 1].coordList.Min(x => x.X);
+                    allSizeX += (ListPathsOneLine[l - 1].maxY - ListPathsOneLine[l - 1].minY);
+
                     for (int k = 0; k < ListPathsOneLine[l].coordList.Count; k++)
                     {
-                        ListPathsOneLine[l].coordList[k].Z = ListPathsOneLine[l].coordList[k].Y + allSizeX + XoffSetCharacters;
-
+                        ListPathsOneLine[l].coordList[k].X = ListPathsOneLine[l].coordList[k].X + allSizeX + XoffSetCharacters;
                     }
-                    ListPathsOneLine[l].maxY = ListPathsOneLine[l].coordList.Max(x => x.Y);
-                    ListPathsOneLine[l].minY = ListPathsOneLine[l].coordList.Min(x => x.Y);
+                    ListPathsOneLine[l].maxX = ListPathsOneLine[l].coordList.Max(x => x.X);
+                    ListPathsOneLine[l].minX = ListPathsOneLine[l].coordList.Min(x => x.X);
                     //ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
+                }
+                foreach (TextLinePath tlp in ListPathsOneLine)
+                {
+                    tlp.minX = tlp.coordList.Min(x => x.X);
+                    tlp.maxX = tlp.coordList.Max(x => x.X);
+
+                    tlp.minY = tlp.coordList.Min(x => x.Y);
+                    tlp.maxY = tlp.coordList.Max(x => x.Y);
+
+                    ListPaths.Add(tlp);
+                }
+            }
+            float allPathsSVGMinX = ListPaths.Min(x => x.minX);
+            float allPathsSVGMaxX = ListPaths.Max(x => x.maxX);
+            float allPathsSVGMinY = ListPaths.Min(x => x.minY);
+            float allPathsSVGMaxY = ListPaths.Max(x => x.maxY);
+
+            float allPathsSVGMidX = allPathsSVGMinX + ((allPathsSVGMaxX - allPathsSVGMinX) / 2);
+            float allPathsSVGMidY = allPathsSVGMinY + ((allPathsSVGMaxY - allPathsSVGMinY) / 2);
+        
+            foreach(TextLinePath tlp in ListPaths)
+            {
+                foreach(Coords coord in tlp.coordList)
+                {
+                    coord.X -= allPathsSVGMidX;
+                    coord.Y -= allPathsSVGMidY;
                 }
             }
         }
@@ -146,22 +177,23 @@ public class TextToPath : MonoBehaviour
         float allPathsMaxX = ListPaths.Max(x => x.maxX);
         float allPathsMinY = ListPaths.Min(x => x.minY);
         float allPathsMaxY = ListPaths.Max(x => x.maxY);
-
-        /// Setting the multiline text 
-        float allSize = 0f;
-        for (int i = 1; i < ListPaths.Count; i++)
+        if (TextLines.Count > 1)
         {
-            allSize += (ListPaths[i - 1].maxY - ListPaths[i - 1].minY);
-            for (int j = 0; j < ListPaths[i].coordList.Count; j++)
+            /// Setting the multiline text 
+            float allSize = 0f;
+            for (int i = 1; i < ListPaths.Count; i++)
             {
-                ListPaths[i].coordList[j].Y = ListPaths[i].coordList[j].Y + allSize + YoffSetLines;
+                allSize += (ListPaths[i - 1].maxY - ListPaths[i - 1].minY);
+                for (int j = 0; j < ListPaths[i].coordList.Count; j++)
+                {
+                    ListPaths[i].coordList[j].Y = ListPaths[i].coordList[j].Y + allSize + YoffSetLines;
 
+                }
+                ListPaths[i].maxY = ListPaths[i].coordList.Max(x => x.Y);
+                ListPaths[i].minY = ListPaths[i].coordList.Min(x => x.Y);
+                //ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
             }
-            ListPaths[i].maxY = ListPaths[i].coordList.Max(x => x.Y);
-            ListPaths[i].minY = ListPaths[i].coordList.Min(x => x.Y);
-            //ListPaths[i-1].minY = ListPaths[i-1].coordList.Min(x => x.Y);
         }
-
         if (ListPaths.Count > 1)
         {
             List<Coords> allCoords = new List<Coords>();
