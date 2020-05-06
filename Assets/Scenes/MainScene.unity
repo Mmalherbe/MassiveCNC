@@ -7301,7 +7301,7 @@ MonoBehaviour:
   m_MinValue: 0.01
   m_MaxValue: 0
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.01
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -27697,6 +27697,10 @@ PrefabInstance:
       propertyPath: SVGClassHolder
       value: 
       objectReference: {fileID: 1041931617}
+    - target: {fileID: 1643331420, guid: fce3941a750e0204db099f6e065a4d43, type: 3}
+      propertyPath: Scale
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 191050538508226798, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -27842,6 +27846,11 @@ PrefabInstance:
       propertyPath: StartPositionGcode
       value: 
       objectReference: {fileID: 3255293278839288465}
+    - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
+        type: 3}
+      propertyPath: StretchLines
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 191050538871939147, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}
       propertyPath: Cnc_Settings

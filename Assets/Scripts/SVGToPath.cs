@@ -78,7 +78,7 @@ public class SVGToPath : MonoBehaviour
             float midY = minY + ((maxY - minY) / 2);
             midX = 0;
             midY = 0;
-            for(int i =0; i < Mesh.MeshData.Vertices.Count;i++)
+            for (int i =0; i < Mesh.MeshData.Vertices.Count;i++)
             {
                 Coords coord = new Coords { X = Mesh.MeshData.Vertices[i].x - midX, Y = Mesh.MeshData.Vertices[i].y - midY, Z = Mesh.MeshData.Vertices[i].z };
                 coordsForId.Add(coord);
