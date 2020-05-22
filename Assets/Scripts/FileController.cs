@@ -83,10 +83,30 @@ return;
             new System.IO.StreamWriter(path))
         {
             file.WriteLine(";"+DateTime.Now);
-            foreach (gcLine line in toWrite)
+            file.WriteLine(toWrite[0].ToEdingString(toWrite[0].AUX1,toWrite[0].volt));
+            for(int i =1; i < toWrite.Count; i+=2)
+            {
+                if(toWrite[i].AUX1 != toWrite[i - 1].AUX1 && toWrite[i].volt != toWrite[i - 1].volt) // if the aux1 input changed compared to the line before
+                {
+                    file.WriteLine(toWrite[i].ToEdingString(_AUX1:toWrite[i].AUX1,_volt:toWrite[i].volt));
+                }else if(toWrite[i].AUX1 != toWrite[i - 1].AUX1)
+                {
+                    file.WriteLine(toWrite[i].ToEdingString(_AUX1:toWrite[i].AUX1));
+                }
+                else if(toWrite[i].volt != toWrite[i - 1].volt){
+                    file.WriteLine(toWrite[i].ToEdingString(_volt:toWrite[i].volt));
+                }
+                else
+                {
+                    file.WriteLine(toWrite[i].ToEdingString());
+                }
+            }
+
+          /*  foreach (gcLine line in toWrite)
             {
                 file.WriteLine(line.ToEdingString());
             }
+            */
         }
 
 

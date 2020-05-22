@@ -101,7 +101,7 @@ public class gcParser : MonoBehaviour
     {
         ResetScales();
         Linebuilder.ClearLines();
-        OriginalCoords = coords;
+        OriginalCoords = coords.Distinct().ToList();
 
     }
 
@@ -130,7 +130,9 @@ public class gcParser : MonoBehaviour
         float midX = maxX - minX;
         float midY = maxY - minY;
         float midZ = maxZ - minZ;
-
+        float midPointX = MiddlePointGcode.transform.position.x;
+        float midPointY = MiddlePointGcode.transform.position.y;
+        float midPointZ = MiddlePointGcode.transform.position.z;
         minScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (minX));
         maxScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX));
         minScaleVertical = Mathf.Floor((Cnc_Settings.HeightInMM / 2 - Cnc_Settings.VerticalPaddingInMM) / minY);
@@ -153,24 +155,62 @@ public class gcParser : MonoBehaviour
             gcl.AUX1 = AUXOnInTravels;
             gcodeFromPath.Add(gcl);
         }
-        for(int i = 0; i < coords.Count;i++)
-        {
-          midX = 0;
-            midY = 0;
-            midZ = 0;
-            gcLine gcl = new gcLine();
-            gcl.X = float.Parse((coords[i].X - midX).ToString("F4"));
-            gcl.Y = float.Parse((coords[i].Y - midY).ToString("F4"));
-            gcl.Z = float.Parse((coords[i].Z - midZ).ToString("F4"));
-            gcl.F = 20000f;
-            gcl.G = 1;
-            gcl.AUX1 = AUXOnInFigures;
-            if (coords.IndexOf(coords.First(x => x.X == coords[i].X && x.Y == coords[i].Y && x.Z == coords[i].Z)) != i)
-            {
-                gcl.AUX1 = AUXOnInTravels;
-            }
-            gcodeFromPath.Add(gcl);
 
+        for (int i = 0; i < coords.Count; i++)
+        {
+            if (i == coords.Count - 1)
+            {
+                midX = 0;
+                midY = 0;
+                midZ = 0;
+                gcLine gcl = new gcLine();
+                gcl.X = float.Parse((coords[i].X - midX).ToString("F4"));
+                gcl.X *= scaleToUseHorizontal;
+                gcl.X += midPointX;
+                gcl.Y = float.Parse((coords[i].Y - midY).ToString("F4"));
+                gcl.Y *= scaleToUseVertical;
+                gcl.Y += midPointY;
+                gcl.Z = float.Parse((coords[i].Z - midZ).ToString("F4"));
+                gcl.F = 20000f;
+                gcl.G = 1;
+                if (gcl.X == 0 && gcl.Y == 0)
+                {
+                    gcl.AUX1 = AUXOnInTravels;
+                }
+                else
+                {
+                    gcl.AUX1 = AUXOnInFigures;
+                }
+                gcodeFromPath.Add(gcl);
+            }
+            else
+            {
+                if (coords[i].X != coords[i + 1].X || coords[i].Y != coords[i + 1].Y)
+                {
+                    midX = 0;
+                    midY = 0;
+                    midZ = 0;
+                    gcLine gcl = new gcLine();
+                    gcl.X = float.Parse((coords[i].X - midX).ToString("F4"));
+                    gcl.X *= scaleToUseHorizontal;
+                    gcl.X += midPointX;
+                    gcl.Y = float.Parse((coords[i].Y - midY).ToString("F4"));
+                    gcl.Y *= scaleToUseVertical;
+                    gcl.Y += midPointY;
+                    gcl.Z = float.Parse((coords[i].Z - midZ).ToString("F4"));
+                    gcl.F = 20000f;
+                    gcl.G = 1;
+                    if (gcl.X == 0 && gcl.Y == 0)
+                    {
+                        gcl.AUX1 = AUXOnInTravels;
+                    }
+                    else
+                    {
+                        gcl.AUX1 = AUXOnInFigures;
+                    }
+                    gcodeFromPath.Add(gcl);
+                }
+            }
         }
         if (ReturnToHome)
         {
@@ -189,9 +229,7 @@ public class gcParser : MonoBehaviour
             scaleToUseHorizontal = Cnc_Settings.ScaleFactorForMax;
             scaleToUseVertical = Cnc_Settings.ScaleFactorForMax;
         }
-        float midPointX = MiddlePointGcode.transform.position.x;
-        float midPointY = MiddlePointGcode.transform.position.y;
-        float midPointZ = MiddlePointGcode.transform.position.z;
+
 
         if (StretchLines)
         {
@@ -229,16 +267,11 @@ public class gcParser : MonoBehaviour
             }
         }
 
-        foreach (gcLine gcl in gcodeFromPath)
+        for(int i =0; i < gcodeFromPath.Count;i++)
         {
 
-            gcl.X *= scaleToUseHorizontal;
-            gcl.Y *= scaleToUseVertical;
-            gcl.X += midPointX;
-            gcl.Y += midPointY;
 
-
-            if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
+            if (Mathf.Abs((float)gcodeFromPath[i].X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcodeFromPath[i].Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
                 notsafe = true;
             }

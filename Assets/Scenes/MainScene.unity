@@ -27681,6 +27681,10 @@ PrefabInstance:
       propertyPath: Cnc_Settings
       value: 
       objectReference: {fileID: 381301760}
+    - target: {fileID: 274609899, guid: fce3941a750e0204db099f6e065a4d43, type: 3}
+      propertyPath: XoffSetCharacters
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 274609900, guid: fce3941a750e0204db099f6e065a4d43, type: 3}
       propertyPath: FontDropDown
       value: 
@@ -27849,6 +27853,11 @@ PrefabInstance:
     - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}
       propertyPath: StretchLines
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
+        type: 3}
+      propertyPath: AUXOnInTravels
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 191050538871939147, guid: fce3941a750e0204db099f6e065a4d43,
