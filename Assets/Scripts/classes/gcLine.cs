@@ -53,7 +53,7 @@ namespace Assets.Scripts.classes
             return "" + linenr +
     " " + (G != null ? "G" + G : "") +
     " " + (X != null ? "X" + X : "") +
-    " " + (Z != null ? "Y" + -Y: "") +
+    " " + (Z != null ? "Y" + -Y : "") +
     " " + (Y != null ? "Z" + (Z == 0.00001f ? 0 : Z) : "") +
     " " + (F != null ? "F" + F : "") +
     " " + (I != null ? "I" + I : "") +
@@ -68,9 +68,6 @@ namespace Assets.Scripts.classes
     " " + (T != null ? "T" + T : "") +
     " " + (AUX1 != null ? ((bool)AUX1 ? "M54 P1" : "M54 P0") : "") +
     " " + (volt != null ? "M3 S" + volt : "");
-
-    ;
-
         }
     }
 }

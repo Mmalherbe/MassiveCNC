@@ -154,8 +154,6 @@ public class TextToPath : MonoBehaviour
                         float maxY = pt.Max(y => y.Y);
                         float midX = minX + ((maxX - minX) / 2);
                         float midY = minY + ((maxY - minY) / 2);
-
-
                         foreach (PointF p in pt)
                         {
                             coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });

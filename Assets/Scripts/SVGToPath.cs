@@ -56,18 +56,10 @@ public class SVGToPath : MonoBehaviour
         {
         svgParser parser = new svgParser();
         SvgClass svg = parser.Parse(urlToFile);
-        //string SVG_PATH = doc.
-        
-
-
-
         foreach (SvgPath svgPath in svg.SvgPath.Where(x=>x.D.Length> 10))
-        {
-
+        { 
             SVG = new SVGData();
             SVG.Path(svgPath.D);
-
-            Debug.Log(SVG.Dump());
             Mesh.Fill(SVG);
             List<Coords> coordsForId = new List<Coords>();
             float minX = Mesh.MeshData.Vertices.Min(x => x.x);
