@@ -7301,7 +7301,7 @@ MonoBehaviour:
   m_MinValue: 0.01
   m_MaxValue: 0
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.01
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -27853,12 +27853,7 @@ PrefabInstance:
     - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}
       propertyPath: StretchLines
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
-        type: 3}
-      propertyPath: AUXOnInTravels
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 191050538871939146, guid: fce3941a750e0204db099f6e065a4d43,
         type: 3}

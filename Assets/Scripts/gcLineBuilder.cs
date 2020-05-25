@@ -87,8 +87,8 @@ public class gcLineBuilder : MonoBehaviour
             {
                 GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
                 //line.transform.position = LinePlaceHolder.transform.position;
-                line.transform.GetChild(0).position = new Vector3( (float)gCodeLines[i].X, (float)gCodeLines[i].Z, -(float)gCodeLines[i].Y);
-                line.transform.GetChild(1).position = new Vector3((float)gCodeLines[i+1].X, (float)gCodeLines[i+1].Z, -(float)gCodeLines[i+1].Y);
+                line.transform.GetChild(0).position = new Vector3( (float)gCodeLines[i].X, (float)gCodeLines[i].Z!=null? (float)gCodeLines[i].Z:0f, -(float)gCodeLines[i].Y);
+                line.transform.GetChild(1).position = new Vector3((float)gCodeLines[i+1].X, (float)gCodeLines[i+1].Z != null ? (float)gCodeLines[i+1].Z : 0f, -(float)gCodeLines[i+1].Y);
                 LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
                     linerenderer.startColor = (Color.green);
                     linerenderer.endColor = (Color.green);

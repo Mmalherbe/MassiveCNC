@@ -83,7 +83,7 @@ return;
             new System.IO.StreamWriter(path))
         {
             file.WriteLine(";"+DateTime.Now);
-
+            float lastknownFeed = 0;
             for(int i =0; i < toWrite.Count; i++)
             {
                 if(i == 0 || i == toWrite.Count - 1)
@@ -95,9 +95,19 @@ return;
                     float? feed = null;
                     bool? aux1 = null;
                     float? volt = null;
-                    if(toWrite[i].F != toWrite[i - 1].F)
+                    if(toWrite[i].F != null)
                     {
-                        feed = (float)toWrite[i].F;
+                        lastknownFeed = (float)toWrite[i].F;
+                    }
+                    if (toWrite[i].F != toWrite[i - 1].F)
+                    {
+                        if (toWrite[i].F == null)
+                        {
+                            feed = lastknownFeed;
+                        }
+                        else {
+                            feed = (float)toWrite[i].F;
+                        }
                     }
                     if(toWrite[i].AUX1 != toWrite[i - 1].AUX1)
                     {

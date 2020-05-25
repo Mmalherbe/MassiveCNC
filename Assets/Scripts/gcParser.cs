@@ -216,56 +216,41 @@ public class gcParser : MonoBehaviour
 
         if (StretchLines)
         {
+            List<gcLine> gcLinesBackup = new List<gcLine>(gcodeFromPath);
+            gcodeFromPath.Clear();
             Dictionary<int, gcLine> StretchLineToAdd = new Dictionary<int, gcLine>();
-            for (int i = 1; i < gcodeFromPath.Count; i++)
+            float lastknownFeed = 0;
+
+            for (int i =0; i < gcLinesBackup.Count -1; i++)
             {
-                float xStart = (float)gcodeFromPath[i - 1].X;
-                float xEnd = (float)gcodeFromPath[i].X;
-                float yStart = (float)gcodeFromPath[i - 1].Y;
-                float yEnd = (float)gcodeFromPath[i].Y;
+
                 // y = a*x+b
                 // a = deltax/deltay
                 // b = (insert 1 coordinate)..
 
-                float deltaX = xEnd - xStart;
-                float deltaY = yEnd - yStart;
+                if (gcLinesBackup[i].F != null)
+                    lastknownFeed = (float)gcLinesBackup[i].F;
+                float deltaX = (float)gcLinesBackup[i].X - (float)gcLinesBackup[i + 1].X;
+                float deltaY = (float)gcLinesBackup[i].Y - (float)gcLinesBackup[i + 1].Y;
                 float a = deltaX / deltaY;
-                float b = (yStart) / (a * xStart);
-
-                float newStartX = Random.Range((Cnc_Settings.WidthInMM / 2) * (xStart < xEnd ? -1 : 1), xStart) / scaleToUseHorizontal;
-                float newStartY = (a * newStartX + b) / scaleToUseVertical;
-                float newEndX = Random.Range((Cnc_Settings.WidthInMM / 2) * (xStart < xEnd ? -1 : 1), xStart) / scaleToUseHorizontal;
-                float newEndY = (a * newEndX + b) / scaleToUseVertical;
-                if (Mathf.Abs(newStartX) < Mathf.Abs(Cnc_Settings.WidthInMM / 2) && Mathf.Abs(newStartY) < Mathf.Abs(Cnc_Settings.HeightInMM / 2) &&
-                    Mathf.Abs(newEndX) < Mathf.Abs(Cnc_Settings.WidthInMM / 2) && Mathf.Abs(newEndY) < Mathf.Abs(Cnc_Settings.HeightInMM / 2))
-                {
-                    StretchLineToAdd.Add(i - 1, new gcLine
-                    {
-                        G = 1,
-                        X = newStartX,
-                        Y = newStartY,
-                        Z = gcodeFromPath[i - 1].Z,
-                        F = gcodeFromPath[i - 1].F,
-                        AUX1 = AUXOnInTravels
-                    });
-                    StretchLineToAdd.Add(i + 1,
-                        new gcLine
-                        {
-                            G = 1,
-                            X = newEndX,
-                            Y = newEndY,
-                            Z = gcodeFromPath[i - 1].Z,
-                            F = gcodeFromPath[i - 1].F,
-                            AUX1 = AUXOnInTravels
-                        }
-                        );
+                float b = ((float)gcLinesBackup[i + 1].Y) / (a * (float)gcLinesBackup[i + 1].X);
+                float newStartX = 0, newStartY=0;
+                if (gcLinesBackup[i].X > gcLinesBackup[i+1].X)
+                { // line going bot left to top right
+                    newStartX = Random.Range(-(Cnc_Settings.WidthInMM / 2), (float)gcLinesBackup[i].X);
+                    newStartY = (a * newStartX + b) / scaleToUseVertical;
                 }
+                gcodeFromPath.Add(new gcLine
+                {
+                    G = 1,
+                    X = newStartX,
+                    Y = newStartY,
+                    F = gcLinesBackup[i].F !=null?gcLinesBackup[i].F : lastknownFeed,
 
+                });
+                gcodeFromPath.Add(gcLinesBackup[i]);
             }
-            foreach (KeyValuePair<int, gcLine> kvp in StretchLineToAdd)
-            {
-                gcodeFromPath.Insert(kvp.Key, kvp.Value);
-            }
+
         }
 
         foreach (gcLine gcl in gcodeFromPath)
@@ -279,7 +264,7 @@ public class gcParser : MonoBehaviour
 
             if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
-                notsafe = true;
+              //  notsafe = true;
             }
         }
 
