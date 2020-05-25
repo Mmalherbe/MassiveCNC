@@ -83,10 +83,37 @@ return;
             new System.IO.StreamWriter(path))
         {
             file.WriteLine(";"+DateTime.Now);
-            foreach (gcLine line in toWrite)
+
+            for(int i =0; i < toWrite.Count; i++)
+            {
+                if(i == 0 || i == toWrite.Count - 1)
+                {
+                    file.WriteLine(toWrite[i].ToEdingString(false,0f));
+                }
+                else
+                {
+                    float? feed = null;
+                    bool? aux1 = null;
+                    float? volt = null;
+                    if(toWrite[i].F != toWrite[i - 1].F)
+                    {
+                        feed = (float)toWrite[i].F;
+                    }
+                    if(toWrite[i].AUX1 != toWrite[i - 1].AUX1)
+                    {
+                        aux1 = (bool)toWrite[i].AUX1;
+                    }
+                    if(toWrite[i].volt != toWrite[i - 1].volt)
+                    {
+                        volt = (float)toWrite[i].volt;
+                    }
+                    file.WriteLine(toWrite[i].ToEdingString(_AUX1: aux1, _Volt: volt, _Feed: feed));
+                }
+            }
+            /*foreach (gcLine line in toWrite)
             {
                 file.WriteLine(line.ToEdingString());
-            }
+            }*/
         }
 
 
