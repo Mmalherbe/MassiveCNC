@@ -197,11 +197,17 @@ public class TextToPath : MonoBehaviour
             List<Coords> allCoords = new List<Coords>();
             for (int j = 0; j < ListPaths.Count; j++)
             {
-                foreach (Coords coords in ListPaths[j].coordList)
+
+                for(int k = 0; k < ListPaths[j].coordList.Count;k++) 
                 {
-                    allCoords.Add(coords);
+                    if( k == 0)
+                    {
+                        ListPaths[j].coordList[k].Travel = true;
+                    }
+                    allCoords.Add(ListPaths[j].coordList[k]);
 
                 }
+
             }
             Gcparser.SetCoordsAndMultiLine(allCoords, true);
         }
