@@ -7301,7 +7301,7 @@ MonoBehaviour:
   m_MinValue: 0.01
   m_MaxValue: 0
   m_WholeNumbers: 0
-  m_Value: 0.01
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

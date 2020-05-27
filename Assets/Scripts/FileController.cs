@@ -84,7 +84,8 @@ return;
         {
             file.WriteLine(";"+DateTime.Now);
             float lastknownFeed = 0;
-            for(int i =0; i < toWrite.Count; i++)
+            bool lastknownAux1 = false;
+            for (int i =0; i < toWrite.Count; i++)
             {
                 if(i == 0 || i == toWrite.Count - 1)
                 {
@@ -99,6 +100,10 @@ return;
                     {
                         lastknownFeed = (float)toWrite[i].F;
                     }
+                    if(toWrite[i].AUX1!= null)
+                    {
+                        lastknownAux1 =(bool) toWrite[i].AUX1;
+                    }
                     if (toWrite[i].F != toWrite[i - 1].F)
                     {
                         if (toWrite[i].F == null)
@@ -109,9 +114,16 @@ return;
                             feed = (float)toWrite[i].F;
                         }
                     }
-                    if(toWrite[i].AUX1 != toWrite[i - 1].AUX1)
+                    if (toWrite[i].AUX1 != toWrite[i - 1].AUX1)
                     {
-                        aux1 = (bool)toWrite[i].AUX1;
+                        if (toWrite[i].AUX1 == null)
+                        {
+                            aux1 = lastknownAux1;
+                        }
+                        else
+                        {
+                            aux1 = (bool)toWrite[i].AUX1;
+                        }
                     }
                     if(toWrite[i].volt != toWrite[i - 1].volt)
                     {
