@@ -29,7 +29,7 @@ public class gcParser : MonoBehaviour
     [SerializeField] internal bool AUXOnInFigures = true;
     [SerializeField] internal bool AUXOnInTravels = true;
     [SerializeField] internal bool StretchLines = true;
-
+    [SerializeField] internal float StandardFeed = 20000;
     [SerializeField] internal GameObject HomePositionObj;
     [SerializeField] internal GameObject MiddlePointGcode;
     [SerializeField] internal GameObject StartPositionGcode;
@@ -48,7 +48,7 @@ public class gcParser : MonoBehaviour
     private float maxX;
     private float minY;
     private float maxY;
-
+    [SerializeField] internal List<gcLine> gcodeFromPathToExport = new List<gcLine>();
 
     string getValue(string gCodeLine, string letter, string splitAt)
     {
@@ -134,7 +134,7 @@ public class gcParser : MonoBehaviour
         if (coords.Count == 0) return;
         bool notsafe = false;
         List<gcLine> gcodeFromPath = new List<gcLine>();
-
+        gcodeFromPathToExport.Clear();
 
         // Create gcode from the path you want to draw.. without any manipulations like stretching
         for (int i = 0; i < coords.Count; i++)
@@ -145,7 +145,7 @@ public class gcParser : MonoBehaviour
                 gcl.X = float.Parse((coords[i].X).ToString("F4"));
                 gcl.Y = float.Parse((coords[i].Y).ToString("F4"));
                 gcl.Z = float.Parse((coords[i].Z).ToString("F4"));
-                gcl.F = 20000f;
+                gcl.F = StandardFeed;
                 gcl.G = 1;
                 gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
 
@@ -153,18 +153,17 @@ public class gcParser : MonoBehaviour
             }
             else
             {
-                if (coords[i].X != coords[i + 1].X || coords[i].Y != coords[i + 1].Y)
-                {
-                    gcLine gcl = new gcLine();
-                    gcl.X = float.Parse((coords[i].X).ToString("F4"));
-                    gcl.Y = float.Parse((coords[i].Y).ToString("F4"));
-                    gcl.Z = float.Parse((coords[i].Z).ToString("F4"));
-                    gcl.F = 20000f;
-                    gcl.G = 1;
-                    gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
 
-                    gcodeFromPath.Add(gcl);
-                }
+                gcLine gcl = new gcLine();
+                gcl.X = float.Parse((coords[i].X).ToString("F4"));
+                gcl.Y = float.Parse((coords[i].Y).ToString("F4"));
+                gcl.Z = float.Parse((coords[i].Z).ToString("F4"));
+                gcl.F = StandardFeed;
+                gcl.G = 1;
+                gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
+
+                gcodeFromPath.Add(gcl);
+
             }
 
 
@@ -199,7 +198,7 @@ public class gcParser : MonoBehaviour
                 // y = a*x+b
                 // a = deltax/deltay
                 // b = (insert 1 coordinate)..
-                
+
                 gcodeFromPath.Add(gcLinesBackup[i]);
 
                 if (i > 1 && i < gcLinesBackup.Count - 2 && i % 2 != 0)
@@ -208,12 +207,12 @@ public class gcParser : MonoBehaviour
                     for (int j = 0; j < 2; j++)
                     {
                         gcLine randomLineA = createRandomizedStretchLine(gcLinesBackup[i + j], lineInfoList[i + j]);
-                        randomLineA.X -= coords.Max(x=>x.X)-coords.Min(x=>x.X);
+                        randomLineA.X -= coords.Max(x => x.X) - coords.Min(x => x.X);
                         randomLineA.Y -= coords.Max(x => x.Y) - coords.Min(x => x.Y);
                         coords.Add(new Coords { X = (float)randomLineA.X, Y = (float)randomLineA.Y, Z = (float)gcLinesBackup[i + j].Z });
                         gcodeFromPath.Add(randomLineA);
                     }
-                    
+
                 }
                 gcodeFromPath.Add(gcLinesBackup[i]);
             }
@@ -252,7 +251,7 @@ public class gcParser : MonoBehaviour
 
 
 
-     
+
 
         minScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (minX));
         maxScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX));
@@ -281,7 +280,7 @@ public class gcParser : MonoBehaviour
 
             if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
-                //  notsafe = true;
+                notsafe = true;
             }
         }
 
@@ -293,7 +292,7 @@ public class gcParser : MonoBehaviour
         }
         else
         {
-
+            gcodeFromPathToExport = gcodeFromPath;
             Interaction_Controller.UpdateMinMaxValues();
             Linebuilder.showOutLinesFromPoints(gcodeFromPath);
             gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");

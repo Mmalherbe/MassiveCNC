@@ -77,6 +77,23 @@ public class gcLineBuilder : MonoBehaviour
             }
         }
     }
+
+    public List<gcLine> ExportLinesToGcode(List<gcLine> gCodeLines)
+    {
+        List<gcLine> toExport = new List<gcLine>();
+
+        for(int i =0; i < gCodeLines.Count; i++)
+        {
+            gcLine line = new gcLine();
+            line = gCodeLines[i];
+            line.AUX1 = LinePlaceHolder.transform.GetChild(i).GetComponent<LineRenderer>().enabled;
+            toExport.Add(line);
+
+        }
+        return toExport;
+    }
+
+
     public void showOutLinesFromPoints(List<gcLine> gCodeLines, bool multiple = false)
     {
         if (!multiple) ClearLines();

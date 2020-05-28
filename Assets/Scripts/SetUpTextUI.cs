@@ -68,19 +68,20 @@ public class SetUpTextUI : MonoBehaviour
             float minY = Mathf.Min(float.Parse(letter.Line.Min(x => x.Y1)), float.Parse(letter.Line.Min(x => x.Y2)));
             float maxY = Mathf.Max(float.Parse(letter.Line.Max(x => x.Y1)), float.Parse(letter.Line.Max(x => x.Y2)));
 
+                float midX = minX + ((maxX - minX) / 2);
+                float midY = minY + ((maxY - minY) / 2);
 
-            float midX = minX + ((maxX - minX) / 2);
-            float midY = minY + ((maxY - minY) / 2);
-
+            
+            
             foreach (Assets.Scripts.classes.SvgLineFile.Line line in letter.Line)
             {
                 coord = new Coords();
-                coord.X = float.Parse(line.X1 == null ? "0" : line.X1) - midX;
-                coord.Y = float.Parse(line.Y1 == null ? "0" : line.Y1) - midY;
+                coord.X = float.Parse(line.X1 == null ? "0" : line.X1) - (textToPath.useMidPointOfEachCharacter?midX:0);
+                coord.Y = float.Parse(line.Y1 == null ? "0" : line.Y1) - (textToPath.useMidPointOfEachCharacter ? midY:0);
                 coordsForChar.Add(coord);
                 coord = new Coords();
-                coord.X = float.Parse(line.X2 == null ? "0" : line.X2) - midX;
-                coord.Y = float.Parse(line.Y2 == null ? "0" : line.Y2) - midY;
+                coord.X = float.Parse(line.X2 == null ? "0" : line.X2) - (textToPath.useMidPointOfEachCharacter ? midX:0);
+                coord.Y = float.Parse(line.Y2 == null ? "0" : line.Y2) - (textToPath.useMidPointOfEachCharacter ? midY:0);
                 coordsForChar.Add(coord);
             }
             charCoords.Add(letter.Id, coordsForChar);

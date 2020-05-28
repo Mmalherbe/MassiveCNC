@@ -17,7 +17,7 @@ public class TextToPath : MonoBehaviour
     [SerializeField] internal int fontSize = 10;
     [SerializeField] internal float XoffSetCharacters = 0;
     [SerializeField] internal float YoffSetLines = 10;
-
+    [SerializeField] internal bool useMidPointOfEachCharacter;
     private int fontStyle = 0;
     [SerializeField] private CNC_Settings Cnc_Settings;
     internal string fontstyleString = "Regular";
@@ -51,6 +51,7 @@ public class TextToPath : MonoBehaviour
                     List<Coords> coords = new List<Coords>();
                     CoordsOneCharacter.Clear();
                     CoordsOneCharacter = new List<Coords>(fontDict.First(x => x.Key == TextLines[i][j].ToString()).Value); // list of coords for character
+
                     float minX = CoordsOneCharacter.Min(x => x.X);
                     float minY = CoordsOneCharacter.Min(y => y.Y);
                     float maxX = CoordsOneCharacter.Max(x => x.X);
@@ -58,10 +59,20 @@ public class TextToPath : MonoBehaviour
                     float midX = ((maxX - minX) / 2);
                     float midY = ((maxY - minY) / 2);
 
-
-                    foreach (Coords p in CoordsOneCharacter)
+                    if (!useMidPointOfEachCharacter)
                     {
-                        coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
+                        foreach (Coords p in CoordsOneCharacter)
+                        {
+                            coords.Add(new Coords() { X = p.X, Y = p.Y, Z = 0.00001f });
+                        }
+
+                    }
+                    else
+                    {
+                        foreach (Coords p in CoordsOneCharacter)
+                        {
+                            coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
+                        }
                     }
                     LineOfCharacterCoords.Add(coords);
                     TextLinePath PathOneCharacter = new TextLinePath
@@ -109,13 +120,13 @@ public class TextToPath : MonoBehaviour
 
             float allPathsSVGMidX = allPathsSVGMinX + ((allPathsSVGMaxX - allPathsSVGMinX) / 2);
             float allPathsSVGMidY = allPathsSVGMinY + ((allPathsSVGMaxY - allPathsSVGMinY) / 2);
-        
-            foreach(TextLinePath tlp in ListPaths)
+
+            foreach (TextLinePath tlp in ListPaths)
             {
-                foreach(Coords coord in tlp.coordList)
+                foreach (Coords coord in tlp.coordList)
                 {
-                    coord.X -= allPathsSVGMidX;
-                    coord.Y -= allPathsSVGMidY;
+                    coord.X -= useMidPointOfEachCharacter?allPathsSVGMidX:0;
+                    coord.Y -= useMidPointOfEachCharacter?allPathsSVGMidY:0;
                 }
             }
         }
@@ -156,7 +167,7 @@ public class TextToPath : MonoBehaviour
                         float midY = minY + ((maxY - minY) / 2);
                         foreach (PointF p in pt)
                         {
-                            coords.Add(new Coords() { X = p.X - (midX), Y = p.Y - (midY), Z = 0.00001f });
+                            coords.Add(new Coords() { X = p.X - (useMidPointOfEachCharacter ? (midX):0), Y = p.Y - (useMidPointOfEachCharacter ? (midY) : 0), Z = 0.00001f });
                         }
                         txtLinPath.id = i;
                         txtLinPath.coordList = coords;
@@ -198,9 +209,9 @@ public class TextToPath : MonoBehaviour
             for (int j = 0; j < ListPaths.Count; j++)
             {
 
-                for(int k = 0; k < ListPaths[j].coordList.Count;k++) 
+                for (int k = 0; k < ListPaths[j].coordList.Count; k++)
                 {
-                    if( k == 0)
+                    if (k == 0)
                     {
                         ListPaths[j].coordList[k].Travel = true;
                     }

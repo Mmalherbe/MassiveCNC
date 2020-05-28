@@ -9,30 +9,32 @@ using System;
 using Path = System.IO.Path;
 using TMPro;
 
-public class FileController : MonoBehaviour {
+public class FileController : MonoBehaviour
+{
     // calling upon different classes, objects and variables
-    [SerializeField] private  gcParser gcParser;
+    [SerializeField] private gcParser gcParser;
     [SerializeField] private TextMeshProUGUI CNCbtn_text;
     [SerializeField] private TextMeshProUGUI SVGbtn_text;
     [SerializeField] private SVGToPath svgToPath;
     public void Start()
     {
-        string fileName = "spindleTest.cnc";
-        string path = Path.Combine(Application.dataPath, "examples", fileName);
+        /*  string fileName = "spindleTest.cnc";
+          string path = Path.Combine(Application.dataPath, "examples", fileName);
 
-        using (System.IO.StreamWriter file =
-               new System.IO.StreamWriter(path))
-        {
-            file.WriteLine(";" + DateTime.Now);
-            for (int i = 0; i < 1023; i++)
-            {
-                file.WriteLine("M3 S"+i);
+          using (System.IO.StreamWriter file =
+                 new System.IO.StreamWriter(path))
+          {
+              file.WriteLine(";" + DateTime.Now);
+              for (int i = 0; i < 1023; i++)
+              {
+                  file.WriteLine("M3 S"+i);
 
-            }
-        }
+              }
+          }*/
 
     }
-    public void openCNCfile(){
+    public void openCNCfile()
+    {
 
 
         CNCbtn_text.text = "opening File";
@@ -46,63 +48,79 @@ public class FileController : MonoBehaviour {
                 string line = sr.ReadLine();
                 if (!line.StartsWith(";") && !string.IsNullOrEmpty(line))
                 {
-                    gcParser.fileLinebyLine.Add(line.Trim()); 
+                    gcParser.fileLinebyLine.Add(line.Trim());
                 }
-                    
+
 
             }
         }
-       
+
         gcParser.ParseFromGcodeFile();
         CNCbtn_text.text = "File Opened"; // Changes the buttontext again                      
-return;           
-}
+        return;
+    }
     public void openSVGfile()
     {
         SVGbtn_text.text = "opening File";
         string path = EditorUtility.OpenFilePanel("Open SVG", "", "svg");
-        if (path.ToUpper().Contains("LINE")) {
+        if (path.ToUpper().Contains("LINE"))
+        {
             svgToPath.ParseSVGLinesToPath(path);
-        } else
+        }
+        else
         {
 
-        
+
             svgToPath.ParseSVGToPath(path);
         }
         SVGbtn_text.text = "File Opened"; // Changes the buttontext again                      
         return;
     }
-    public  void writeFile(List<gcLine> toWrite,string fileName)
+    public void writeFile(List<gcLine> toWrite, string fileName)
     {
-        if(Path.GetExtension(fileName) == "")
+        string path = "";
+        if (string.IsNullOrEmpty(fileName))
         {
-            fileName += ".cnc";
-        } 
-        string path =  Path.Combine(Application.dataPath,"examples", fileName);
+            path = EditorUtility.SaveFilePanel(
+           "Save Paths as Gcode",
+           "",
+           "exportedPaths" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".cnc",
+           "cnc");
+
+        }
+        else
+        {
+            if (Path.GetExtension(fileName) == "")
+            {
+                fileName += ".cnc";
+            }
+            path = Path.Combine(Application.dataPath, "examples", fileName);
+        }
+        if (string.IsNullOrEmpty(path)) return;
         using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter(path))
+        new System.IO.StreamWriter(path))
         {
-            file.WriteLine(";"+DateTime.Now);
+            file.WriteLine(";" + DateTime.Now);
             float lastknownFeed = 0;
             bool lastknownAux1 = false;
-            for (int i =0; i < toWrite.Count; i++)
+            for (int i = 0; i < toWrite.Count; i++)
             {
-                if(i == 0 || i == toWrite.Count - 1)
+                if (i == 0 || i == toWrite.Count - 1)
                 {
-                    file.WriteLine(toWrite[i].ToEdingString(false,0f));
+                    file.WriteLine(toWrite[i].ToEdingString(false, 0f));
                 }
                 else
                 {
                     float? feed = null;
                     bool? aux1 = null;
                     float? volt = null;
-                    if(toWrite[i].F != null)
+                    if (toWrite[i].F != null)
                     {
                         lastknownFeed = (float)toWrite[i].F;
                     }
-                    if(toWrite[i].AUX1!= null)
+                    if (toWrite[i].AUX1 != null)
                     {
-                        lastknownAux1 =(bool) toWrite[i].AUX1;
+                        lastknownAux1 = (bool)toWrite[i].AUX1;
                     }
                     if (toWrite[i].F != toWrite[i - 1].F)
                     {
@@ -110,7 +128,8 @@ return;
                         {
                             feed = lastknownFeed;
                         }
-                        else {
+                        else
+                        {
                             feed = (float)toWrite[i].F;
                         }
                     }
@@ -125,7 +144,7 @@ return;
                             aux1 = (bool)toWrite[i].AUX1;
                         }
                     }
-                    if(toWrite[i].volt != toWrite[i - 1].volt)
+                    if (toWrite[i].volt != toWrite[i - 1].volt)
                     {
                         volt = (float)toWrite[i].volt;
                     }

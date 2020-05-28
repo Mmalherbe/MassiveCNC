@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.classes;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,7 +16,7 @@ public class interactionController : MonoBehaviour
     [SerializeField] SVGToPath SvgToPath;
     [SerializeField] CNC_Settings Cnc_Settings;
     [SerializeField] SetUpEnviroment setUpEnviroment;
-
+    [SerializeField] gcLineBuilder lineBuilder;
     [SerializeField] TMP_InputField HeightInputField;
     [SerializeField] TMP_InputField WidthInputField;
     [SerializeField] TMP_InputField HeightMarginInputField;
@@ -188,6 +190,11 @@ public class interactionController : MonoBehaviour
     {
         SvgToPath.PathToGCode();
 
+    }
+    public void PathsToGcode_Click()
+    {
+        List<gcLine> lines = lineBuilder.ExportLinesToGcode(gcParser.gcodeFromPathToExport);
+        fileController.writeFile(lines, "") ;
     }
 
     public void StartLocationInputChanged()
