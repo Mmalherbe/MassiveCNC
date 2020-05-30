@@ -82,7 +82,7 @@ public class gcLineBuilder : MonoBehaviour
     {
         List<gcLine> toExport = new List<gcLine>();
 
-        for(int i =0; i < gCodeLines.Count; i++)
+        for (int i = 0; i < gCodeLines.Count; i++)
         {
             gcLine line = new gcLine();
             line = gCodeLines[i];
@@ -90,45 +90,78 @@ public class gcLineBuilder : MonoBehaviour
             toExport.Add(line);
 
         }
-        return toExport;
-    }
-
-
-    public void showOutLinesFromPoints(List<gcLine> gCodeLines, bool multiple = false)
-    {
-        if (!multiple) ClearLines();
+        Dictionary<int, gcLine> delayLines = new Dictionary<int, gcLine>();
 
         for (int i = 0; i < gCodeLines.Count; i++)
         {
-            if (i == 0)
+            if (i > 0 && i < gCodeLines.Count - 1)
             {
-                GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
-                //line.transform.position = LinePlaceHolder.transform.position;
-                line.transform.GetChild(0).position = new Vector3(gCodeLines[i].X != null ? (float)gCodeLines[i].X : 0f, gCodeLines[i].Z != null ? (float)gCodeLines[i].Z : 0f, gCodeLines[i].Y != null ? -(float)gCodeLines[i].Y : 0f);
-                line.transform.GetChild(1).position = new Vector3(gCodeLines[i + 1].X != null ? (float)gCodeLines[i + 1].X : 0f, gCodeLines[i + 1].Z != null ? (float)gCodeLines[i + 1].Z : 0f, gCodeLines[i + 1].Y != null ? -(float)gCodeLines[i + 1].Y : 0f);
-                LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
-                linerenderer.startColor = (Color.green);
-                linerenderer.endColor = (Color.green);
-                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
-                linerenderer.enabled = gCodeLines[i].AUX1 != null ? (bool)gCodeLines[i].AUX1 : false;
-            }
-            else
-            {
-                GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
-                line.transform.position = LinePlaceHolder.transform.position;
-                line.transform.GetChild(0).position = new Vector3(gCodeLines[i - 1].X != null ? (float)gCodeLines[i - 1].X : 0f, gCodeLines[i - 1].Z != null ? (float)gCodeLines[i - 1].Z : 0f, gCodeLines[i - 1].Y != null ? -(float)gCodeLines[i - 1].Y : 0f);
-                line.transform.GetChild(1).position = new Vector3(gCodeLines[i].X != null ? (float)gCodeLines[i].X : 0f, gCodeLines[i].Z != null ? (float)gCodeLines[i].Z : 0f, gCodeLines[i].Y != null ? -(float)gCodeLines[i].Y : 0f);
-                // if it is a rapidpositioning statement it will be made green
+                if (gCodeLines[i].G != 4 && gCodeLines[i + 1].G != 4)
+                {
+                    if (gCodeLines[i].AUX1 != gCodeLines[i + 1].AUX1)
+                    { // indrukken van spuit +- 0.5f ,
+                        // loslaten -0.2f
 
-                LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
-                linerenderer.startColor = (Color.green);
-                linerenderer.endColor = (Color.green);
-                linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
-                linerenderer.enabled = gCodeLines[i].AUX1 != null ? (bool)gCodeLines[i].AUX1 : false;
-            }
+                        gcLine delayline = new gcLine();
+                        delayline.G = 4;
+                        delayline.P = 0.5f;
+                        delayLines.Add(i+1, delayline);
+                    }
+                }
 
+            }
+        }
+
+        foreach (KeyValuePair<int, gcLine> delayline in delayLines)
+        {
+
+            toExport.Insert(delayline.Key, new gcLine { });
+            toExport.Insert(delayline.Key+1, delayline.Value);
+            
+        }
+    
+
+
+
+            return toExport;
+    }
+
+
+public void showOutLinesFromPoints(List<gcLine> gCodeLines, bool multiple = false)
+{
+    if (!multiple) ClearLines();
+
+    for (int i = 0; i < gCodeLines.Count; i++)
+    {
+        if (i == 0)
+        {
+            GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
+            //line.transform.position = LinePlaceHolder.transform.position;
+            line.transform.GetChild(0).position = new Vector3(gCodeLines[i].X != null ? (float)gCodeLines[i].X : 0f, gCodeLines[i].Z != null ? (float)gCodeLines[i].Z : 0f, gCodeLines[i].Y != null ? -(float)gCodeLines[i].Y : 0f);
+            line.transform.GetChild(1).position = new Vector3(gCodeLines[i + 1].X != null ? (float)gCodeLines[i + 1].X : 0f, gCodeLines[i + 1].Z != null ? (float)gCodeLines[i + 1].Z : 0f, gCodeLines[i + 1].Y != null ? -(float)gCodeLines[i + 1].Y : 0f);
+            LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
+            linerenderer.startColor = (Color.green);
+            linerenderer.endColor = (Color.green);
+            linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
+            linerenderer.enabled = gCodeLines[i].AUX1 != null ? (bool)gCodeLines[i].AUX1 : false;
+        }
+        else
+        {
+            GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
+            line.transform.position = LinePlaceHolder.transform.position;
+            line.transform.GetChild(0).position = new Vector3(gCodeLines[i - 1].X != null ? (float)gCodeLines[i - 1].X : 0f, gCodeLines[i - 1].Z != null ? (float)gCodeLines[i - 1].Z : 0f, gCodeLines[i - 1].Y != null ? -(float)gCodeLines[i - 1].Y : 0f);
+            line.transform.GetChild(1).position = new Vector3(gCodeLines[i].X != null ? (float)gCodeLines[i].X : 0f, gCodeLines[i].Z != null ? (float)gCodeLines[i].Z : 0f, gCodeLines[i].Y != null ? -(float)gCodeLines[i].Y : 0f);
+            // if it is a rapidpositioning statement it will be made green
+
+            LineRenderer linerenderer = line.gameObject.GetComponent<LineRenderer>();
+            linerenderer.startColor = (Color.green);
+            linerenderer.endColor = (Color.green);
+            linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
+            linerenderer.enabled = gCodeLines[i].AUX1 != null ? (bool)gCodeLines[i].AUX1 : false;
         }
 
     }
+
+}
 
 }

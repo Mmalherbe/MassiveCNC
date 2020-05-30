@@ -69,8 +69,8 @@ public class SVGToPath : MonoBehaviour
             float minY = Mesh.MeshData.Vertices.Min(y => y.y);
             float maxX = Mesh.MeshData.Vertices.Max(x => x.x);
             float maxY = Mesh.MeshData.Vertices.Max(y => y.y);
-            float midX = (maxX - minX)/2;
-            float midY = (maxY - minY)/2;
+            float midX = (maxX - minX);
+            float midY = (maxY - minY);
 
             for (int i = 0; i < Mesh.MeshData.Vertices.Count; i++)
             {
@@ -88,7 +88,7 @@ public class SVGToPath : MonoBehaviour
             }
             if (string.IsNullOrEmpty(svgPath.Class))
             {
-                svgPath.Class = "default classname";
+                svgPath.Class = (svgClassesToShow.Count + 1).ToString();
             }
             CreateSVGClassObject(svgPath.Class);
             svgPaths.Add(svgPath.Class, coordsForId);

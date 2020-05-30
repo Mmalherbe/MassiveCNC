@@ -29,6 +29,7 @@ public class gcParser : MonoBehaviour
     [SerializeField] internal bool AUXOnInFigures = true;
     [SerializeField] internal bool AUXOnInTravels = true;
     [SerializeField] internal bool StretchLines = true;
+    [SerializeField] internal bool centerPath = true;
     [SerializeField] internal float StandardFeed = 20000;
     [SerializeField] internal GameObject HomePositionObj;
     [SerializeField] internal GameObject MiddlePointGcode;
@@ -136,6 +137,23 @@ public class gcParser : MonoBehaviour
         List<gcLine> gcodeFromPath = new List<gcLine>();
         gcodeFromPathToExport.Clear();
 
+        if (centerPath)
+        {
+            float midxPath = coords.Min(x=>x.X) + ((coords.Max(x => x.X) - coords.Min(x => x.X))/2);
+            float midyPath = coords.Min(x => x.Y) + ((coords.Max(x => x.Y) - coords.Min(x => x.Y))/2);
+            float deltaX = MiddlePointGcode.transform.position.x - midxPath;
+            float deltaY = MiddlePointGcode.transform.position.y - midyPath;
+            foreach (Coords coord in coords)
+                {
+                    coord.X += deltaX;
+                    coord.Y += deltaY;
+                }
+
+
+
+
+        }
+
         // Create gcode from the path you want to draw.. without any manipulations like stretching
         for (int i = 0; i < coords.Count; i++)
         {
@@ -147,7 +165,8 @@ public class gcParser : MonoBehaviour
                 gcl.Z = float.Parse((coords[i].Z).ToString("F4"));
                 gcl.F = StandardFeed;
                 gcl.G = 1;
-                gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
+
+               gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
 
                 gcodeFromPath.Add(gcl);
             }
@@ -165,13 +184,9 @@ public class gcParser : MonoBehaviour
                 gcodeFromPath.Add(gcl);
 
             }
-
-
-
-
         }
 
-
+      
 
 
         gcodeFromPath = fill(gcodeFromPath);
@@ -280,7 +295,7 @@ public class gcParser : MonoBehaviour
 
             if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
-                notsafe = true;
+                // notsafe = true;
             }
         }
 

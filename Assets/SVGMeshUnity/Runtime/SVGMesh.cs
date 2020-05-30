@@ -25,17 +25,23 @@ namespace SVGMeshUnity
 
         private void Awake()
         {
+            setup();
+        }
+        private void setup()
+        {
             BezierToVertex = new BezierToVertex();
             BezierToVertex.WorkBufferPool = WorkBufferPool;
-            
+
             Triangulation = new Triangulation();
             Triangulation.WorkBufferPool = WorkBufferPool;
         }
-        
         public void Fill(SVGData svg)
         {
             MeshData.Clear();
-            
+            if(BezierToVertex == null || Triangulation == null)
+            {
+                setup();
+            }
             // convert curves into discrete points
             BezierToVertex.Scale = Scale;
             BezierToVertex.GetContours(svg, MeshData);
