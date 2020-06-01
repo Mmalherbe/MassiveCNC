@@ -90,7 +90,7 @@ public class gcLineBuilder : MonoBehaviour
             toExport.Add(line);
 
         }
-        Dictionary<int, gcLine> delayLines = new Dictionary<int, gcLine>();
+        Dictionary<int, List<gcLine>> delayLines = new Dictionary<int, List<gcLine>>();
 
         for (int i = 0; i < gCodeLines.Count; i++)
         {
@@ -101,24 +101,27 @@ public class gcLineBuilder : MonoBehaviour
                     if (gCodeLines[i].AUX1 != gCodeLines[i + 1].AUX1)
                     { // indrukken van spuit +- 0.5f ,
                         // loslaten -0.2f
-
+                        gcLine auxline = new gcLine();
+                        auxline.AUX1 = gCodeLines[i + 1].AUX1;
                         gcLine delayline = new gcLine();
+                        delayline.linenr = i;
                         delayline.G = 4;
                         delayline.P = 0.5f;
-                        delayLines.Add(i+1, delayline);
+                        List<gcLine> delayAuxlines = new List<gcLine>();
+                        delayAuxlines.Add(delayline);
+                        delayAuxlines.Add(auxline);
+                        delayAuxlines.Add(delayline);
+                        delayLines.Add(i, delayAuxlines);
                     }
                 }
 
             }
         }
 
-        foreach (KeyValuePair<int, gcLine> delayline in delayLines)
+        foreach (KeyValuePair<int, List<gcLine>> delayline in delayLines)
         {
-
-            toExport.Insert(delayline.Key, new gcLine { });
-            toExport.Insert(delayline.Key+1, delayline.Value);
-            
-        }
+            toExport.InsertRange(delayline.Key, delayline.Value);
+         }
     
 
 
