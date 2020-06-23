@@ -11,5 +11,6 @@ namespace Assets.Scripts.classes
         public float X;
         public float Y;
         public float Z;
+        public bool Travel = false;
     }
 }

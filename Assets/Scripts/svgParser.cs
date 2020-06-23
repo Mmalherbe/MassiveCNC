@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.classes;
+using Assets.Scripts.classes.Font;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +15,6 @@ namespace Assets.Scripts
     {
         public SvgClass Parse(string urlToFile)
         {
-
-           
             if (System.IO.Path.GetExtension(urlToFile).ToUpper() != ".SVG")
             {
                 return null;
@@ -27,12 +26,33 @@ namespace Assets.Scripts
             XmlReader reader = XmlReader.Create(urlToFile, settings);
             XmlDocument doc = new XmlDocument();
             doc.Load(reader);
-            Debug.Log(doc);
             SvgClass svg = new SvgClass();
 
             svg = XmlOperation.Deserialize<SvgClass>(urlToFile);
             return svg;
         }
+
+        public Assets.Scripts.classes.SvgLineFile.Svg ParseSVGLine(string urlToFile)
+        {
+            if (System.IO.Path.GetExtension(urlToFile).ToUpper() != ".SVG")
+            {
+                return null;
+            }
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.None;
+            settings.XmlResolver = null;
+            settings.DtdProcessing = DtdProcessing.Ignore;
+            XmlReader reader = XmlReader.Create(urlToFile, settings);
+            XmlDocument doc = new XmlDocument();
+            doc.Load(reader);
+            Assets.Scripts.classes.SvgLineFile.Svg svg = new Assets.Scripts.classes.SvgLineFile.Svg();
+
+            svg = XmlOperation.Deserialize<Assets.Scripts.classes.SvgLineFile.Svg>(urlToFile);
+            return svg;
+
+
+        }
+
 
 
     }

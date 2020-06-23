@@ -24,6 +24,8 @@ namespace Assets.Scripts.classes
 		public string D { get; set; }
 		[XmlAttribute(AttributeName = "transform")]
 		public string Transform { get; set; }
+		[XmlAttribute(AttributeName = "id")]
+		public string Id { get; set; }
 	}
 
 	[XmlRoot(ElementName = "svg", Namespace = "http://www.w3.org/2000/svg")]

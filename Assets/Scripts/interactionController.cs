@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.classes;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,7 +16,7 @@ public class interactionController : MonoBehaviour
     [SerializeField] SVGToPath SvgToPath;
     [SerializeField] CNC_Settings Cnc_Settings;
     [SerializeField] SetUpEnviroment setUpEnviroment;
-
+    [SerializeField] gcLineBuilder lineBuilder;
     [SerializeField] TMP_InputField HeightInputField;
     [SerializeField] TMP_InputField WidthInputField;
     [SerializeField] TMP_InputField HeightMarginInputField;
@@ -24,11 +26,27 @@ public class interactionController : MonoBehaviour
     [SerializeField] Slider RatioScaleSlider;
     [SerializeField] Slider HorizontalScaleSlider;
     [SerializeField] Slider VerticalScaleSlider;
+    [SerializeField] TMP_InputField RatioScaleInputField;
+    [SerializeField] TMP_InputField HorizontalScaleInputField;
+    [SerializeField] TMP_InputField VerticalScaleInputField;
+
+
 
     [SerializeField] TextMeshProUGUI MinXValueHolder;
     [SerializeField] TextMeshProUGUI MaxXValueHolder;
     [SerializeField] TextMeshProUGUI MinYValueHolder;
     [SerializeField] TextMeshProUGUI MaxYValueHolder;
+
+    [SerializeField] TMP_InputField StartLocX;
+    [SerializeField] TMP_InputField StartLocY;
+    [SerializeField] TMP_InputField StartLocZ;
+
+    [SerializeField] TMP_InputField MidPointLocX;
+    [SerializeField] TMP_InputField MidPointLocY;
+    [SerializeField] TMP_InputField MidPointLocZ;
+
+
+
     internal bool scaleSet = false;
 
 
@@ -40,12 +58,21 @@ public class interactionController : MonoBehaviour
         if (string.IsNullOrEmpty(WidthMarginInputField.text)) WidthMarginInputField.text = Cnc_Settings.HorizontalPaddingInMM.ToString();
         if (string.IsNullOrEmpty(HeightMarginInputField.text)) HeightMarginInputField.text = Cnc_Settings.VerticalPaddingInMM.ToString();
 
+        if (string.IsNullOrEmpty(StartLocX.text)) StartLocX.text = Cnc_Settings.DefaultHomeX.ToString();
+        if (string.IsNullOrEmpty(StartLocY.text)) StartLocY.text = Cnc_Settings.DefaultHomeY.ToString();
+        if (string.IsNullOrEmpty(StartLocZ.text)) StartLocZ.text = Cnc_Settings.DefaultHomeZ.ToString();
+
+        if (string.IsNullOrEmpty(MidPointLocX.text)) MidPointLocX.text = Cnc_Settings.DefaultHomeX.ToString();
+        if (string.IsNullOrEmpty(MidPointLocY.text)) MidPointLocY.text = Cnc_Settings.DefaultHomeY.ToString();
+        if (string.IsNullOrEmpty(MidPointLocZ.text)) MidPointLocZ.text = Cnc_Settings.DefaultHomeZ.ToString();
+
+
         setupEnviroment.camSet = true;
         setUpEnviroment.ResetCamera();
 
 
     }
-    public void updateScaleSliders( float maxHorizontal, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
+    public void updateScaleSliders(float maxHorizontal, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
     {
         HorizontalScaleSlider.minValue = 0.01f;
         HorizontalScaleSlider.maxValue = Mathf.Floor(maxHorizontal);
@@ -59,6 +86,9 @@ public class interactionController : MonoBehaviour
         RatioScaleSlider.maxValue = Cnc_Settings.ScaleFactorForMax;
         HorizontalScaleSlider.value = currentScaleHorizontal;
         VerticalScaleSlider.value = currentScaleVertical;
+        RatioScaleInputField.text = RatioScaleSlider.value.ToString();
+        VerticalScaleInputField.text = VerticalScaleSlider.value.ToString();
+        HorizontalScaleInputField.text = HorizontalScaleSlider.value.ToString();
 
     }
     public void ParseTextToGcode_Click()
@@ -108,10 +138,44 @@ public class interactionController : MonoBehaviour
         setupEnviroment.ResetCamera();
     }
 
+    public void RatioScaleEntered()
+    {
+        float ratioScaleEntered = float.Parse(RatioScaleInputField.text);
+        if (scaleSet)
+        {
+            RatioScaleSlider.value = ratioScaleEntered;
+            HorizontalScaleSlider.value = VerticalScaleSlider.value = RatioScaleSlider.value;
+            gcParser.scaleToUseHorizontal = gcParser.scaleToUseVertical = ratioScaleEntered;
+            gcParser.RedrawWithUpdatedScale();
+        }
+    } 
+    public void HorizontalScaleEntered()
+    {
+        float ScaleEntered = float.Parse(HorizontalScaleInputField.text);
+        if (scaleSet)
+        {
+
+            HorizontalScaleSlider.value = ScaleEntered;
+            gcParser.scaleToUseHorizontal = ScaleEntered;
+            gcParser.RedrawWithUpdatedScale();
+        }
+    }    public void VerticalScaleEntered()
+    {
+        float ScaleEntered = float.Parse(VerticalScaleInputField.text);
+        if (scaleSet)
+        {
+
+            VerticalScaleSlider.value = ScaleEntered;
+            gcParser.scaleToUseVertical = ScaleEntered;
+            gcParser.RedrawWithUpdatedScale();
+        }
+    }
+
     public void RatioScaleChanged()
     {
         Cnc_Settings.ScaleToMax = false;
         ScaleToMaxToggle.isOn = false;
+        RatioScaleInputField.text = RatioScaleSlider.value.ToString();
         if (scaleSet)
         {
             HorizontalScaleSlider.value = VerticalScaleSlider.value = RatioScaleSlider.value;
@@ -125,6 +189,7 @@ public class interactionController : MonoBehaviour
         ScaleToMaxToggle.isOn = false;
         if (scaleSet)
         {
+            HorizontalScaleInputField.text = HorizontalScaleSlider.value.ToString();
             gcParser.scaleToUseHorizontal = HorizontalScaleSlider.value;
             gcParser.RedrawWithUpdatedScale();
         }
@@ -135,6 +200,7 @@ public class interactionController : MonoBehaviour
         ScaleToMaxToggle.isOn = false;
         if (scaleSet)
         {
+            VerticalScaleInputField.text = VerticalScaleSlider.value.ToString();
             gcParser.scaleToUseVertical = VerticalScaleSlider.value;
             gcParser.RedrawWithUpdatedScale();
         }
@@ -154,7 +220,7 @@ public class interactionController : MonoBehaviour
 
     public void UpdateMinMaxValues()
     {
-       
+
         float[] MinMaxValues = gcParser.getMinMaxValues();
         MinXValueHolder.text = MinMaxValues[0].ToString();
         MaxXValueHolder.text = MinMaxValues[1].ToString();
@@ -169,5 +235,57 @@ public class interactionController : MonoBehaviour
         SvgToPath.PathToGCode();
 
     }
+    public void PathsToGcode_Click()
+    {
+        List<gcLine> lines = lineBuilder.ExportLinesToGcode(gcParser.gcodeFromPathToExport);
+        fileController.writeFile(lines, "");
+    }
 
+    public void StartLocationInputChanged()
+    {
+        if (StartLocX.text.Length == 0) StartLocX.text = gcParser.HomePositionObj.transform.position.x.ToString();
+        if (StartLocY.text.Length == 0) StartLocY.text = gcParser.HomePositionObj.transform.position.y.ToString();
+        if (StartLocZ.text.Length == 0) StartLocZ.text = gcParser.HomePositionObj.transform.position.z.ToString();
+
+        float startX = float.Parse(StartLocX.text);
+        float startY = float.Parse(StartLocY.text);
+        float startZ = float.Parse(StartLocZ.text);
+
+        if (Mathf.Abs(startX) < Mathf.Abs(Cnc_Settings.WidthInMM / 2) &&
+            Mathf.Abs(startY) < Mathf.Abs(Cnc_Settings.HeightInMM / 2) &&
+            Mathf.Abs(startZ) < Mathf.Abs(Cnc_Settings.MinimumZinMM) &&
+            Mathf.Abs(startZ) < Mathf.Abs(Cnc_Settings.MaximumZinMM)
+            )
+        {
+            Vector3 newStartLoc = new Vector3(startX, startY, startZ);
+            gcParser.StartPositionGcode.transform.position = newStartLoc;
+        }
+
+    }
+
+    public void MidPointLocationInputChanged()
+    {
+        if (MidPointLocX.text.Length == 0) MidPointLocX.text = gcParser.HomePositionObj.transform.position.x.ToString();
+        if (MidPointLocY.text.Length == 0) MidPointLocY.text = gcParser.HomePositionObj.transform.position.y.ToString();
+        if (MidPointLocZ.text.Length == 0) MidPointLocZ.text = gcParser.HomePositionObj.transform.position.z.ToString();
+
+        float MidPointX = float.Parse(MidPointLocX.text);
+        float MidPointY = float.Parse(MidPointLocY.text);
+        float MidPointZ = float.Parse(MidPointLocZ.text);
+
+        if (Mathf.Abs(MidPointX) > Mathf.Abs(Cnc_Settings.WidthInMM / 2) ||
+            Mathf.Abs(MidPointY) > Mathf.Abs(Cnc_Settings.HeightInMM / 2) ||
+            Mathf.Abs(MidPointZ) > Mathf.Abs(Cnc_Settings.MinimumZinMM) ||
+            Mathf.Abs(MidPointZ) > Mathf.Abs(Cnc_Settings.MaximumZinMM)
+            )
+        {
+            MidPointX = 0f;
+            MidPointY = 0f;
+            MidPointZ = 0f;
+        }
+        Vector3 newMidPointLoc = new Vector3(MidPointX, MidPointY, MidPointZ);
+        gcParser.MiddlePointGcode.transform.position = newMidPointLoc;
+
+
+    }
 }
