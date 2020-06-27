@@ -69,6 +69,7 @@ public class gcLineBuilder : MonoBehaviour
     {
         Debug.Log(drawnRect);
         var x = 0;
+        if (lines == null  ||lines.Count() == 0) return;
         foreach (GameObject line in lines)
         {
             if (drawnRect.Contains(line.transform.position, true))
@@ -147,7 +148,8 @@ public void showOutLinesFromPoints(List<gcLine> gCodeLines, bool multiple = fals
             linerenderer.endColor = (Color.green);
             linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
             linerenderer.enabled = gCodeLines[i].AUX1 != null ? (bool)gCodeLines[i].AUX1 : false;
-        }
+                lines.Append(line);
+            }
         else
         {
             GameObject line = (GameObject)Instantiate(LinePrefab, LinePlaceHolder.transform);
@@ -161,9 +163,12 @@ public void showOutLinesFromPoints(List<gcLine> gCodeLines, bool multiple = fals
             linerenderer.endColor = (Color.green);
             linerenderer.startWidth = linerenderer.endWidth = Cnc_Settings.ScaleFactorInUnity / 10;
             linerenderer.enabled = gCodeLines[i].AUX1 != null ? (bool)gCodeLines[i].AUX1 : false;
-        }
+                lines.Append(line);
+            }
+            
 
     }
+        
 
 }
 
