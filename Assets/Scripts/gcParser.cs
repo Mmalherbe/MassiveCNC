@@ -16,6 +16,7 @@ using Random = UnityEngine.Random;
 
 public class gcParser : MonoBehaviour
 {
+    [SerializeField] private EdingCncApiController edingcnc;
     [SerializeField] private CNC_Settings Cnc_Settings;
     [SerializeField] private interactionController Interaction_Controller;
     [SerializeField] private int c = 1;
@@ -129,6 +130,18 @@ public class gcParser : MonoBehaviour
         Interaction_Controller.updateScaleSliders(maxScaleHorizontal, maxScaleVertical, scaleToUseHorizontal, scaleToUseVertical);
 
     }
+     public void MoveForEachLine()
+    {
+        foreach(gcLine line in gcodeFromPathToExport)
+        {
+            edingcnc.Move(new Vector3((float)line.X, (float)line.Y, (float)line.Z));
+
+        }
+
+
+    }
+
+
     internal void GenerateGcodeFromPath()
     {
         List<Coords> coords = OriginalCoords;

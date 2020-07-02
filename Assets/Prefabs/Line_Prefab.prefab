@@ -71,6 +71,7 @@ GameObject:
   - component: {fileID: 2390227859871719943}
   - component: {fileID: 2329916562081811553}
   - component: {fileID: 3505965740755654669}
+  - component: {fileID: -7763278018152142267}
   m_Layer: 8
   m_Name: Line_Prefab
   m_TagString: gcLine
@@ -206,3 +207,15 @@ MonoBehaviour:
   Line: {fileID: 2329916562081811553}
   origin: {fileID: 4530267928675514123}
   destination: {fileID: 4943195746637464032}
+--- !u!114 &-7763278018152142267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9189896160583101348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27d49bc338f8567459c625ddcdcb06b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

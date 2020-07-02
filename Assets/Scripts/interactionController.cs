@@ -1,7 +1,9 @@
-﻿using Assets.Scripts.classes;
+﻿using Assets.Scripts;
+using Assets.Scripts.classes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +11,13 @@ using UnityEngine.UI;
 public class interactionController : MonoBehaviour
 {
 
+    [Header("Settings")]
+    [SerializeField] internal bool GetMachinePositionLive = true;
+
+
+    [Header("declared items. Do not change unless you know what you are doing.")]
+    [SerializeField] EdingCncApiController EdingCncApiControl;
+    [SerializeField] TextMeshProUGUI RealTimeHeadPosition;
     [SerializeField] SetUpEnviroment setupEnviroment;
     [SerializeField] gcParser gcParser;
     [SerializeField] FileController fileController;
@@ -17,11 +26,14 @@ public class interactionController : MonoBehaviour
     [SerializeField] CNC_Settings Cnc_Settings;
     [SerializeField] SetUpEnviroment setUpEnviroment;
     [SerializeField] gcLineBuilder lineBuilder;
+    [SerializeField] LineSelectorAndInteractor SelectionInteractor;
     [SerializeField] TMP_InputField HeightInputField;
     [SerializeField] TMP_InputField WidthInputField;
     [SerializeField] TMP_InputField HeightMarginInputField;
     [SerializeField] TMP_InputField WidthMarginInputField;
     [SerializeField] Toggle ScaleToMaxToggle;
+    [SerializeField] Toggle AuxSelectedLineToggle;
+    [SerializeField] Toggle VoltSelectedLineToggle;
 
     [SerializeField] Slider RatioScaleSlider;
     [SerializeField] Slider HorizontalScaleSlider;
@@ -31,6 +43,8 @@ public class interactionController : MonoBehaviour
     [SerializeField] TMP_InputField VerticalScaleInputField;
 
 
+    [SerializeField] Slider SelectedLinesVoltSlider;
+    [SerializeField] TMP_InputField SelectedLinesVoltInput;
 
     [SerializeField] TextMeshProUGUI MinXValueHolder;
     [SerializeField] TextMeshProUGUI MaxXValueHolder;
@@ -49,7 +63,16 @@ public class interactionController : MonoBehaviour
 
     internal bool scaleSet = false;
 
+    private void Update()
+    {
+        if (GetMachinePositionLive)
+        {
+            RealTimeHeadPosition.text = "X : " + EdingCncApiControl.HeadPosition.x + "\n" +
+                                        "Y : " + EdingCncApiControl.HeadPosition.y + "\n" +
+                                        "Z : " + EdingCncApiControl.HeadPosition.z + "\n";
+        }
 
+    }
     private void Start()
     {
         if (string.IsNullOrEmpty(WidthInputField.text)) WidthInputField.text = Cnc_Settings.WidthInMM.ToString();
@@ -91,6 +114,33 @@ public class interactionController : MonoBehaviour
         HorizontalScaleInputField.text = HorizontalScaleSlider.value.ToString();
 
     }
+
+    public void ToggleAUXLinesSelected_Click()
+    {
+        if (!SelectionInteractor.SelectedLineObjects.Equals(lineBuilder.SelectedLines))
+        {
+            SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
+        }
+        SelectionInteractor.ToggleAux(AuxSelectedLineToggle.isOn);
+    }  
+    public void VoltLinesSelectedValue_Changed()
+    {
+        if (!SelectionInteractor.SelectedLineObjects.Equals(lineBuilder.SelectedLines))
+        {
+            SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
+        }
+        SelectionInteractor.SetVolt(int.Parse(SelectedLinesVoltInput.text));
+    }
+    public void ToggleVoltLinesSelected_Click()
+    {
+        if (!SelectionInteractor.SelectedLineObjects.Equals(lineBuilder.SelectedLines))
+        {
+            SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
+        }
+        if (!AuxSelectedLineToggle.isOn)
+        SelectionInteractor.SetVolt(0);
+    }
+
     public void ParseTextToGcode_Click()
     {
         TextToPath.ClickParseTextToGcode();

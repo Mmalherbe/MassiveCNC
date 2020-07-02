@@ -6,8 +6,32 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Assets.Scripts.classes
 {
-    public class gcLine
+    public class gcLine : MonoBehaviour
     {
+        public void Set(gcLine Data)
+        {
+            linenr = Data.linenr;
+            G = Data.G;
+            X = Data.X;
+            Y = Data.Y;
+            Z = Data.Z;
+            F = Data.F;
+            I = Data.I;
+            J = Data.J;
+            K = Data.K;
+            L = Data.L;
+            M = Data.M;
+            N = Data.N;
+            P = Data.P;
+            R = Data.R;
+            S = Data.S;
+            T = Data.T;
+            M = Data.M;
+            volt = Data.volt;
+            AUX1 = Data.AUX1;
+            travelPath = Data.travelPath;
+        }
+
         public int? linenr;
         public int? G;
         public float? X;
