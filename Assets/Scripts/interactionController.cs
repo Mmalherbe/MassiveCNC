@@ -45,6 +45,8 @@ public class interactionController : MonoBehaviour
 
     [SerializeField] Slider SelectedLinesVoltSlider;
     [SerializeField] TMP_InputField SelectedLinesVoltInput;
+    [SerializeField] TMP_InputField SelectedLinesVoltMin;
+    [SerializeField] TMP_InputField SelectedLinesVoltMax;
 
     [SerializeField] TextMeshProUGUI MinXValueHolder;
     [SerializeField] TextMeshProUGUI MaxXValueHolder;
@@ -137,10 +139,49 @@ public class interactionController : MonoBehaviour
         {
             SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
         }
-        if (!AuxSelectedLineToggle.isOn)
+        if (!VoltSelectedLineToggle.isOn)
         SelectionInteractor.SetVolt(0);
     }
 
+    public void InputVoltSelectedLines_Changed()
+    {
+        if (!SelectionInteractor.SelectedLineObjects.Equals(lineBuilder.SelectedLines))
+        {
+            SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
+        }
+        SelectedLinesVoltInput.text = SelectedLinesVoltSlider.value.ToString();
+        SelectionInteractor.SetVolt(Mathf.RoundToInt(SelectedLinesVoltSlider.value));
+
+    }
+
+    public void InputVoltSelectedTextInput_Changed()
+    {
+        if (!SelectionInteractor.SelectedLineObjects.Equals(lineBuilder.SelectedLines))
+        {
+            SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
+        }
+        SelectedLinesVoltSlider.value = int.Parse(SelectedLinesVoltInput.text);
+        SelectionInteractor.SetVolt(Mathf.RoundToInt(SelectedLinesVoltSlider.value));
+
+
+    }
+
+    public void InputVoltSelectedTextMin_Changed()
+    {
+        if(SelectedLinesVoltSlider.value < float.Parse(SelectedLinesVoltMin.text))
+        {
+            SelectedLinesVoltSlider.value = float.Parse(SelectedLinesVoltMin.text);
+            SelectedLinesVoltInput.text = SelectedLinesVoltMin.text;
+        }
+    }
+    public void InputVoltSelectedTextMax_Changed()
+    {
+        if (SelectedLinesVoltSlider.value > float.Parse(SelectedLinesVoltMax.text))
+        {
+            SelectedLinesVoltSlider.value = float.Parse(SelectedLinesVoltMax.text);
+            SelectedLinesVoltInput.text = SelectedLinesVoltMax.text;
+        }
+    }
     public void ParseTextToGcode_Click()
     {
         TextToPath.ClickParseTextToGcode();
