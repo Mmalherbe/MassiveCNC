@@ -61,18 +61,22 @@ public class interactionController : MonoBehaviour
     [SerializeField] TMP_InputField MidPointLocY;
     [SerializeField] TMP_InputField MidPointLocZ;
 
-
+    [SerializeField] Toggle ConnectToEding;
 
     internal bool scaleSet = false;
 
     private void Update()
     {
-        if (GetMachinePositionLive)
+        if (EdingCncApiControl.Connected(true))
         {
-            RealTimeHeadPosition.text = "X : " + EdingCncApiControl.HeadPosition.x + "\n" +
-                                        "Y : " + EdingCncApiControl.HeadPosition.y + "\n" +
-                                        "Z : " + EdingCncApiControl.HeadPosition.z + "\n";
+            if (GetMachinePositionLive)
+            {
+                RealTimeHeadPosition.text = "X : " + EdingCncApiControl.HeadPosition.x + "\n" +
+                                            "Y : " + EdingCncApiControl.HeadPosition.y + "\n" +
+                                            "Z : " + EdingCncApiControl.HeadPosition.z + "\n";
+            }
         }
+        else { GetMachinePositionLive = false; }
 
     }
     private void Start()
@@ -124,7 +128,7 @@ public class interactionController : MonoBehaviour
             SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
         }
         SelectionInteractor.ToggleAux(AuxSelectedLineToggle.isOn);
-    }  
+    }
     public void VoltLinesSelectedValue_Changed()
     {
         if (!SelectionInteractor.SelectedLineObjects.Equals(lineBuilder.SelectedLines))
@@ -140,7 +144,28 @@ public class interactionController : MonoBehaviour
             SelectionInteractor.SelectedLineObjects = lineBuilder.SelectedLines;
         }
         if (!VoltSelectedLineToggle.isOn)
-        SelectionInteractor.SetVolt(0);
+            SelectionInteractor.SetVolt(0);
+    }
+
+    public void ToggleConnectToEding_Changed(bool boolean)
+    {
+        ConnectToEding.isOn = EdingCncApiControl.Connected(boolean);
+
+    }
+    public void ToggleLivePosition_Changed(bool boolean)
+    {
+        if (boolean)
+        {
+            if (EdingCncApiControl.Connected(boolean))
+            {
+                GetMachinePositionLive = boolean;
+            }
+        }
+        else
+        {
+            GetMachinePositionLive = boolean;
+
+        }
     }
 
     public void InputVoltSelectedLines_Changed()
@@ -168,7 +193,7 @@ public class interactionController : MonoBehaviour
 
     public void InputVoltSelectedTextMin_Changed()
     {
-        if(SelectedLinesVoltSlider.value < float.Parse(SelectedLinesVoltMin.text))
+        if (SelectedLinesVoltSlider.value < float.Parse(SelectedLinesVoltMin.text))
         {
             SelectedLinesVoltSlider.value = float.Parse(SelectedLinesVoltMin.text);
             SelectedLinesVoltInput.text = SelectedLinesVoltMin.text;
@@ -239,7 +264,7 @@ public class interactionController : MonoBehaviour
             gcParser.scaleToUseHorizontal = gcParser.scaleToUseVertical = ratioScaleEntered;
             gcParser.RedrawWithUpdatedScale();
         }
-    } 
+    }
     public void HorizontalScaleEntered()
     {
         float ScaleEntered = float.Parse(HorizontalScaleInputField.text);
@@ -250,7 +275,8 @@ public class interactionController : MonoBehaviour
             gcParser.scaleToUseHorizontal = ScaleEntered;
             gcParser.RedrawWithUpdatedScale();
         }
-    }    public void VerticalScaleEntered()
+    }
+    public void VerticalScaleEntered()
     {
         float ScaleEntered = float.Parse(VerticalScaleInputField.text);
         if (scaleSet)
