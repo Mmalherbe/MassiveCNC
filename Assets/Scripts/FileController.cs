@@ -76,7 +76,7 @@ public class FileController : MonoBehaviour
         SVGbtn_text.text = "File Opened"; // Changes the buttontext again                      
         return;
     }
-    public void writeFile(List<gcLine> toWrite, string fileName)
+    public string writeFile(List<gcLine> toWrite, string fileName)
     {
         string path = "";
         if (string.IsNullOrEmpty(fileName))
@@ -96,7 +96,7 @@ public class FileController : MonoBehaviour
             }
             path = Path.Combine(Application.dataPath, "examples", fileName);
         }
-        if (string.IsNullOrEmpty(path)) return;
+        if (string.IsNullOrEmpty(path)) return "";
         using (System.IO.StreamWriter file =
         new System.IO.StreamWriter(path))
         {
@@ -158,6 +158,6 @@ public class FileController : MonoBehaviour
         }
 
 
-
+        return path;
     }
 }

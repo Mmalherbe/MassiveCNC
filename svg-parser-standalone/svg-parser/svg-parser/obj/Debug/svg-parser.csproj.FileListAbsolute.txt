@@ -1,4 +1,0 @@
-C:\Users\Gebruiker\Desktop\massivecnc\Assets\svg-parser-standalone\svg-parser\svg-parser\obj\Debug\svg-parser.csprojAssemblyReference.cache
-C:\Users\Gebruiker\Desktop\massivecnc\Assets\svg-parser-standalone\svg-parser\svg-parser\obj\Debug\svg-parser.csproj.CoreCompileInputs.cache
-C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\Debug\svg-parser.csprojAssemblyReference.cache
-C:\Users\Gebruiker\Desktop\massivecnc\svg-parser-standalone\svg-parser\svg-parser\obj\Debug\svg-parser.csproj.CoreCompileInputs.cache

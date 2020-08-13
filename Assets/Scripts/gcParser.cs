@@ -132,13 +132,8 @@ public class gcParser : MonoBehaviour
     }
      public void MoveForEachLine()
     {
-        foreach(gcLine line in gcodeFromPathToExport)
-        {
-            edingcnc.Move(new Vector3((float)line.X, (float)line.Y, (float)line.Z));
 
-        }
-
-
+        edingcnc.MoveAlongPath(gcodeFromPathToExport);
     }
 
 

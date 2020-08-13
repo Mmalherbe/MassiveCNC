@@ -12,7 +12,7 @@ public class interactionController : MonoBehaviour
 {
 
     [Header("Settings")]
-    [SerializeField] internal bool GetMachinePositionLive = true;
+    [SerializeField] internal bool GetMachinePositionLive;
 
 
     [Header("declared items. Do not change unless you know what you are doing.")]
@@ -61,13 +61,14 @@ public class interactionController : MonoBehaviour
     [SerializeField] TMP_InputField MidPointLocY;
     [SerializeField] TMP_InputField MidPointLocZ;
 
-    [SerializeField] Toggle ConnectToEding;
+    [SerializeField] Toggle ToggleConnectToEding;
+    [SerializeField] Toggle ToggleGetLivePosition;
 
     internal bool scaleSet = false;
 
     private void Update()
     {
-        if (EdingCncApiControl.Connected(true))
+        if (EdingCncApiControl.IsConnected())
         {
             if (GetMachinePositionLive)
             {
@@ -149,24 +150,21 @@ public class interactionController : MonoBehaviour
 
     public void ToggleConnectToEding_Changed(bool boolean)
     {
-        ConnectToEding.isOn = EdingCncApiControl.Connected(boolean);
-
+       EdingCncApiControl.Connect(!EdingCncApiControl.IsConnected());
     }
-    public void ToggleLivePosition_Changed(bool boolean)
+    public void ToggleLivePosition_Changed()
     {
-        if (boolean)
-        {
-            if (EdingCncApiControl.Connected(boolean))
-            {
-                GetMachinePositionLive = boolean;
-            }
-        }
-        else
-        {
-            GetMachinePositionLive = boolean;
+           
+        ToggleGetLivePosition.isOn = EdingCncApiControl.IsConnected();
+        GetMachinePositionLive = ToggleGetLivePosition.isOn;
 
-        }
     }
+
+    public void LoadGcodeToEdingCNC()
+    {
+     EdingCncApiControl.LoadJob(fileController.writeFile(gcParser.gcodeFromPathToExport, "tmpToEding.cnc"));
+    }
+
 
     public void InputVoltSelectedLines_Changed()
     {

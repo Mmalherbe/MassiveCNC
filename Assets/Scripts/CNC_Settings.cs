@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CNC_Settings : MonoBehaviour
 {
-
+    public bool RelativeMovement;
     public bool ScaleToMax;
     public float ScaleFactorForMax;
     public float WidthInMM;
