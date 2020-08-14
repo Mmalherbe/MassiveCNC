@@ -50,6 +50,10 @@ public class TextToPath : MonoBehaviour
                 {
                     List<Coords> coords = new List<Coords>();
                     CoordsOneCharacter.Clear();
+                    if(CoordsOneCharacter.Count == 0)
+                    { // If no character is found, for example a uppercase letter that isnt included, get the lowercase one
+                      CoordsOneCharacter = new List(fontDict.First(x =&gt; x.Key.ToUpper() == TextLines[i][j].ToString().ToUpper()).Value);
+                    }
                     CoordsOneCharacter = new List<Coords>(fontDict.First(x => x.Key == TextLines[i][j].ToString()).Value); // list of coords for character
 
                     float minX = CoordsOneCharacter.Min(x => x.X);
