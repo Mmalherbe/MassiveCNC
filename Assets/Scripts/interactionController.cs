@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.classes;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,7 +16,7 @@ public class interactionController : MonoBehaviour
     [SerializeField] SVGToPath SvgToPath;
     [SerializeField] CNC_Settings Cnc_Settings;
     [SerializeField] SetUpEnviroment setUpEnviroment;
-
+    [SerializeField] gcLineBuilder lineBuilder;
     [SerializeField] TMP_InputField HeightInputField;
     [SerializeField] TMP_InputField WidthInputField;
     [SerializeField] TMP_InputField HeightMarginInputField;
@@ -24,6 +26,11 @@ public class interactionController : MonoBehaviour
     [SerializeField] Slider RatioScaleSlider;
     [SerializeField] Slider HorizontalScaleSlider;
     [SerializeField] Slider VerticalScaleSlider;
+    [SerializeField] TMP_InputField RatioScaleInputField;
+    [SerializeField] TMP_InputField HorizontalScaleInputField;
+    [SerializeField] TMP_InputField VerticalScaleInputField;
+
+
 
     [SerializeField] TextMeshProUGUI MinXValueHolder;
     [SerializeField] TextMeshProUGUI MaxXValueHolder;
@@ -65,7 +72,7 @@ public class interactionController : MonoBehaviour
 
 
     }
-    public void updateScaleSliders( float maxHorizontal, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
+    public void updateScaleSliders(float maxHorizontal, float maxVertical, float currentScaleHorizontal, float currentScaleVertical)
     {
         HorizontalScaleSlider.minValue = 0.01f;
         HorizontalScaleSlider.maxValue = Mathf.Floor(maxHorizontal);
@@ -79,6 +86,9 @@ public class interactionController : MonoBehaviour
         RatioScaleSlider.maxValue = Cnc_Settings.ScaleFactorForMax;
         HorizontalScaleSlider.value = currentScaleHorizontal;
         VerticalScaleSlider.value = currentScaleVertical;
+        RatioScaleInputField.text = RatioScaleSlider.value.ToString();
+        VerticalScaleInputField.text = VerticalScaleSlider.value.ToString();
+        HorizontalScaleInputField.text = HorizontalScaleSlider.value.ToString();
 
     }
     public void ParseTextToGcode_Click()
@@ -128,10 +138,44 @@ public class interactionController : MonoBehaviour
         setupEnviroment.ResetCamera();
     }
 
+    public void RatioScaleEntered()
+    {
+        float ratioScaleEntered = float.Parse(RatioScaleInputField.text);
+        if (scaleSet)
+        {
+            RatioScaleSlider.value = ratioScaleEntered;
+            HorizontalScaleSlider.value = VerticalScaleSlider.value = RatioScaleSlider.value;
+            gcParser.scaleToUseHorizontal = gcParser.scaleToUseVertical = ratioScaleEntered;
+            gcParser.RedrawWithUpdatedScale();
+        }
+    } 
+    public void HorizontalScaleEntered()
+    {
+        float ScaleEntered = float.Parse(HorizontalScaleInputField.text);
+        if (scaleSet)
+        {
+
+            HorizontalScaleSlider.value = ScaleEntered;
+            gcParser.scaleToUseHorizontal = ScaleEntered;
+            gcParser.RedrawWithUpdatedScale();
+        }
+    }    public void VerticalScaleEntered()
+    {
+        float ScaleEntered = float.Parse(VerticalScaleInputField.text);
+        if (scaleSet)
+        {
+
+            VerticalScaleSlider.value = ScaleEntered;
+            gcParser.scaleToUseVertical = ScaleEntered;
+            gcParser.RedrawWithUpdatedScale();
+        }
+    }
+
     public void RatioScaleChanged()
     {
         Cnc_Settings.ScaleToMax = false;
         ScaleToMaxToggle.isOn = false;
+        RatioScaleInputField.text = RatioScaleSlider.value.ToString();
         if (scaleSet)
         {
             HorizontalScaleSlider.value = VerticalScaleSlider.value = RatioScaleSlider.value;
@@ -145,6 +189,7 @@ public class interactionController : MonoBehaviour
         ScaleToMaxToggle.isOn = false;
         if (scaleSet)
         {
+            HorizontalScaleInputField.text = HorizontalScaleSlider.value.ToString();
             gcParser.scaleToUseHorizontal = HorizontalScaleSlider.value;
             gcParser.RedrawWithUpdatedScale();
         }
@@ -155,6 +200,7 @@ public class interactionController : MonoBehaviour
         ScaleToMaxToggle.isOn = false;
         if (scaleSet)
         {
+            VerticalScaleInputField.text = VerticalScaleSlider.value.ToString();
             gcParser.scaleToUseVertical = VerticalScaleSlider.value;
             gcParser.RedrawWithUpdatedScale();
         }
@@ -174,7 +220,7 @@ public class interactionController : MonoBehaviour
 
     public void UpdateMinMaxValues()
     {
-       
+
         float[] MinMaxValues = gcParser.getMinMaxValues();
         MinXValueHolder.text = MinMaxValues[0].ToString();
         MaxXValueHolder.text = MinMaxValues[1].ToString();
@@ -188,6 +234,11 @@ public class interactionController : MonoBehaviour
     {
         SvgToPath.PathToGCode();
 
+    }
+    public void PathsToGcode_Click()
+    {
+        List<gcLine> lines = lineBuilder.ExportLinesToGcode(gcParser.gcodeFromPathToExport);
+        fileController.writeFile(lines, "");
     }
 
     public void StartLocationInputChanged()
@@ -232,9 +283,9 @@ public class interactionController : MonoBehaviour
             MidPointY = 0f;
             MidPointZ = 0f;
         }
-            Vector3 newMidPointLoc = new Vector3(MidPointX, MidPointY, MidPointZ);
-            gcParser.MiddlePointGcode.transform.position = newMidPointLoc;
-        
+        Vector3 newMidPointLoc = new Vector3(MidPointX, MidPointY, MidPointZ);
+        gcParser.MiddlePointGcode.transform.position = newMidPointLoc;
+
 
     }
 }

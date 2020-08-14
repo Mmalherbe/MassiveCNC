@@ -12,6 +12,7 @@ using TMPro;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using FontStyle = System.Drawing.FontStyle;
+using Random = UnityEngine.Random;
 
 public class gcParser : MonoBehaviour
 {
@@ -24,6 +25,12 @@ public class gcParser : MonoBehaviour
     [SerializeField] private LineRenderer ZAxis;
     [SerializeField] internal bool FileLoaded = false;
     [SerializeField] internal bool StartFromHome = true;
+    [SerializeField] internal bool ReturnToHome = true;
+    [SerializeField] internal bool AUXOnInFigures = true;
+    [SerializeField] internal bool AUXOnInTravels = true;
+    [SerializeField] internal bool StretchLines = true;
+    [SerializeField] internal bool centerPath = true;
+    [SerializeField] internal float StandardFeed = 20000;
     [SerializeField] internal GameObject HomePositionObj;
     [SerializeField] internal GameObject MiddlePointGcode;
     [SerializeField] internal GameObject StartPositionGcode;
@@ -36,13 +43,13 @@ public class gcParser : MonoBehaviour
     internal float maxScaleVertical = 1.001f;
     internal float scaleToUseHorizontal = 1f;
     internal float scaleToUseVertical = 1f;
-    private bool multiLine = false;
+    internal List<lineInfo> lineInfoList = new List<lineInfo>();
     internal List<Coords> OriginalCoords = new List<Coords>();
     private float minX;
     private float maxX;
     private float minY;
     private float maxY;
-
+    [SerializeField] internal List<gcLine> gcodeFromPathToExport = new List<gcLine>();
 
     string getValue(string gCodeLine, string letter, string splitAt)
     {
@@ -96,8 +103,20 @@ public class gcParser : MonoBehaviour
         ResetScales();
         Linebuilder.ClearLines();
         OriginalCoords = coords;
-        multiLine = multiline;
-
+        lineInfoList.Clear();
+        for (int i = 0; i < OriginalCoords.Count - 1; i += 2)
+        {
+            float deltaX = (float)OriginalCoords[i].X - (float)OriginalCoords[i + 1].X;
+            float deltaY = (float)OriginalCoords[i].Y - (float)OriginalCoords[i + 1].Y;
+            float a = deltaX / (deltaY > 0 ? deltaY : 1);
+            float b = ((float)OriginalCoords[i + 1].Y) / a > 0 ? (a * (float)OriginalCoords[i + 1].X) : 1;
+            lineInfo lineInf = new lineInfo
+            {
+                a = a,
+                b = b
+            };
+            lineInfoList.Add(lineInf);
+        }
     }
 
     private void ResetScales()
@@ -116,6 +135,124 @@ public class gcParser : MonoBehaviour
         if (coords.Count == 0) return;
         bool notsafe = false;
         List<gcLine> gcodeFromPath = new List<gcLine>();
+        gcodeFromPathToExport.Clear();
+
+        if (centerPath)
+        {
+            float midxPath = coords.Min(x=>x.X) + ((coords.Max(x => x.X) - coords.Min(x => x.X))/2);
+            float midyPath = coords.Min(x => x.Y) + ((coords.Max(x => x.Y) - coords.Min(x => x.Y))/2);
+            float deltaX = MiddlePointGcode.transform.position.x - midxPath;
+            float deltaY = MiddlePointGcode.transform.position.y - midyPath;
+            foreach (Coords coord in coords)
+                {
+                    coord.X += deltaX;
+                    coord.Y += deltaY;
+                }
+
+
+
+
+        }
+
+        // Create gcode from the path you want to draw.. without any manipulations like stretching
+        for (int i = 0; i < coords.Count; i++)
+        {
+            if (i == 0 || i == coords.Count - 1)
+            {
+                gcLine gcl = new gcLine();
+                gcl.X = float.Parse((coords[i].X).ToString("F4"));
+                gcl.Y = float.Parse((coords[i].Y).ToString("F4"));
+                gcl.Z = float.Parse((coords[i].Z).ToString("F4"));
+                gcl.F = StandardFeed;
+                gcl.G = 1;
+
+               gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
+
+                gcodeFromPath.Add(gcl);
+            }
+            else
+            {
+
+                gcLine gcl = new gcLine();
+                gcl.X = float.Parse((coords[i].X).ToString("F4"));
+                gcl.Y = float.Parse((coords[i].Y).ToString("F4"));
+                gcl.Z = float.Parse((coords[i].Z).ToString("F4"));
+                gcl.F = StandardFeed;
+                gcl.G = 1;
+                gcl.AUX1 = (bool)coords[i].Travel == true ? AUXOnInTravels : AUXOnInFigures;
+
+                gcodeFromPath.Add(gcl);
+
+            }
+        }
+
+      
+
+
+        gcodeFromPath = fill(gcodeFromPath);
+
+        if (Cnc_Settings.ScaleToMax)
+        {
+            scaleToUseHorizontal = Cnc_Settings.ScaleFactorForMax;
+            scaleToUseVertical = Cnc_Settings.ScaleFactorForMax;
+        }
+        float midPointX = MiddlePointGcode.transform.position.x;
+        float midPointY = MiddlePointGcode.transform.position.y;
+        float midPointZ = MiddlePointGcode.transform.position.z;
+
+        if (StretchLines)
+        {
+            List<gcLine> gcLinesBackup = new List<gcLine>(gcodeFromPath);
+            gcodeFromPath.Clear();
+            Dictionary<int, gcLine> StretchLineToAdd = new Dictionary<int, gcLine>();
+            float lastknownFeed = 0;
+
+            for (int i = 0; i < gcLinesBackup.Count - 1; i++)
+            {
+
+                // y = a*x+b
+                // a = deltax/deltay
+                // b = (insert 1 coordinate)..
+
+                gcodeFromPath.Add(gcLinesBackup[i]);
+
+                if (i > 1 && i < gcLinesBackup.Count - 2 && i % 2 != 0)
+                {
+
+                    for (int j = 0; j < 2; j++)
+                    {
+                        gcLine randomLineA = createRandomizedStretchLine(gcLinesBackup[i + j], lineInfoList[i + j]);
+                        randomLineA.X -= coords.Max(x => x.X) - coords.Min(x => x.X);
+                        randomLineA.Y -= coords.Max(x => x.Y) - coords.Min(x => x.Y);
+                        coords.Add(new Coords { X = (float)randomLineA.X, Y = (float)randomLineA.Y, Z = (float)gcLinesBackup[i + j].Z });
+                        gcodeFromPath.Add(randomLineA);
+                    }
+
+                }
+                gcodeFromPath.Add(gcLinesBackup[i]);
+            }
+
+        }
+        if (StartFromHome)
+        {
+            gcLine gcl = new gcLine();
+            gcl.G = 1;
+            gcl.X = HomePositionObj.transform.position.x;
+            gcl.Y = HomePositionObj.transform.position.y;
+            gcl.Z = HomePositionObj.transform.position.z;
+            gcl.AUX1 = AUXOnInTravels;
+            gcodeFromPath.Insert(0, gcl);
+        }
+        if (ReturnToHome)
+        {
+            gcLine gcl = new gcLine();
+            gcl.G = 1;
+            gcl.X = HomePositionObj.transform.position.x;
+            gcl.Y = HomePositionObj.transform.position.y;
+            gcl.Z = HomePositionObj.transform.position.z;
+            gcl.AUX1 = AUXOnInTravels;
+            gcodeFromPath.Insert(gcodeFromPath.Count - 1, gcl);
+        }
         minX = coords.Min(i => i.X);
         maxX = coords.Max(i => i.X);
         minY = coords.Min(i => i.Y);
@@ -125,6 +262,11 @@ public class gcParser : MonoBehaviour
         float midX = maxX - minX;
         float midY = maxY - minY;
         float midZ = maxZ - minZ;
+
+
+
+
+
 
         minScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (minX));
         maxScaleHorizontal = Mathf.Floor((Cnc_Settings.WidthInMM / 2 - Cnc_Settings.HorizontalPaddingInMM) / (maxX));
@@ -136,43 +278,12 @@ public class gcParser : MonoBehaviour
         if (!Interaction_Controller.scaleSet)
         {
             Interaction_Controller.updateScaleSliders(maxScaleHorizontal, maxScaleVertical, scaleToUseHorizontal, scaleToUseVertical);
-            scaleToUseHorizontal = safeToScale * (Cnc_Settings.defaultScalePercentage/100);
-            scaleToUseVertical = safeToScale * (Cnc_Settings.defaultScalePercentage/100);
+            scaleToUseHorizontal = safeToScale * (Cnc_Settings.defaultScalePercentage / 100);
+            scaleToUseVertical = safeToScale * (Cnc_Settings.defaultScalePercentage / 100);
         }
-        if (StartFromHome)
-        {
-            gcLine gcl = new gcLine();
-            gcl.X = HomePositionObj.transform.position.x;
-            gcl.Y = HomePositionObj.transform.position.y;
-            gcl.Z = HomePositionObj.transform.position.z;
-            gcodeFromPath.Add(gcl);
-        }
-        foreach (Coords coord in coords)
-        {
-          midX = 0;
-            midY = 0;
-            midZ = 0;
-            
 
 
 
-            gcLine gcl = new gcLine();
-            gcl.X = (coord.X - midX);
-            gcl.Y = coord.Y - midY;
-            gcl.Z = coord.Z - midZ;
-            gcl.G = 1;
-            gcodeFromPath.Add(gcl);
-        }
-        gcodeFromPath = fill(gcodeFromPath);
-
-        if (Cnc_Settings.ScaleToMax)
-        {
-            scaleToUseHorizontal = Cnc_Settings.ScaleFactorForMax;
-            scaleToUseVertical = Cnc_Settings.ScaleFactorForMax;
-        }
-        float midPointX = MiddlePointGcode.transform.position.x;
-        float midPointY = MiddlePointGcode.transform.position.y;
-        float midPointZ = MiddlePointGcode.transform.position.z;
         foreach (gcLine gcl in gcodeFromPath)
         {
 
@@ -184,7 +295,7 @@ public class gcParser : MonoBehaviour
 
             if (Mathf.Abs((float)gcl.X) > Mathf.Abs(((Cnc_Settings.WidthInMM - (Cnc_Settings.HorizontalPaddingInMM * 2)) / 2)) || Mathf.Abs((float)gcl.Y) > Mathf.Abs(((Cnc_Settings.HeightInMM - (Cnc_Settings.VerticalPaddingInMM * 2)) / 2)))
             {
-                notsafe = true;
+                 notsafe = true;
             }
         }
 
@@ -196,13 +307,27 @@ public class gcParser : MonoBehaviour
         }
         else
         {
-
+            gcodeFromPathToExport = gcodeFromPath;
             Interaction_Controller.UpdateMinMaxValues();
-            Linebuilder.showOutLinesFromPoints(gcodeFromPath, multiLine);
+            Linebuilder.showOutLinesFromPoints(gcodeFromPath);
             gameObject.GetComponent<FileController>().writeFile(gcodeFromPath, "examp");
         }
     }
 
+
+    gcLine createRandomizedStretchLine(gcLine gcl, lineInfo lineinf)
+    {
+        lineinf.x = Random.Range(-(Cnc_Settings.WidthInMM / 2), (float)gcl.X);
+        return new gcLine
+        {
+            G = gcl.G,
+            F = gcl.F,
+            X = lineinf.x,
+            Y = lineinf.y,
+            Z = gcl.Z
+        };
+
+    }
     List<gcLine> fill(List<gcLine> lines)
     {
         // Make sure every line has coordinates, if they don't give them the coordinates from the previous line. Where -999999 is a value given to a missing value.
