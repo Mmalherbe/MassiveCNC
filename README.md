@@ -1,3 +1,8 @@
+https://img.shields.io/github/forks/mmalherbe/massiveCNC?label=Forks&style=social
+https://img.shields.io/github/stars/mmalherbe/massivecnc?style=social
+https://img.shields.io/github/license/mmalherbe/massivecnc
+
+
 # MassiveCNC
 
 MassiveCNC is an utility that allows CNC machine users to do generate G-code from text, SVG or precompiled G-Code. Or interact with their machine in RealTime using Unity3D.
