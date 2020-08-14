@@ -63,7 +63,7 @@ public class FileController : MonoBehaviour
     {
         SVGbtn_text.text = "opening File";
         string path = EditorUtility.OpenFilePanel("Open SVG", "", "svg");
-        if (path.ToUpper().Contains("LINE"))
+        if (path.ToUpper().Contains("LINE") || path.ToLower().Contains("line")  )
         {
             svgToPath.ParseSVGLinesToPath(path);
         }
