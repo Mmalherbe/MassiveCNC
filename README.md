@@ -1,7 +1,6 @@
-https://img.shields.io/github/forks/mmalherbe/massiveCNC?label=Forks&style=social
-https://img.shields.io/github/stars/mmalherbe/massivecnc?style=social
-https://img.shields.io/github/license/mmalherbe/massivecnc
-
+![GitHub](https://img.shields.io/github/forks/mmalherbe/massiveCNC?label=Forks&style=social)
+![GitHub](https://img.shields.io/github/stars/mmalherbe/massivecnc?style=social)
+![GitHub](https://img.shields.io/github/license/mmalherbe/massivecnc)
 
 # MassiveCNC
 
