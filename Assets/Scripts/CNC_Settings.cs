@@ -20,5 +20,5 @@ public class CNC_Settings : MonoBehaviour
     public float DefaultHomeY;
     public float DefaultHomeZ;
 
-
+ public float DefaultHomeA
 }
