@@ -51,10 +51,11 @@ public class TextToPath : MonoBehaviour
                     List<Coords> coords = new List<Coords>();
                     CoordsOneCharacter.Clear();
                     CoordsOneCharacter = new List<Coords>(fontDict.First(x => x.Key == TextLines[i][j].ToString()).Value); // list of coords for character
-                        if(CoordsOneCharacter.Count == 0)
-                        { // If no character is found, for example a uppercase letter that isnt included, get the lowercase one
-                                CoordsOneCharacter = new List(fontDict.First(x =&gt; x.Key.ToUpper() == TextLines[i][j].ToString().ToUpper()).Value);
-                        }
+                    if (CoordsOneCharacter.Count == 0)
+                    { // If no character is found, for example a uppercase letter that isnt included, get the lowercase one
+                      //CoordsOneCharacter = new List(fontDict.First(x =&gt; x.Key.ToUpper() == TextLines[i][j].ToString().ToUpper()).Value); << WRONG
+                        CoordsOneCharacter = new List<Coords>(fontDict.First(x => x.Key == TextLines[i][j].ToString()).Value); // list of coords for character
+                    }
                     float minX = CoordsOneCharacter.Min(x => x.X);
                     float minY = CoordsOneCharacter.Min(y => y.Y);
                     float maxX = CoordsOneCharacter.Max(x => x.X);
@@ -128,8 +129,8 @@ public class TextToPath : MonoBehaviour
             {
                 foreach (Coords coord in tlp.coordList)
                 {
-                    coord.X -= useMidPointOfEachCharacter?allPathsSVGMidX:0;
-                    coord.Y -= useMidPointOfEachCharacter?allPathsSVGMidY:0;
+                    coord.X -= useMidPointOfEachCharacter ? allPathsSVGMidX : 0;
+                    coord.Y -= useMidPointOfEachCharacter ? allPathsSVGMidY : 0;
                 }
             }
         }
@@ -170,7 +171,7 @@ public class TextToPath : MonoBehaviour
                         float midY = minY + ((maxY - minY) / 2);
                         foreach (PointF p in pt)
                         {
-                            coords.Add(new Coords() { X = p.X - (useMidPointOfEachCharacter ? (midX):0), Y = p.Y - (useMidPointOfEachCharacter ? (midY) : 0), Z = 0.00001f });
+                            coords.Add(new Coords() { X = p.X - (useMidPointOfEachCharacter ? (midX) : 0), Y = p.Y - (useMidPointOfEachCharacter ? (midY) : 0), Z = 0.00001f });
                         }
                         txtLinPath.id = i;
                         txtLinPath.coordList = coords;
