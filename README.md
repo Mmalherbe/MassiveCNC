@@ -84,7 +84,7 @@ Thanks to the following people who have contributed to this project:
 
 * [@scottydocs](https://github.com/scottydocs) 📖 (Creating the perfect README format)
 * [@mmalherbe](https://github.com/mmalherbe) 🧩
-* [Oosterhof-Design](https://oosterhof-design.com)🧠 (Creating the EdingCNC API wrapper)
+* [@Oosterhof-Design](https://github.com/Oosterhof-Design) Or [Oosterhof-Design](https://oosterhof-design.com)🧠 (Creating the EdingCNC API wrapper)
 * [@farooqaziz20](https://github.com/farooqaziz20) 🐛
 * [@hamzach276](https://github.com/hamzach276) 🐛
 
