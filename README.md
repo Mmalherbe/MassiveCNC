@@ -60,9 +60,11 @@ Open the cloned or forked version in Unity3D.
 Make sure to install EdingCNC 4.03
 In the hierarchy under controllers select the cncapi_controller and set the EdingCNCPath correctly ( To the cnc.ini in the installed location of EdingCNC4.03)
 
-For example : C:\Users\M\Desktop\CNC4.03\cnc.ini
- Start the EdingCNC4.03 as administrator and select the blue start button. Afterwards you should be able to connect to EdingCNC.
+For example : C:\Users\M\Desktop\CNC4.03\cnc.ini if you do NOT want to use it with the graphical interface of EdingCNC.
 
+
+If you wish to connect to the Graphical interface of EdingCNC please keep the EdingCNCPath - variable empty
+ Start the EdingCNC4.03 as administrator and select the blue start button. Afterwards you should be able to connect to EdingCNC.
 
 ```
 
